@@ -1,5 +1,6 @@
 segment .data
 	_y dd 10
+	_o dd 2
 segment .bss
 	_x resd 1
 	__esp resd 1
@@ -13,7 +14,7 @@ segment .text
 ; -----------------------
 main:
 	mov dword [__esp] , esp
-	
+
 
 	;scanf x
 	push dword _x
@@ -23,7 +24,7 @@ main:
 	; x = (x * 2 ) -y
 	push dword [_x]
 	pop dword eax
-	add eax, eax
+	mul dword [_o]
 
 	push dword [_y]
 	pop dword ebx
@@ -40,4 +41,3 @@ main:
 
 	mov dword esp, [__esp]
 	ret
-
