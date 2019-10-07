@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define VARIABLE 1
 
 /*14*/
 /* FUNCIÓN PARA PODER HACER EL CÓDIGO MULTIPLATAFORMA U OTROS PARÁMETROS GENERALES TAL VEZ SE PUEDA QUEDAR VACÍA */
@@ -111,29 +112,12 @@ void escribir_operando(FILE *fpasm, char *nombre, int es_variable)
     char *elem2 = "]";
 
     if (!fpasm)
-    {
         return;
-    }
-
-    if (es_variable == 1)
-    {
-        strcat(elem1, nombre);
-        strcat(aux, elem1);
-        strcat(aux, elem2);
-        fprintf(fpasm, aux);
-    }
-    else
-    {
-        strcat(aux, nombre);
-        fprintf(fpasm, aux);
-    }
 
     if (es_variable == 1)
         fprintf(fpasm, "\tpush dword _%s\n", nombre);
     else
         fprintf(fpasm, "\tpush dword %s\n", nombre);
-
-    return;
 
     return;
 }
@@ -150,19 +134,21 @@ EL VALOR ES [eax]
 void asignar(FILE *fpasm, char *nombre, int es_variable)
 {
 
+    fprintf(fpasm, "pop dword eax\n");
+
     if (es_variable == 0)
     {
-        fprintf(fpasm, "\tpop dword [_nombre]\n");
+        fprint(fpasm, "\tmov [_%s], eax \n", nombre);
     }
     else
     {
-        fprintf(fpasm, "\tpop dword eax\n");
-        fprintf(fpasm, "\tmov dowrd [_nombre], [eax]\n");
+        fprintf(fpasm, "\tmov eax, [eax]\n");
+        fprintf(fpasm, "\tmov [_%s], eax\n", nombre)
     }
 }
 
 /*5*/
-#define VARIABLE 1
+
 void sumar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
     fprintf(fpasm, "\tpop dword ebx\n");
@@ -318,56 +304,15 @@ UTILIZA UN JUEGO DE ETIQUETAS ÚNICO
 void no(FILE *fpasm, int es_variable, int cuantos_no)
 {
 
-    /* BASICAMENTE HAY QUE GENERAR ESTO
-        cmp eax, 0
-        je _uno
-        push dword 0
-        jmp _fin_not
-_uno:   push dword 1
-_fin_not:
-*/
+    fprintf(fpasm, "\tcmp eax, 0\nje _uno\npush dword 0\njmp _fin_not\nuno: push dword 1\nfin_not:\n");
 
-    if (es_variable)
-    { /*si es_variable == 1*/
-        /*hacer push de la pila y cambiar el contenido (0 por 1 y 1 por 0) haciendo pop*/
-
-        /*
-    pop eax
-    cmp eax, 0
-    je _uno
-    push dword 0
-    jmp _fin_not
-
-    _uno:
-    push dword 1
-
-    _fin_not:
-    
-luego hay que escribirlo en el fichero en c con un fprintf 
-    */
+    if (es_variable == VARIABLE)
+    {
+        fprintf(fpasm, "\tcmp eax, 0\nje _uno\npush dword 0\njmp _fin_not\n\n_uno:\npush dword 1\n\n_fin_not:\n");
     }
     else
     {
-
-        /*quiere decir que tenemos una direccion de memoria en lugar de una variable*/
-        /*ir a la direccion de memoria y cambiarlo, después volver a meter la misma direccion en la pila*/
-
-        /*
-    pop eax
-    mov eax, [eax]
-
-    cmp eax, 0
-    je _uno
-
-    mov eax, 0
-    jmp _fin_not
-
-    _uno:
-    mov eax, 1
-
-    _fin_not:
-    push eax
-    */
+        fprintf(fpasm, "\tmov eax, [eax]\n\ncmp eax, 0\nje _uno\n\nmov eax, 0\njmp _fin_not\n\n_uno:\nmov eax, 1\n\n_fin_not:\npush eax\n")
     }
 }
 
@@ -382,12 +327,12 @@ void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -409,12 +354,12 @@ void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -436,12 +381,12 @@ void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -463,12 +408,12 @@ void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -490,12 +435,12 @@ void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -517,12 +462,12 @@ void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == 1)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == 1)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -534,7 +479,6 @@ void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "push dword 1\n");
 }
 
-
 /*1*/
 
 /*
@@ -542,15 +486,19 @@ GENERA EL CÓDIGO PARA LEER UNA VARIABLE DE NOMBRE nombre Y TIPO tipo (ESTE
 AÑO SÓLO USAREMOS ENTERO Y BOOLEANO) DE CONSOLA LLAMANDO A LAS CORRESPONDIENTES
 FUNCIONES DE ALFALIB (scan_int Y scan_boolean)
 */
-void leer(FILE* fpasm, char* nombre, int tipo)
+void leer(FILE *fpasm, char *nombre, int tipo)
 {
 
-    if (!fpasm || !nombre) return;
+    if (!fpasm || !nombre)
+        return;
 
     fprintf(fpasm, "\tPUSH DWORD _%s\n", nombre);
-    if(tipo == ENTERO){
+    if (tipo == ENTERO)
+    {
         fprintf(fpasm, "\tCALL scan_int\n");
-    }else if(tipo == BOOLEANO){
+    }
+    else if (tipo == BOOLEANO)
+    {
         fprintf(fpasm, "\tCALL scan_boolean\n");
     }
     fprintf(fpasm, "\tADD esp, 4\n");
@@ -563,23 +511,27 @@ DIRECCION (es_variable == 1) Y QUE HAY QUE LLAMAR A LA CORRESPONDIENTE
 FUNCIÓN DE ALFALIB (print_int O print_boolean) DEPENDIENTO DEL TIPO (tipo == BOOLEANO
 O ENTERO )
 */
-void escribir(FILE* fpasm, int es_variable, int tipo)
+void escribir(FILE *fpasm, int es_variable, int tipo)
 {
 
-    if (!fpasm) return;
+    if (!fpasm)
+        return;
 
-    if(es_variable == 1){
+    if (es_variable == 1)
+    {
         fprintf(fpasm, "\tPOP DWORD eax\n");
         fprintf(fpasm, "\tMOV eax, [eax]\n");
         fprintf(fpasm, "\tPUSH DWORD eax\n");
     }
-    if(tipo == ENTERO){
+    if (tipo == ENTERO)
+    {
         fprintf(fpasm, "\tCALL print_int\n");
-    }else if(tipo == BOOLEANO){
+    }
+    else if (tipo == BOOLEANO)
+    {
         fprintf(fpasm, "\tCALL print_boolean\n");
     }
 
     fprintf(fpasm, "\tADD esp, 4\n");
     fprintf(fpasm, "\tCALL print_endofline\n");
-
 }
