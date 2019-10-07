@@ -1,8 +1,9 @@
-#include "generacion_omicron.h"
+#include "generacion.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define VARIABLE 1
+int not=0;
 
 /*14*/
 /* FUNCIÓN PARA PODER HACER EL CÓDIGO MULTIPLATAFORMA U OTROS PARÁMETROS GENERALES TAL VEZ SE PUEDA QUEDAR VACÍA */
@@ -17,7 +18,7 @@ void escribir_subseccion_data(FILE *fpasm)
     /*Declaracion del segmento de datos*/
     fprintf(fpasm, "segment .data \n");
     /*Declaracion del error de dividir entre 0*/
-    fprintf(fpasm, "err_div0 db \"Error al dividir entre 0\"\n");
+    fprintf(fpasm, "\terr_div0 db \"Error al dividir entre 0\"\n");
 }
 
 /*12*/
@@ -29,7 +30,7 @@ AL MENOS HAY QUE DECLARAR LA VARIABLE AUXILIAR PARA GUARDAR EL PUNTERO DE PILA _
 void escribir_cabecera_bss(FILE *fpasm)
 {
 
-    fprintf(fpasm, "segment .bss \n\t __esp resd 1\n");
+    fprintf(fpasm, "segment .bss \n\t__esp resd 1\n");
 }
 
 /*11*/
@@ -65,8 +66,7 @@ DECLARACION DE main COMO ETIQUETA VISIBLE DESDE EL EXTERIOR
 void escribir_segmento_codigo(FILE *fpasm)
 {
 
-    char cadena[] = "segment .text \n\t global main \n\t extern scan_int print_int scan_float print_boolean \n\t extern print_endofline, print_blank, print_string\n\t extern alfa_malloc, alfa_free, ld_float";
-    fprintf(fpasm, cadena);
+    fprintf(fpasm, "segment .text\n\tglobal main\n\textern scan_int, print_int, scan_float, scan_boolean, print_boolean\n\textern print_endofline, print_blank, print_string\n\textern alfa_malloc, alfa_free, ld_float\n");
 }
 
 /*9*/
@@ -93,8 +93,8 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-    char cadena[] = "jmp fin\ndivision_cero:\npush dword err_div0\ncall print_string\nadd esp, 4\ncall print_endofline\njmp fin\nfin:\nmov dword esp, [__esp]\nret\n";
-    fprintf(fpasm, cadena);
+    
+    fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\nfin:\n\tmov dword esp, [__esp]\n\tret\n");
 }
 
 /*7*/
@@ -104,21 +104,32 @@ SE INTRODUCE EL OPERANDO nombre EN LA PILA
 SI ES UNA VARIABLE (es_variable == 1) HAY QUE PRECEDER EL NOMBRE DE _
 EN OTRO CASO, SE ESCRIBE TAL CUAL
 */
+
+/*
+; LEEMOS Y ESCRIBIMOS LA VARIABLE BOOL b2
+	push dword _b2
+	call scan_boolean
+	add esp, 4
+
+	push dword [_b2]
+	call print_boolean
+	add esp, 4
+	call print_endofline
+*/
 void escribir_operando(FILE *fpasm, char *nombre, int es_variable)
 {
-
-    char *aux = "push dword ";
-    char *elem1 = "[_";
-    char *elem2 = "]";
 
     if (!fpasm)
         return;
 
-    if (es_variable == 1)
+    fprintf(fpasm, ";--------Escribir Operando--------\n");
+
+    if (es_variable == VARIABLE)
         fprintf(fpasm, "\tpush dword _%s\n", nombre);
     else
         fprintf(fpasm, "\tpush dword %s\n", nombre);
 
+    fprintf(fpasm, ";--------Escrito Operando--------\n");
     return;
 }
 
@@ -134,16 +145,16 @@ EL VALOR ES [eax]
 void asignar(FILE *fpasm, char *nombre, int es_variable)
 {
 
-    fprintf(fpasm, "pop dword eax\n");
+    fprintf(fpasm, "\tpop dword eax\n");
 
     if (es_variable == 0)
     {
-        fprint(fpasm, "\tmov [_%s], eax \n", nombre);
+        fprintf(fpasm, "\tmov [_%s], eax \n", nombre);
     }
     else
     {
         fprintf(fpasm, "\tmov eax, [eax]\n");
-        fprintf(fpasm, "\tmov [_%s], eax\n", nombre)
+        fprintf(fpasm, "\tmov [_%s], eax\n", nombre);
     }
 }
 
@@ -278,16 +289,16 @@ void cambiar_signo(FILE *fpasm, int es_variable)
 {
     if (es_variable == 1)
     {
-        fprintf(fpasm, "pop dword eax\n");
-        fprintf(fpasm, "mov dword eax, [eax]"\n);
-        fprintf(fpasm, "imul eax, -1\n");
-        fprintf(fpasm, "push eax\n");
+        fprintf(fpasm, "\tpop dword eax\n");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+        fprintf(fpasm, "\timul eax, -1\n");
+        fprintf(fpasm, "\tpush eax\n");
     }
     else
     {
-        fprintf(fpasm, "pop dword eax\n");
-        fprintf(fpasm, "imul eax, -1\n");
-        fprintf(fpasm, "push eax\n");
+        fprintf(fpasm, "\tpop dword eax\n");
+        fprintf(fpasm, "\timul eax, -1\n");
+        fprintf(fpasm, "\tpush eax\n");
     }
 }
 
@@ -301,19 +312,38 @@ CONTADOR QUE ASEGURA QUE UTILIZARLO COMO AÑADIDO AL NOMBRE DE LAS ETIQUETAS QUE
 USEMOS (POR EJEMPLO cierto: O falso: ) NOS ASEGURARÁ QUE CADA LLAMADA A no
 UTILIZA UN JUEGO DE ETIQUETAS ÚNICO
 */
+
+/*
+;NOT CON SALTOS
+    cmp eax, 0
+    jne to1
+
+    mov eax, 1
+    jmp end
+
+    to1: mov eax, 0
+*/
 void no(FILE *fpasm, int es_variable, int cuantos_no)
 {
+    fprintf(fpasm, ";--------NOT--------\n\tpop dword eax\n");
+    /*fprintf(fpasm, "\tcmp eax, 0\n\tje _uno\n\tpush dword 0\n\tjmp _fin_not\n");*/
+    not++;
 
-    fprintf(fpasm, "\tcmp eax, 0\nje _uno\npush dword 0\njmp _fin_not\nuno: push dword 1\nfin_not:\n");
 
-    if (es_variable == VARIABLE)
+    if((cuantos_no+1)%2){
+        if (es_variable == VARIABLE)
     {
-        fprintf(fpasm, "\tcmp eax, 0\nje _uno\npush dword 0\njmp _fin_not\n\n_uno:\npush dword 1\n\n_fin_not:\n");
+        fprintf(fpasm, "\tcmp eax, 0\n\tjne to1_%d\n\tmov eax, 1\n\tjmp notend_%d\n", not, not);
     }
     else
     {
-        fprintf(fpasm, "\tmov eax, [eax]\n\ncmp eax, 0\nje _uno\n\nmov eax, 0\njmp _fin_not\n\n_uno:\nmov eax, 1\n\n_fin_not:\npush eax\n")
+        fprintf(fpasm, "\tmov eax, [eax]\n\n\tcmp eax, 0\n\tjne to1_%d\n\n\tmov eax, 0\n\tjmp notend_%d\n", not, not);
     }
+
+        fprintf(fpasm, "to1_%d:\n\tmov eax, 0\nnotend_%d:\n\tpush dword eax\n", not, not);
+    }
+    fprintf(fpasm, ";--------NOTEND--------\n");
+    
 }
 
 /*2*/
@@ -492,16 +522,16 @@ void leer(FILE *fpasm, char *nombre, int tipo)
     if (!fpasm || !nombre)
         return;
 
-    fprintf(fpasm, "\tPUSH DWORD _%s\n", nombre);
+    fprintf(fpasm, "\tpush dword _%s\n", nombre);
     if (tipo == ENTERO)
     {
-        fprintf(fpasm, "\tCALL scan_int\n");
+        fprintf(fpasm, "\tcall scan_int\n");
     }
     else if (tipo == BOOLEANO)
     {
-        fprintf(fpasm, "\tCALL scan_boolean\n");
+        fprintf(fpasm, "\tcall scan_boolean\n");
     }
-    fprintf(fpasm, "\tADD esp, 4\n");
+    fprintf(fpasm, "\tadd esp, 4\n");
 }
 
 /*
@@ -519,19 +549,20 @@ void escribir(FILE *fpasm, int es_variable, int tipo)
 
     if (es_variable == 1)
     {
-        fprintf(fpasm, "\tPOP DWORD eax\n");
-        fprintf(fpasm, "\tMOV eax, [eax]\n");
-        fprintf(fpasm, "\tPUSH DWORD eax\n");
+        fprintf(fpasm, "\tpop dword eax\n");
+        fprintf(fpasm, "\tmov eax, [eax]\n");
+        fprintf(fpasm, "\tpush dword eax\n");
     }
+
     if (tipo == ENTERO)
     {
-        fprintf(fpasm, "\tCALL print_int\n");
+        fprintf(fpasm, "\tcall print_int\n");
     }
     else if (tipo == BOOLEANO)
     {
-        fprintf(fpasm, "\tCALL print_boolean\n");
+        fprintf(fpasm, "\tcall print_boolean\n");
     }
 
-    fprintf(fpasm, "\tADD esp, 4\n");
-    fprintf(fpasm, "\tCALL print_endofline\n");
+    fprintf(fpasm, "\tadd esp, 4\n");
+    fprintf(fpasm, "\tcall print_endofline\n");
 }
