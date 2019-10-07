@@ -28,15 +28,17 @@ main:
 ;--------Escrito Operando--------
 ;--------NOT--------
 	pop dword eax
-	cmp eax, 0
-	jne to1_1
-	mov eax, 1
-	jmp notend_1
-to1_1:
-	mov eax, 0
-notend_1:
-	push dword eax
-;--------NOTEND--------
+	cmp dword [eax], 0
+	je no_es0_0
+	cmp dword [eax], 1
+	je no_es1_0
+	jmp no_fin_0
+	no_es0_0:
+	push dword 1
+	jmp no_fin_0
+	no_es1_0:
+	push dword 0
+	no_fin_0:
 	call print_boolean
 	add esp, 4
 	call print_endofline

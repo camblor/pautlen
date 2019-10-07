@@ -325,10 +325,13 @@ UTILIZA UN JUEGO DE ETIQUETAS ÚNICO
 */
 void no(FILE *fpasm, int es_variable, int cuantos_no)
 {
-    fprintf(fpasm, ";--------NOT--------\n\tpop dword eax\n");
+    char eax[6] = "";
+    fprintf(fpasm, ";--------NOT--------\n");
+    fprintf(fpasm, "\tpop dword eax\n");
     /*fprintf(fpasm, "\tcmp eax, 0\n\tje _uno\n\tpush dword 0\n\tjmp _fin_not\n");*/
+    /*
     not++;
-
+    
 
     if((cuantos_no+1)%2){
         if (es_variable == VARIABLE)
@@ -342,8 +345,26 @@ void no(FILE *fpasm, int es_variable, int cuantos_no)
 
         fprintf(fpasm, "to1_%d:\n\tmov eax, 0\nnotend_%d:\n\tpush dword eax\n", not, not);
     }
-    fprintf(fpasm, ";--------NOTEND--------\n");
-    
+    fprintf(fpasm, ";--------NOTEND--------\n");*/
+
+    if(es_variable == 0)
+        fprintf(fpasm, "\tcmp dword %s, 0\n", strcpy(eax, "eax"));
+    else
+        fprintf(fpasm, "\tcmp dword %s, 0\n", strcpy(eax, "[eax]"));
+
+    fprintf(fpasm, "\tje no_es0_%d\n", cuantos_no);
+
+    fprintf(fpasm, "\tcmp dword %s, 1\n", eax);
+    fprintf(fpasm, "\tje no_es1_%d\n", cuantos_no);
+
+    fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
+    fprintf(fpasm, "\tno_es0_%d:\n", cuantos_no);
+
+    fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
+    fprintf(fpasm, "\tno_es1_%d:\n", cuantos_no);
+    fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tno_fin_%d:\n", cuantos_no);
 }
 
 /*2*/
