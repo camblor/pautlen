@@ -16,4 +16,11 @@ main:
 	nasm -g -o ejmain.o -f elf32 ejmain.asm
 	gcc -m32 -o ejmain ejmain.o alfalib.o
 
+s3_3:
+	gcc -o ej s3_3.c generacion.c generacion.h -lm
+	gcc -m32 -o s3_3 s3_3.o alfalib.o
+	./s3_3 s3_3.asm
+	nasm -g -o s3_3.o -f elf32 s3_3.asm
+
+
 all: main0

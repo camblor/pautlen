@@ -93,7 +93,7 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-    
+
     fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\nfin:\n\tmov dword esp, [__esp]\n\tret\n");
 }
 
@@ -331,7 +331,7 @@ void no(FILE *fpasm, int es_variable, int cuantos_no)
     /*fprintf(fpasm, "\tcmp eax, 0\n\tje _uno\n\tpush dword 0\n\tjmp _fin_not\n");*/
     /*
     not++;
-    
+
 
     if((cuantos_no+1)%2){
         if (es_variable == VARIABLE)
@@ -422,7 +422,7 @@ void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "push dword 1\n");
 }
 
-/* 
+/*
 GENERA EL CÓDIGO PARA COMPARAR SI LO QUE HAY EN LA PRIMERA POSICION DE LA PILA
 ES MENOR O IGUAL A LA SEGUNDA POSICION, TENIENDO EN CUENTA QUE HAY QUE INDICAR
 SI SON DIRECCIONES O NO
@@ -586,4 +586,52 @@ void escribir(FILE *fpasm, int es_variable, int tipo)
 
     fprintf(fpasm, "\tadd esp, 4\n");
     fprintf(fpasm, "\tcall print_endofline\n");
+}
+
+void declararFuncion(FILE *fd_asm, char * nombre_funcion, int num_var_loc){
+  if(!fd_asm || !nombre_funcion) return;
+
+  fprintf(fd_asm, "_%s:\n", nombre_funcion);
+  fprintf(fd_asm, "push ebp\n");
+  fprintf(fd_asm, "mov ebp, eps\n");
+  fprintf(fd_asm, "sub esp, 4\n");
+}
+
+void retornarFuncion(FILE * fd_asm, int es_variable){
+  if(!fd_asm) return;
+
+  fprintf(fd_asm, "mov esp, ebp\n");
+  fprintf(fd_asm, "pop ebp\n");
+  fprintf(fd_asm, "ret\n");
+
+}
+
+
+void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
+
+  if(!fpasm || pos_parametro > num_total_parametros) return;
+
+  fprintf(fpasm, "mov dword eax, [ebp+8 +4*%d]", pos_parametro);
+}
+
+void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
+
+  if(!fpasm) return;
+
+  fprintf(fpasm, "mov dword [ebp-4*%d], eax\n", posicion_variable_local);
+}
+
+void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+
+}
+
+void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
+
+}
+
+void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
+  if(!fd_asm || !nombre_funcion) return;
+
+  fprintf(fd_asm, "call _%s\n", nombre_funcion);
+  fprintf(fd_asm, "add esp, 4\n");
 }
