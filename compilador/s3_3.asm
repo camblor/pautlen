@@ -18,8 +18,8 @@ _doble:
 	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
-	mov dword [ebx], eax;--------Escribir Operando--------
-	push dword _(null)
+	mov dword [ebx], eax;--------Escribir Operando--------2:0
+	push dword 2
 ;--------Escrito Operando--------
 	lea eax, [ebp + 1+8]
 	pop dword ebx
@@ -32,17 +32,19 @@ _doble:
 	mov esp, ebp
 	pop ebp 
 ret
-main:
+_main:
 	mov dword [__esp] , esp
-;--------Escribir Operando--------
+;--------Escribir Operando--------2:0
 	push dword 2
 ;--------Escrito Operando--------
 	pop dword eax
-	mov eax, [eax]
-	mov [_z], eax
-;--------Escribir Operando--------
+	mov [_z], eax 
+;--------Escribir Operando--------z:1
 	push dword _z
 ;--------Escrito Operando--------
+	pop eax
+	mov eax, [eax]
+	push eax
 	call _doble
 	add esp, 4*1
 	push dword eax

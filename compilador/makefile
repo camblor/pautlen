@@ -20,8 +20,9 @@ s3_3:
 	gcc -c s3_3.c generacion.c generacion.h
 	gcc -o s3_3 s3_3.c generacion.c generacion.h -lm
 	./s3_3 s3_3.asm
-	gcc -m32 -o s3_3 s3_3.o alfalib.o
 	nasm -g -o s3_3.o -f elf32 s3_3.asm
+	gcc -m32 -o s3_3 s3_3.o alfalib.o
 
-
-all: main0
+clean:
+	rm -r *.asm
+	rm -r *.o

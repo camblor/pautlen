@@ -153,4 +153,9 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local);
 void asignarDestinoEnPila(FILE* fpasm, int es_variable);
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable);
 void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos);
+void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta);
+void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta);
+void ifthen_fin(FILE * fpasm, int etiqueta);
+void ifthenelse_fin_then( FILE * fpasm, int etiqueta);
+void ifthenelse_fin( FILE * fpasm, int etiqueta);
 #endif

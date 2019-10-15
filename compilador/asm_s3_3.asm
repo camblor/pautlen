@@ -1,44 +1,57 @@
-segment .data 
+segment .data
 	err_div0 db "Error al dividir entre 0"
-segment .bss 
+segment .bss
 	__esp resd 1
-	_x resd 1
-	_y resd 1
 	_z resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
 	extern print_endofline, print_blank, print_string
 	extern alfa_malloc, alfa_free, ld_float
-main:
-	mov dword [__esp] , esp
-;--------Escribir Operando--------8:0
-	push dword 8
-;--------Escrito Operando--------
-	pop dword eax
-	mov [_x], eax 
-	push dword _y
-	call scan_int
-	add esp, 4
-;--------Escribir Operando--------y:1
-	push dword _y
-;--------Escrito Operando--------
-;--------Escribir Operando--------x:1
-	push dword _x
-;--------Escrito Operando--------
+	_doble:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	lea eax, [ebp +8]
+	push dword eax
+	lea eax, [ebp - 4]
+	push dword eax
 	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
-	mov dword ebx, [ebx]
-	add eax, ebx
+	mov dword [ebx], eax
+	call print_int
+	add esp, 4
+	call print_endofline
+;--------Escribir Operando--------2:0
+	push dword 2
+;--------Escrito Operando--------
+	lea eax, [ebp +8]
 	push dword eax
+	pop dword ebx
 	pop dword eax
-	mov [_z], eax 
+	mov dword ebx, [ebx]
+	imul ebx
+	push dword eax
+	pop eax
+	mov esp, ebp
+	pop ebp
+	ret
+main:
+	mov dword [__esp] , esp
+;--------Escribir Operando--------2:0
+	push dword 2
+;--------Escrito Operando--------
+	pop dword eax
+	mov [_z], eax
 ;--------Escribir Operando--------z:1
 	push dword _z
 ;--------Escrito Operando--------
-	pop dword eax
+	pop eax
 	mov eax, [eax]
+	push eax
+	call _doble
+	add esp, 4*1
 	push dword eax
 	call print_int
 	add esp, 4
