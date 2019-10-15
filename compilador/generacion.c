@@ -592,46 +592,66 @@ void declararFuncion(FILE *fd_asm, char * nombre_funcion, int num_var_loc){
   if(!fd_asm || !nombre_funcion) return;
 
   fprintf(fd_asm, "_%s:\n", nombre_funcion);
-  fprintf(fd_asm, "push ebp\n");
-  fprintf(fd_asm, "mov ebp, eps\n");
-  fprintf(fd_asm, "sub esp, 4\n");
+  fprintf(fd_asm, "\tpush ebp\n");
+  fprintf(fd_asm, "\tmov ebp, esp\n");
+  fprintf(fd_asm, "\tsub esp, 4*%d\n", num_var_loc);
 }
 
 void retornarFuncion(FILE * fd_asm, int es_variable){
   if(!fd_asm) return;
 
-  fprintf(fd_asm, "mov esp, ebp\n");
-  fprintf(fd_asm, "pop ebp\n");
-  fprintf(fd_asm, "ret\n");
+  fprintf(fd_asm, "\tpop eax\n");
+  if (es_variable==1)
+      fprintf(fd_asm, "\tmov dword eax, [eax]\n");
 
+  fprintf(fd_asm, "\tmov esp, ebp\n");
+  fprintf(fd_asm, "\tpop ebp \n");
+  fprintf(fd_asm, "ret\n");
 }
 
 
 void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
 
-  if(!fpasm || pos_parametro > num_total_parametros) return;
+  if(!fpasm) return;
+  int aux = 4*(1+(num_total_parametros-pos_parametro));
+  fprintf(fpasm, "\tlea eax, [ebp + 1+%d]\n", aux);
 
-  fprintf(fpasm, "mov dword eax, [ebp+8 +4*%d]", pos_parametro);
+
 }
 
 void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 
   if(!fpasm) return;
 
-  fprintf(fpasm, "mov dword [ebp-4*%d], eax\n", posicion_variable_local);
+  fprintf(fpasm, "\tlea eax, [ebp -4*%d]\n", posicion_variable_local);
+  fprintf(fpasm, "\tpush dword eax\n");
 }
 
 void asignarDestinoEnPila(FILE* fpasm, int es_variable){
+  if(!fpasm) return;
 
+  fprintf(fpasm, "\tpop dword ebx\n");
+  fprintf(fpasm, "\tpop dword eax\n");
+  if(es_variable==1)
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+
+  fprintf(fpasm, "\tmov dword [ebx], eax");
 }
 
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
+  if(!fd_asm) return;
 
+  if(es_variable==1){
+    fprintf(fd_asm, "\tpop eax\n");
+    fprintf(fd_asm, "\tmov eax, [eax]\n");
+    fprintf(fd_asm, "\tpush eax\n");
+  }
 }
 
 void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
   if(!fd_asm || !nombre_funcion) return;
 
-  fprintf(fd_asm, "call _%s\n", nombre_funcion);
-  fprintf(fd_asm, "add esp, 4\n");
+  fprintf(fd_asm, "\tcall _%s\n", nombre_funcion);
+  fprintf(fd_asm, "\tadd esp, 4*%d\n", num_argumentos);
+  fprintf(fd_asm, "\tpush dword eax\n");
 }

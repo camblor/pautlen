@@ -1,6 +1,6 @@
-segment .data
+segment .data 
 	err_div0 db "Error al dividir entre 0"
-segment .bss
+segment .bss 
 	__esp resd 1
 	_z resd 1
 segment .text
@@ -9,15 +9,28 @@ segment .text
 	extern print_endofline, print_blank, print_string
 	extern alfa_malloc, alfa_free, ld_float
 _doble:
-push ebp
-mov ebp, eps
-sub esp, 4
-mov dword eax, [ebp+8 +4*0]mov dword [ebp-4*1], eax;
-;--------Escribir Operando--------
-	push dword _(null);
+	push ebp
+	mov ebp, esp
+	sub esp, 4*1
+	lea eax, [ebp + 1+8]
+	lea eax, [ebp -4*1]
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov dword eax, [eax]
+	mov dword [ebx], eax;--------Escribir Operando--------
+	push dword _(null)
 ;--------Escrito Operando--------
-mov dword eax, [ebp+8 +4*0]mov esp, ebp;
-pop ebp;
+	lea eax, [ebp + 1+8]
+	pop dword ebx
+	pop dword eax
+	mov dword ebx, [ebx]
+	imul ebx
+	push dword eax
+	pop eax
+	mov dword eax, [eax]
+	mov esp, ebp
+	pop ebp 
 ret
 main:
 	mov dword [__esp] , esp
@@ -30,8 +43,9 @@ main:
 ;--------Escribir Operando--------
 	push dword _z
 ;--------Escrito Operando--------
-call _doble
-add esp, 4
+	call _doble
+	add esp, 4*1
+	push dword eax
 	call print_int
 	add esp, 4
 	call print_endofline

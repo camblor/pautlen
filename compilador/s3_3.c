@@ -19,9 +19,11 @@ int main(int argc, char const *argv[]) {
   declararFuncion(fd_asm, "doble", 1);
   escribirParametro(fd_asm, 0, 1);
   escribirVariableLocal(fd_asm, 1);
+  asignarDestinoEnPila(fd_asm, 1);
 
   escribir_operando(fd_asm, 0, 1);
   escribirParametro(fd_asm, 0, 1);
+  multiplicar(fd_asm, 0, 1);
   retornarFuncion(fd_asm, 1);
 
   escribir_inicio_main(fd_asm);
