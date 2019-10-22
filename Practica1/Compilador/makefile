@@ -1,28 +1,8 @@
-main0:
-	gcc -o ej main_0_generacion.c generacion.c generacion.h -lm
-	./ej ej0.asm
-	nasm -g -o ej0.o -f elf32 ej0.asm
-	gcc -m32 -o ej0 ej0.o alfalib.o
-
-main2:
-	gcc -o ej main_2_generacion.c generacion.c generacion.h -lm
-	./ej ej2.asm
-	nasm -g -o ej2.o -f elf32 ej2.asm
-	gcc -m32 -o ej2 ej2.o alfalib.o
-
-main:
-	gcc -o ej main_generacion.c generacion.c generacion.h -lm
-	./ej ejmain.asm
-	nasm -g -o ejmain.o -f elf32 ejmain.asm
-	gcc -m32 -o ejmain ejmain.o alfalib.o
-
-s3_3:
-	gcc -c s3_3.c generacion.c generacion.h
-	gcc -o s3_3 s3_3.c generacion.c generacion.h -lm
-	./s3_3 s3_3.asm
-	nasm -g -o s3_3.o -f elf32 s3_3.asm
-	gcc -m32 -o s3_3 s3_3.o alfalib.o
-
+ejemplo6:
+	gcc -c ejemplo6.c generacion.c generacion.h
+	gcc -o ejemplo6 ejemplo6.c generacion.c generacion.h -lm
+	./ejemplo6 ejemplo6.asm
+	nasm -g -o ejemplo6.o -f elf32 ejemplo6.asm
+	gcc -m32 -o ejemplo6 ejemplo6.o alfalib.o
 clean:
-	rm -r *.asm
-	rm -r *.o
+	rm -r ej0.asm ej0.o ejemplo6.asm ejemplo6 generacion.h.gch generacion.o ejemplo6.o

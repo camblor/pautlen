@@ -3,16 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 #define VARIABLE 1
-int not=0;
+int not = 0;
+int getiqueta = -1;
+int cimapila = -1;
 
-/*14*/
+/*
+    CODIGO PARA LA GENERACION DE CABECERAS
+*/
+
 /* FUNCIÓN PARA PODER HACER EL CÓDIGO MULTIPLATAFORMA U OTROS PARÁMETROS GENERALES TAL VEZ SE PUEDA QUEDAR VACÍA */
 void escribir_cabecera_compatibilidad(FILE *fpasm)
 {
     fprintf(fpasm, "segment compatibilidad\n");
 }
 
-/*13*/
 void escribir_subseccion_data(FILE *fpasm)
 {
     /*Declaracion del segmento de datos*/
@@ -20,8 +24,6 @@ void escribir_subseccion_data(FILE *fpasm)
     /*Declaracion del error de dividir entre 0*/
     fprintf(fpasm, "\terr_div0 db \"Error al dividir entre 0\"\n");
 }
-
-/*12*/
 
 /*
 FUNCIÓN PARA ESCRIBIR EL INICIO DE LA SECCIÓN .bss:
@@ -33,9 +35,8 @@ void escribir_cabecera_bss(FILE *fpasm)
     fprintf(fpasm, "segment .bss \n\t__esp resd 1\n");
 }
 
-/*11*/
-
-/* tipo no hace falta porque para nosotros todo es entero en esta versión, se deja por compatibilidad con futuras versiones*/
+/* 
+tipo no hace falta porque para nosotros todo es entero en esta versión, se deja por compatibilidad con futuras versiones*/
 /*
 GENERA EL CÓDIGO ASOCIADO EN LA SECCIÓN .bss PARA DECLARAR UNA VARIABLE CON
 SU NOMBRE (HAY QUE PRECEDER DE _)
@@ -56,8 +57,6 @@ void declarar_variable(FILE *fpasm, char *nombre, int tipo, int tamano)
     return;
 }
 
-/*10*/
-
 /*
 ESCRIBE EL INICIO DE LA SECCIÓN DE CÓDIGO
 DECLARACIONES DE FUNCIONES QUE SE TOMARAN DE OTROS MODULOS
@@ -69,7 +68,9 @@ void escribir_segmento_codigo(FILE *fpasm)
     fprintf(fpasm, "segment .text\n\tglobal main\n\textern scan_int, print_int, scan_float, scan_boolean, print_boolean\n\textern print_endofline, print_blank, print_string\n\textern alfa_malloc, alfa_free, ld_float\n");
 }
 
-/*9*/
+/*
+    CODIGO PARA LA GENERACION DEL PROGRAMA PRINCIPAL
+*/
 
 /*
 ESCRIBE EL PRINCIPIO DEL CÓDIGO PROPIAMENTE DICHO
@@ -82,8 +83,6 @@ void escribir_inicio_main(FILE *fpasm)
     fprintf(fpasm, "main:\n\tmov dword [__esp] , esp\n");
 }
 
-/*8*/
-
 /*
 ESCRITURA DEL FINAL DEL PROGRAMA
 GESTIÓN DE ERROR EN TIEMPO DE EJECUCIÓN (DIVISION POR 0)
@@ -93,47 +92,34 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-
     fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\nfin:\n\tmov dword esp, [__esp]\n\tret\n");
 }
 
-/*7*/
+/*
+    CODIGO PARA LA GENERACION DE OPERACIONES
+*/
 
 /*
 SE INTRODUCE EL OPERANDO nombre EN LA PILA
 SI ES UNA VARIABLE (es_variable == 1) HAY QUE PRECEDER EL NOMBRE DE _
 EN OTRO CASO, SE ESCRIBE TAL CUAL
 */
-
-/*
-; LEEMOS Y ESCRIBIMOS LA VARIABLE BOOL b2
-	push dword _b2
-	call scan_boolean
-	add esp, 4
-
-	push dword [_b2]
-	call print_boolean
-	add esp, 4
-	call print_endofline
-*/
 void escribir_operando(FILE *fpasm, char *nombre, int es_variable)
 {
 
     if (!fpasm)
         return;
-      printf("entra : %s\n", nombre);
-    fprintf(fpasm, ";--------Escribir Operando--------%s:%d\n",nombre,es_variable);
+    printf("entra : %s\n", nombre);
+    fprintf(fpasm, ";--------Escribir Operando--------%s:%d\n", nombre, es_variable);
 
     if (es_variable == VARIABLE)
         fprintf(fpasm, "\tpush dword _%s\n", nombre);
     else
         fprintf(fpasm, "\tpush dword %s\n", nombre);
 
-    fprintf(fpasm, ";--------Escrito Operando--------\n");
+    /*fprintf(fpasm, ";--------Escrito Operando--------\n");*/
     return;
 }
-
-/*6*/
 
 /*
 ESCRIBE EL CÓDIGO PARA REALIZAR UNA ASIGNACIÓN DE LO QUE ESTÉ EN LA CIMA DE LA PILA A LA VARIABLE nombre
@@ -158,8 +144,6 @@ void asignar(FILE *fpasm, char *nombre, int es_variable)
     }
 }
 
-/*5*/
-
 void sumar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
     fprintf(fpasm, "\tpop dword ebx\n");
@@ -178,6 +162,7 @@ void sumar(FILE *fpasm, int es_variable_1, int es_variable_2)
     fprintf(fpasm, "\tadd eax, ebx\n");
     fprintf(fpasm, "\tpush dword eax\n");
 }
+
 void restar(FILE *fpasm, int es_variable_1, int es_variable_2)
 {
     fprintf(fpasm, "\tpop dword ebx\n");
@@ -277,14 +262,10 @@ void y(FILE *fpasm, int es_variable_1, int es_variable_2)
     fprintf(fpasm, "\tpush dword eax\n");
 }
 
-/*4*/
-
 /*
 GENERA EL CÓDIGO PARA CAMBIAR DE SIGNO LO QUE HAYA EN LA CIMA DE LA PILA
 TENIENDO EN CUENTA QUE PUEDE SER UN VALOR INMEDIATO O UNA DIRECCION (VER ASIGNAR)
 */
-/*neg (-x) vs no*/
-/*imul -> neg*/
 void cambiar_signo(FILE *fpasm, int es_variable)
 {
     if (es_variable == 1)
@@ -302,8 +283,6 @@ void cambiar_signo(FILE *fpasm, int es_variable)
     }
 }
 
-/*3*/
-
 /*
 GENERA EL CÓDIGO PARA NEGAR COMO VALOR LÓGICO LO QUE HAYA EN LA CIMA DE LA PILA
 TENIENDO EN CUENTA QUE PUEDE SER UN VALOR INMEDIATO O UNA DIRECCION (VER ASIGNAR)
@@ -312,42 +291,12 @@ CONTADOR QUE ASEGURA QUE UTILIZARLO COMO AÑADIDO AL NOMBRE DE LAS ETIQUETAS QUE
 USEMOS (POR EJEMPLO cierto: O falso: ) NOS ASEGURARÁ QUE CADA LLAMADA A no
 UTILIZA UN JUEGO DE ETIQUETAS ÚNICO
 */
-
-/*
-;NOT CON SALTOS
-    cmp eax, 0
-    jne to1
-
-    mov eax, 1
-    jmp end
-
-    to1: mov eax, 0
-*/
 void no(FILE *fpasm, int es_variable, int cuantos_no)
 {
     char eax[6] = "";
-    fprintf(fpasm, ";--------NOT--------\n");
     fprintf(fpasm, "\tpop dword eax\n");
-    /*fprintf(fpasm, "\tcmp eax, 0\n\tje _uno\n\tpush dword 0\n\tjmp _fin_not\n");*/
-    /*
-    not++;
 
-
-    if((cuantos_no+1)%2){
-        if (es_variable == VARIABLE)
-    {
-        fprintf(fpasm, "\tcmp eax, 0\n\tjne to1_%d\n\tmov eax, 1\n\tjmp notend_%d\n", not, not);
-    }
-    else
-    {
-        fprintf(fpasm, "\tmov eax, [eax]\n\n\tcmp eax, 0\n\tjne to1_%d\n\n\tmov eax, 0\n\tjmp notend_%d\n", not, not);
-    }
-
-        fprintf(fpasm, "to1_%d:\n\tmov eax, 0\nnotend_%d:\n\tpush dword eax\n", not, not);
-    }
-    fprintf(fpasm, ";--------NOTEND--------\n");*/
-
-    if(es_variable == 0)
+    if (es_variable == 0)
         fprintf(fpasm, "\tcmp dword %s, 0\n", strcpy(eax, "eax"));
     else
         fprintf(fpasm, "\tcmp dword %s, 0\n", strcpy(eax, "[eax]"));
@@ -366,8 +315,6 @@ void no(FILE *fpasm, int es_variable, int cuantos_no)
     fprintf(fpasm, "\tpush dword 0\n");
     fprintf(fpasm, "\tno_fin_%d:\n", cuantos_no);
 }
-
-/*2*/
 
 /*
 GENERA EL CÓDIGO PARA COMPARAR SI LO QUE HAY EN LAS DOS PRIMERAS (DESDE LA CIMA)
@@ -510,24 +457,26 @@ SI SON DIRECCIONES O NO
 */
 void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword edx\n");
+    if (es_variable2 == VARIABLE)
+    { /* Si es variable es = 1 */
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
+    }
+
+    fprintf(fpasm, "\tpop dword eax\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
-    if (es_variable2 == VARIABLE)
-    { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
-    }
-
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jg mayor\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "mayor:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, edx\n");
+    fprintf(fpasm, "\tjg mayor%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_mayor%d\n", etiqueta);
+    fprintf(fpasm, "mayor%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_mayor%d:\n", etiqueta);
 }
 
 /*1*/
@@ -562,6 +511,17 @@ DIRECCION (es_variable == 1) Y QUE HAY QUE LLAMAR A LA CORRESPONDIENTE
 FUNCIÓN DE ALFALIB (print_int O print_boolean) DEPENDIENTO DEL TIPO (tipo == BOOLEANO
 O ENTERO )
 */
+
+/*
+  mov eax, 0xDEADBEEF
+  push eax
+  push message
+  call printf
+  add esp, 8
+*/
+
+
+
 void escribir(FILE *fpasm, int es_variable, int tipo)
 {
 
@@ -588,110 +548,138 @@ void escribir(FILE *fpasm, int es_variable, int tipo)
     fprintf(fpasm, "\tcall print_endofline\n");
 }
 
-void declararFuncion(FILE *fd_asm, char * nombre_funcion, int num_var_loc){
-  if(!fd_asm || !nombre_funcion) return;
+void declararFuncion(FILE *fd_asm, char *nombre_funcion, int num_var_loc)
+{
+    if (!fd_asm || !nombre_funcion)
+        return;
 
-  fprintf(fd_asm, "\t_%s:\n", nombre_funcion);
-  fprintf(fd_asm, "\tpush ebp\n");
-  fprintf(fd_asm, "\tmov ebp, esp\n");
-  int aux = 4*num_var_loc;
-  fprintf(fd_asm, "\tsub esp, %d\n", aux);
+    fprintf(fd_asm, "\t_%s:\n", nombre_funcion);
+    fprintf(fd_asm, "\tpush ebp\n");
+    fprintf(fd_asm, "\tmov ebp, esp\n");
+    int aux = 4 * num_var_loc;
+    fprintf(fd_asm, "\tsub esp, %d\n", aux);
 }
 
-void retornarFuncion(FILE * fd_asm, int es_variable){
-  if(!fd_asm) return;
+void retornarFuncion(FILE *fd_asm, int es_variable)
+{
+    if (!fd_asm)
+        return;
 
-  fprintf(fd_asm, "\tpop eax\n");
-  if (es_variable==1)
-      fprintf(fd_asm, "\tmov dword eax, [eax]\n");
-
-  fprintf(fd_asm, "\tmov esp, ebp\n");
-  fprintf(fd_asm, "\tpop ebp \n");
-  fprintf(fd_asm, "\tret\n");
-}
-
-
-void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
-
-  if(!fpasm) return;
-  int aux = 4*(1+(num_total_parametros-pos_parametro));
-  fprintf(fpasm, "\tlea eax, [ebp +%d]\n", aux);
-  fprintf(fpasm, "\tpush dword eax\n");
-
-
-}
-
-void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
-
-  if(!fpasm) return;
-
-  int aux = 4*posicion_variable_local;
-  fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux);
-  fprintf(fpasm, "\tpush dword eax\n");
-}
-
-void asignarDestinoEnPila(FILE* fpasm, int es_variable){
-  if(!fpasm) return;
-
-  fprintf(fpasm, "\tpop dword ebx\n");
-  fprintf(fpasm, "\tpop dword eax\n");
-  if(es_variable==1)
-    fprintf(fpasm, "\tmov dword eax, [eax]\n");
-
-  fprintf(fpasm, "\tmov dword [ebx], eax");
-}
-
-void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
-  if(!fd_asm) return;
-
-  if(es_variable==1){
     fprintf(fd_asm, "\tpop eax\n");
-    fprintf(fd_asm, "\tmov eax, [eax]\n");
-    fprintf(fd_asm, "\tpush eax\n");
-  }
+    if (es_variable == 1)
+        fprintf(fd_asm, "\tmov dword eax, [eax]\n");
+
+    fprintf(fd_asm, "\tmov esp, ebp\n");
+    fprintf(fd_asm, "\tpop ebp \n");
+    fprintf(fd_asm, "\tret\n");
 }
 
-void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
-  if(!fd_asm || !nombre_funcion) return;
+void escribirParametro(FILE *fpasm, int pos_parametro, int num_total_parametros)
+{
 
-  fprintf(fd_asm, "\tcall _%s\n", nombre_funcion);
-  fprintf(fd_asm, "\tadd esp, 4*%d\n", num_argumentos);
-  fprintf(fd_asm, "\tpush dword eax\n");
+    if (!fpasm)
+        return;
+    int aux = 4 * (1 + (num_total_parametros - pos_parametro));
+    fprintf(fpasm, "\tlea eax, [ebp +%d]\n", aux);
+    fprintf(fpasm, "\tpush dword eax\n");
 }
 
-void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
-  if(!fpasm) return;
+void escribirVariableLocal(FILE *fpasm, int posicion_variable_local)
+{
 
-  fprintf(fpasm, "\tpop eax\n");
-  if (exp_es_variable == 1)
-    fprintf(fpasm, "\tmov eax, [eax]\n");
-  fprintf(fpasm, "cmp eax, 0");
-  fprintf(fpasm, "\tje near fin_then %d\n", etiqueta);
+    if (!fpasm)
+        return;
+
+    int aux = 4 * posicion_variable_local;
+    fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux);
+    fprintf(fpasm, "\tpush dword eax\n");
 }
 
-void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta){
-  if(!fpasm) return;
+void asignarDestinoEnPila(FILE *fpasm, int es_variable)
+{
+    if (!fpasm)
+        return;
 
-  fprintf(fpasm, "\tpop eax\n");
-  if (exp_es_variable == 1)
-    fprintf(fpasm, "\tmov eax, [eax]\n");
-  fprintf(fpasm, "cmp eax, 0");
-  fprintf(fpasm, "\tje near fin_then %d\n", etiqueta);
+    fprintf(fpasm, "\tpop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    if (es_variable == 1)
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+
+    fprintf(fpasm, "\tmov dword [ebx], eax");
 }
 
-void ifthen_fin(FILE * fpasm, int etiqueta){
-  if(!fpasm) return;
+void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable)
+{
+    if (!fd_asm)
+        return;
 
-  fprintf(fpasm, "\tfin_then etiqueta:\n");
+    if (es_variable == 1)
+    {
+        fprintf(fd_asm, "\tpop eax\n");
+        fprintf(fd_asm, "\tmov eax, [eax]\n");
+        fprintf(fd_asm, "\tpush eax\n");
+    }
 }
 
-void ifthenelse_fin_then( FILE * fpasm, int etiqueta){
-  if(!fpasm) return;
+void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos)
+{
+    if (!fd_asm || !nombre_funcion)
+        return;
 
-  fprintf(fpasm, "\tjmp near fin_ifelse etiqueta\n");
-  fprintf(fpasm, "\tfin_then etiqueta:\n");
+    fprintf(fd_asm, "\tcall _%s\n", nombre_funcion);
+    fprintf(fd_asm, "\tadd esp, 4*%d\n", num_argumentos);
+    fprintf(fd_asm, "\tpush dword eax\n");
 }
 
-void ifthenelse_fin( FILE * fpasm, int etiqueta){
+/* 
+    CODIGO PARA LA GENERACION DE CONDICIONALES
+*/
 
+void ifthenelse_inicio(FILE *fpasm, int exp_es_variable, int etiqueta)
+{
+    if (!fpasm)
+        return;
+
+    fprintf(fpasm, "\tpop eax\n");
+    if (exp_es_variable == 1)
+        fprintf(fpasm, "\tmov eax, [eax]\n");
+    fprintf(fpasm, "\tcmp eax, 0\n");
+    fprintf(fpasm, "\tje near fin_then%d\n", etiqueta);
+}
+
+void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta)
+{
+    if (!fpasm)
+        return;
+
+    fprintf(fpasm, "\tpop eax\n");
+    if (exp_es_variable == 1)
+        fprintf(fpasm, "\tmov eax, [eax]\n");
+    fprintf(fpasm, "cmp eax, 0");
+    fprintf(fpasm, "\tje near fin_then%d\n", etiqueta);
+}
+
+void ifthen_fin(FILE *fpasm, int etiqueta)
+{
+    if (!fpasm)
+        return;
+
+    fprintf(fpasm, "fin_then%d:\n", etiqueta);
+}
+
+void ifthenelse_fin_then(FILE *fpasm, int etiqueta)
+{
+    if (!fpasm)
+        return;
+
+    fprintf(fpasm, "\tjmp near fin_ifelse%d\n", etiqueta);
+    fprintf(fpasm, "fin_then%d:\n", etiqueta);
+}
+
+void ifthenelse_fin(FILE *fpasm, int etiqueta)
+{
+    if (!fpasm)
+        return;
+
+    fprintf(fpasm, "fin_ifelse%d:\n", etiqueta);
 }
