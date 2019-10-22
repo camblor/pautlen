@@ -35,7 +35,7 @@ void escribir_cabecera_bss(FILE *fpasm)
     fprintf(fpasm, "segment .bss \n\t__esp resd 1\n");
 }
 
-/* 
+/*
 tipo no hace falta porque para nosotros todo es entero en esta versión, se deja por compatibilidad con futuras versiones*/
 /*
 GENERA EL CÓDIGO ASOCIADO EN LA SECCIÓN .bss PARA DECLARAR UNA VARIABLE CON
@@ -92,7 +92,9 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-    fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\nfin:\n\tmov dword esp, [__esp]\n\tret\n");
+    fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\n");
+    fprintf(fpasm, "fin_indice_fuera_rango:\n\tjmp fin\n");
+    fprintf(fpasm, "fin:\n\tmov dword esp, [__esp]\n\tret\n");
 }
 
 /*
@@ -379,14 +381,14 @@ void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == VARIABLE)
-    { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
-    }
-
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "mov dword eax, [eax]\n");
+    }
+
+    if (es_variable1 == VARIABLE)
+    { /* Si es variable es = 1 */
+        fprintf(fpasm, "mov dword ebx, [ebx]\n");
     }
 
     fprintf(fpasm, "cmp eax, ebx\n");
@@ -406,12 +408,12 @@ void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "pop dword eax\n");
     fprintf(fpasm, " pop dword ebx\n");
 
-    if (es_variable1 == VARIABLE)
+    if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword eax, [eax]");
     }
 
-    if (es_variable2 == VARIABLE)
+    if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "mov dword ebx, [ebx]");
     }
@@ -631,7 +633,7 @@ void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos)
     fprintf(fd_asm, "\tpush dword eax\n");
 }
 
-/* 
+/*
     CODIGO PARA LA GENERACION DE CONDICIONALES
 */
 
@@ -682,4 +684,51 @@ void ifthenelse_fin(FILE *fpasm, int etiqueta)
         return;
 
     fprintf(fpasm, "fin_ifelse%d:\n", etiqueta);
+}
+
+void while_inicio(FILE * fpasm, int etiqueta){
+  if (!fpasm) return;
+
+  fprintf(fpasm, "inicio_while%d:\n", etiqueta);
+}
+
+void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta){
+  if(!fpasm) return;
+
+  fprintf(fpasm, "\tpop eax\n");
+  if (exp_es_variable >0)
+    fprintf(fpasm, "\tmov eax, [eax]\n");
+
+  fprintf(fpasm, "\tcmp eax, 0\n");
+
+  fprintf(fpasm, "\tje near fin_while%d\n", etiqueta);
+}
+
+void while_fin( FILE * fpasm, int etiqueta){
+  if(!fpasm) return;
+
+  fprintf(fpasm, "\tjmp near inicio_while%d\n", etiqueta);
+  fprintf(fpasm, "fin_while%d:\n", etiqueta);
+}
+
+void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion){
+  if(!fpasm) return;
+
+  fprintf(fpasm, "\tpop dword eax\n");
+
+  if(exp_es_direccion == 1){
+    fprintf(fpasm, "\tmov dword eax, [eax]\n");
+  }
+
+  fprintf(fpasm, "\tcmp eax, 0\n");
+
+  fprintf(fpasm, "\tjl  fin_indice_fuera_rango\n");
+  fprintf(fpasm, "\tcmp eax, %d\n", tam_max-1);
+  fprintf(fpasm, "\tjg  fin_indice_fuera_rango\n");
+
+  fprintf(fpasm, "\tmov dword edx, _%s\n",nombre_vector );
+  fprintf(fpasm, "\tlea eax, [edx+eax*4]\n");
+  fprintf(fpasm, "\tpush dword eax\n");
+
+
 }

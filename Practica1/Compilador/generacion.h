@@ -6,6 +6,8 @@
 /* Declaraciones de tipos de datos del compilador */
 #define ENTERO 0
 #define BOOLEANO 1
+#define MAX_ETIQUETAS 100
+
 
 
 
@@ -158,4 +160,8 @@ void ifthen_inicio(FILE * fpasm, int exp_es_variable, int etiqueta);
 void ifthen_fin(FILE * fpasm, int etiqueta);
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta);
 void ifthenelse_fin( FILE * fpasm, int etiqueta);
+void while_inicio(FILE * fpasm, int etiqueta);
+void while_exp_pila (FILE * fpasm, int exp_es_variable, int etiqueta);
+void while_fin( FILE * fpasm, int etiqueta);
+void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion);
 #endif
