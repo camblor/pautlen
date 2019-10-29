@@ -1,5 +1,6 @@
 segment .data 
 	err_div0 db "Error al dividir entre 0"
+	err_index db "Indice de vector fuera de rango"
 segment .bss 
 	__esp resd 1
 	_m resd 1
@@ -69,14 +70,17 @@ fin_menor_igual1:
 	jmp near inicio_while1
 fin_while1:
 	jmp fin
+fin_indice_fuera_rango:
+	push dword err_index
+	call print_string
+	add esp, 4
+	call print_endofline
 	jmp fin
 division_cero:
 	push dword err_div0
 	call print_string
 	add esp, 4
 	call print_endofline
-fin_indice_fuera_rango:
-	jmp fin
 fin:
 	mov dword esp, [__esp]
 	ret

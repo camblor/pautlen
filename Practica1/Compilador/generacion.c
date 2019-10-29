@@ -23,6 +23,7 @@ void escribir_subseccion_data(FILE *fpasm)
     fprintf(fpasm, "segment .data \n");
     /*Declaracion del error de dividir entre 0*/
     fprintf(fpasm, "\terr_div0 db \"Error al dividir entre 0\"\n");
+    fprintf(fpasm, "\terr_index db \"Indice de vector fuera de rango\"\n");
 }
 
 /*
@@ -99,16 +100,20 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-    fprintf(fpasm, "\tjmp fin\n\tjmp fin\n");
+    fprintf(fpasm, "\tjmp fin\n");
+
+    fprintf(fpasm, "fin_indice_fuera_rango:\n");
+    fprintf(fpasm, "\tpush dword err_index\n");
+	fprintf(fpasm, "\tcall print_string\n");
+	fprintf(fpasm, "\tadd esp, 4\n");
+	fprintf(fpasm, "\tcall print_endofline\n");
+	fprintf(fpasm, "\tjmp fin\n");
+
 	fprintf(fpasm, "division_cero:\n");
 	fprintf(fpasm, "\tpush dword err_div0\n");
 	fprintf(fpasm, "\tcall print_string\n");
 	fprintf(fpasm, "\tadd esp, 4\n");
 	fprintf(fpasm, "\tcall print_endofline\n");
-	
-	
-    fprintf(fpasm, "fin_indice_fuera_rango:\n");
-	fprintf(fpasm, "\tjmp fin\n");
 	
     fprintf(fpasm, "fin:\n");
 	fprintf(fpasm, "\tmov dword esp, [__esp]\n");
@@ -324,13 +329,13 @@ void no(FILE *fpasm, int es_variable, int cuantos_no)
     fprintf(fpasm, "\tje no_es1_%d\n", cuantos_no);
 
     fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
-    fprintf(fpasm, "no_es0_%d:\n", cuantos_no);
+    fprintf(fpasm, "\tno_es0_%d:\n", cuantos_no);
 
     fprintf(fpasm, "\tpush dword 1\n");
     fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
-    fprintf(fpasm, "no_es1_%d:\n", cuantos_no);
+    fprintf(fpasm, "\tno_es1_%d:\n", cuantos_no);
     fprintf(fpasm, "\tpush dword 0\n");
-    fprintf(fpasm, "no_fin_%d:\n", cuantos_no);
+    fprintf(fpasm, "\tno_fin_%d:\n", cuantos_no);
 }
 
 /*
@@ -355,10 +360,8 @@ void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "\tcmp eax, ebx\n");
     fprintf(fpasm, "\tje igual%d\n", etiqueta);
     fprintf(fpasm, "\tpush dword 0\n");
-	fprintf(fpasm, "\tjmp fin_igual%d\n", etiqueta);
     fprintf(fpasm, "igual%d:\n", etiqueta);
     fprintf(fpasm, "\tpush dword 1\n");
-	fprintf(fpasm, "fin_igual%d:\n", etiqueta);
 }
 
 /*
@@ -384,10 +387,8 @@ void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
     fprintf(fpasm, "\tcmp eax, ebx\n");
     fprintf(fpasm, "\tjne distinto%d\n", etiqueta);
     fprintf(fpasm, "\tpush dword 0\n");
-	fprintf(fpasm, "\tjmp fin_distinto%d\n", etiqueta);
     fprintf(fpasm, "distinto%d:\n", etiqueta);
     fprintf(fpasm, "\tpush dword 1\n");
-	fprintf(fpasm, "fin_distinto%d:\n", etiqueta);
 }
 
 /*
@@ -397,26 +398,24 @@ SI SON DIRECCIONES O NO
 */
 void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
+    fprintf(fpasm, "pop dword eax\n");
+    fprintf(fpasm, " pop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+        fprintf(fpasm, "mov dword eax, [eax]\n");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]\n");
+        fprintf(fpasm, "mov dword ebx, [ebx]\n");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
-    fprintf(fpasm, "\tjle menor_igual%d\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 0\n");
-	fprintf(fpasm, "\tjmp fin_menor_igual%d\n", etiqueta);
+    fprintf(fpasm, "cmp eax, ebx\n");
+    fprintf(fpasm, "jle menor_igual%d\n", etiqueta);
+    fprintf(fpasm, "push dword 0\n");
     fprintf(fpasm, "menor_igual%d:\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 1\n");
-	fprintf(fpasm, "fin_menor_igual%d:\n", etiqueta);
+    fprintf(fpasm, "push dword 1\n");
 }
 
 /*
@@ -426,26 +425,24 @@ SI SON DIRECCIONES O NO
 */
 void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
+    fprintf(fpasm, "pop dword eax\n");
+    fprintf(fpasm, " pop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]");
+        fprintf(fpasm, "mov dword eax, [eax]");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]");
+        fprintf(fpasm, "mov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
-    fprintf(fpasm, "\tjge mayor_igual%d\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 0\n");
-	fprintf(fpasm, "\tjmp fin_mayor_igual%d\n", etiqueta);
+    fprintf(fpasm, "cmp eax, ebx\n");
+    fprintf(fpasm, "jge mayor_igual%d\n", etiqueta);
+    fprintf(fpasm, "push dword 0\n");
     fprintf(fpasm, "mayor_igual%d:\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 1\n");
-	fprintf(fpasm, "fin_mayor_igual%d:\n", etiqueta);
+    fprintf(fpasm, "push dword 1\n");
 }
 
 /*
@@ -455,26 +452,24 @@ SI SON DIRECCIONES O NO
 */
 void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
+    fprintf(fpasm, "pop dword eax\n");
+    fprintf(fpasm, " pop dword ebx\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]");
+        fprintf(fpasm, "mov dword eax, [eax]");
     }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]");
+        fprintf(fpasm, "mov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
-    fprintf(fpasm, "\tjl menor%d\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 0\n");
-	fprintf(fpasm, "\tjmp fin_menor%d\n", etiqueta);
+    fprintf(fpasm, "cmp eax, ebx\n");
+    fprintf(fpasm, "jl menor%d\n", etiqueta);
+    fprintf(fpasm, "push dword 0\n");
     fprintf(fpasm, "menor%d:\n", etiqueta);
-    fprintf(fpasm, "\tpush dword 1\n");
-	fprintf(fpasm, "fin_menor%d:\n", etiqueta);
+    fprintf(fpasm, "push dword 1\n");
 }
 
 /*
