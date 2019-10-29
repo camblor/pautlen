@@ -11,27 +11,25 @@ segment .text
 	extern alfa_malloc, alfa_free, ld_float
 main:
 	mov dword [__esp] , esp
-;--------Escribir Operando--------0:0
 	push dword 0
 	pop dword eax
 	mov [_m], eax 
 inicio_while1:
-;--------Escribir Operando--------m:1
 	push dword _m
-;--------Escribir Operando--------4:0
 	push dword 4
-pop dword eax
- pop dword ebx
-mov dword ebx, [ebx]
-cmp eax, ebx
-jle menor_igual
-push dword 0
-menor_igual:
-push dword 1
+	pop dword eax
+	pop dword ebx
+	mov dword ebx, [ebx]
+	cmp eax, ebx
+	jle menor_igual1
+	push dword 0
+	jmp fin_menor_igual1
+menor_igual1:
+	push dword 1
+fin_menor_igual1:
 	pop eax
 	cmp eax, 0
 	je near fin_while1
-;--------Escribir Operando--------m:1
 	push dword _m
 	pop dword eax
 	mov eax, [eax]
@@ -39,16 +37,13 @@ push dword 1
 	call print_int
 	add esp, 4
 	call print_endofline
-;--------Escribir Operando--------m:1
 	push dword _m
-;--------Escribir Operando--------10:0
 	push dword 10
 	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
 	imul ebx
 	push dword eax
-;--------Escribir Operando--------m:1
 	push dword _m
 	pop dword eax
 	mov dword eax, [eax]
@@ -61,9 +56,8 @@ push dword 1
 	push dword eax
 	pop dword ebx
 	pop dword eax
-	mov dword [ebx], eax;--------Escribir Operando--------m:1
+	mov dword [ebx], eax
 	push dword _m
-;--------Escribir Operando--------1:0
 	push dword 1
 	pop dword ebx
 	pop dword eax
@@ -75,12 +69,12 @@ push dword 1
 	jmp near inicio_while1
 fin_while1:
 	jmp fin
+	jmp fin
 division_cero:
 	push dword err_div0
 	call print_string
 	add esp, 4
 	call print_endofline
-	jmp fin
 fin_indice_fuera_rango:
 	jmp fin
 fin:

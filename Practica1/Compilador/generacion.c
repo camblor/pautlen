@@ -32,7 +32,9 @@ AL MENOS HAY QUE DECLARAR LA VARIABLE AUXILIAR PARA GUARDAR EL PUNTERO DE PILA _
 void escribir_cabecera_bss(FILE *fpasm)
 {
 
-    fprintf(fpasm, "segment .bss \n\t__esp resd 1\n");
+    fprintf(fpasm, "segment .bss \n");
+	fprintf(fpasm, "\t__esp resd 1\n");
+	
 }
 
 /*
@@ -65,7 +67,11 @@ DECLARACION DE main COMO ETIQUETA VISIBLE DESDE EL EXTERIOR
 void escribir_segmento_codigo(FILE *fpasm)
 {
 
-    fprintf(fpasm, "segment .text\n\tglobal main\n\textern scan_int, print_int, scan_float, scan_boolean, print_boolean\n\textern print_endofline, print_blank, print_string\n\textern alfa_malloc, alfa_free, ld_float\n");
+    fprintf(fpasm, "segment .text\n");
+	fprintf(fpasm, "\tglobal main\n");
+	fprintf(fpasm, "\textern scan_int, print_int, scan_float, scan_boolean, print_boolean\n");
+	fprintf(fpasm, "\textern print_endofline, print_blank, print_string\n");
+	fprintf(fpasm, "\textern alfa_malloc, alfa_free, ld_float\n");
 }
 
 /*
@@ -80,7 +86,8 @@ SALVAGUARDA DEL PUNTERO DE PILA (esp) EN LA VARIABLE A TAL EFECTO (__esp)
 void escribir_inicio_main(FILE *fpasm)
 {
 
-    fprintf(fpasm, "main:\n\tmov dword [__esp] , esp\n");
+    fprintf(fpasm, "main:\n");
+	fprintf(fpasm, "\tmov dword [__esp] , esp\n");
 }
 
 /*
@@ -92,9 +99,20 @@ SENTENCIA DE RETORNO DEL PROGRAMA
 void escribir_fin(FILE *fpasm)
 {
 
-    fprintf(fpasm, "\tjmp fin\ndivision_cero:\n\tpush dword err_div0\n\tcall print_string\n\tadd esp, 4\n\tcall print_endofline\n\tjmp fin\n");
-    fprintf(fpasm, "fin_indice_fuera_rango:\n\tjmp fin\n");
-    fprintf(fpasm, "fin:\n\tmov dword esp, [__esp]\n\tret\n");
+    fprintf(fpasm, "\tjmp fin\n\tjmp fin\n");
+	fprintf(fpasm, "division_cero:\n");
+	fprintf(fpasm, "\tpush dword err_div0\n");
+	fprintf(fpasm, "\tcall print_string\n");
+	fprintf(fpasm, "\tadd esp, 4\n");
+	fprintf(fpasm, "\tcall print_endofline\n");
+	
+	
+    fprintf(fpasm, "fin_indice_fuera_rango:\n");
+	fprintf(fpasm, "\tjmp fin\n");
+	
+    fprintf(fpasm, "fin:\n");
+	fprintf(fpasm, "\tmov dword esp, [__esp]\n");
+	fprintf(fpasm, "\tret\n");
 }
 
 /*
@@ -111,15 +129,12 @@ void escribir_operando(FILE *fpasm, char *nombre, int es_variable)
 
     if (!fpasm)
         return;
-    printf("entra : %s\n", nombre);
-    fprintf(fpasm, ";--------Escribir Operando--------%s:%d\n", nombre, es_variable);
 
     if (es_variable == VARIABLE)
         fprintf(fpasm, "\tpush dword _%s\n", nombre);
     else
         fprintf(fpasm, "\tpush dword %s\n", nombre);
 
-    /*fprintf(fpasm, ";--------Escrito Operando--------\n");*/
     return;
 }
 
@@ -309,13 +324,13 @@ void no(FILE *fpasm, int es_variable, int cuantos_no)
     fprintf(fpasm, "\tje no_es1_%d\n", cuantos_no);
 
     fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
-    fprintf(fpasm, "\tno_es0_%d:\n", cuantos_no);
+    fprintf(fpasm, "no_es0_%d:\n", cuantos_no);
 
     fprintf(fpasm, "\tpush dword 1\n");
     fprintf(fpasm, "\tjmp no_fin_%d\n", cuantos_no);
-    fprintf(fpasm, "\tno_es1_%d:\n", cuantos_no);
+    fprintf(fpasm, "no_es1_%d:\n", cuantos_no);
     fprintf(fpasm, "\tpush dword 0\n");
-    fprintf(fpasm, "\tno_fin_%d:\n", cuantos_no);
+    fprintf(fpasm, "no_fin_%d:\n", cuantos_no);
 }
 
 /*
@@ -324,24 +339,26 @@ POSICIONES DE LA PILA ES IGUAL, TENIENDO EN CUENTA QUE HAY QUE INDICAR SI SON DI
 */
 void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword eax, [eax]");
     }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "je igual\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "igual:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tje igual%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+	fprintf(fpasm, "\tjmp fin_igual%d\n", etiqueta);
+    fprintf(fpasm, "igual%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+	fprintf(fpasm, "fin_igual%d:\n", etiqueta);
 }
 
 /*
@@ -351,24 +368,26 @@ DIRECCIONES O NO
 */
 void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword eax, [eax]");
     }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jne distinto\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "distinto:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tjne distinto%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+	fprintf(fpasm, "\tjmp fin_distinto%d\n", etiqueta);
+    fprintf(fpasm, "distinto%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+	fprintf(fpasm, "fin_distinto%d:\n", etiqueta);
 }
 
 /*
@@ -378,24 +397,26 @@ SI SON DIRECCIONES O NO
 */
 void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]\n");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]\n");
+        fprintf(fpasm, "\tmov dword ebx, [ebx]\n");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jle menor_igual\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "menor_igual:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tjle menor_igual%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+	fprintf(fpasm, "\tjmp fin_menor_igual%d\n", etiqueta);
+    fprintf(fpasm, "menor_igual%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+	fprintf(fpasm, "fin_menor_igual%d:\n", etiqueta);
 }
 
 /*
@@ -405,24 +426,26 @@ SI SON DIRECCIONES O NO
 */
 void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword eax, [eax]");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jge mayor_igual\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "mayor_igual:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tjge mayor_igual%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+	fprintf(fpasm, "\tjmp fin_mayor_igual%d\n", etiqueta);
+    fprintf(fpasm, "mayor_igual%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+	fprintf(fpasm, "fin_mayor_igual%d:\n", etiqueta);
 }
 
 /*
@@ -432,24 +455,26 @@ SI SON DIRECCIONES O NO
 */
 void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword eax, [eax]");
     }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword ebx, [ebx]");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jl menor\n");
-    fprintf(fpasm, "push dword 0\n");
-    fprintf(fpasm, "menor:\n");
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tjl menor%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+	fprintf(fpasm, "\tjmp fin_menor%d\n", etiqueta);
+    fprintf(fpasm, "menor%d:\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 1\n");
+	fprintf(fpasm, "fin_menor%d:\n", etiqueta);
 }
 
 /*
@@ -607,7 +632,7 @@ void asignarDestinoEnPila(FILE *fpasm, int es_variable)
     if (es_variable == 1)
         fprintf(fpasm, "\tmov dword eax, [eax]\n");
 
-    fprintf(fpasm, "\tmov dword [ebx], eax");
+    fprintf(fpasm, "\tmov dword [ebx], eax\n");
 }
 
 void operandoEnPilaAArgumento(FILE *fd_asm, int es_variable)
