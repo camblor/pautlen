@@ -344,24 +344,26 @@ POSICIONES DE LA PILA ES IGUAL, TENIENDO EN CUENTA QUE HAY QUE INDICAR SI SON DI
 */
 void igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
+    fprintf(fpasm, "\tpop dword edx\n");
     fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
-
-    if (es_variable1 == VARIABLE)
-    { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]");
-    }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
+    if (es_variable1 == VARIABLE)
+    { /* Si es variable es = 1 */
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+    }
+
+    fprintf(fpasm, "\tcmp eax, edx\n");
     fprintf(fpasm, "\tje igual%d\n", etiqueta);
     fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_igual%d\n", etiqueta);
     fprintf(fpasm, "igual%d:\n", etiqueta);
     fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_igual%d:\n", etiqueta);
 }
 
 /*
@@ -371,24 +373,26 @@ DIRECCIONES O NO
 */
 void distinto(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
+    fprintf(fpasm, "\tpop dword edx\n");
     fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
-
-    if (es_variable1 == VARIABLE)
-    { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]");
-    }
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
+    if (es_variable1 == VARIABLE)
+    { /* Si es variable es = 1 */
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+    }
+
+    fprintf(fpasm, "\tcmp eax, edx\n");
     fprintf(fpasm, "\tjne distinto%d\n", etiqueta);
     fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_distinto%d\n", etiqueta);
     fprintf(fpasm, "distinto%d:\n", etiqueta);
     fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_distinto%d:\n", etiqueta);
 }
 
 /*
@@ -398,24 +402,26 @@ SI SON DIRECCIONES O NO
 */
 void menor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword edx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]\n");
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]\n");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jle menor_igual%d\n", etiqueta);
-    fprintf(fpasm, "push dword 0\n");
+    fprintf(fpasm, "\tcmp eax, edx\n");
+    fprintf(fpasm, "\tjle menor_igual%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_menor_igual%d\n", etiqueta);
     fprintf(fpasm, "menor_igual%d:\n", etiqueta);
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_menor_igual%d:\n", etiqueta);
 }
 
 /*
@@ -425,24 +431,26 @@ SI SON DIRECCIONES O NO
 */
 void mayor_igual(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
+    fprintf(fpasm, "\tpop dword edx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jge mayor_igual%d\n", etiqueta);
-    fprintf(fpasm, "push dword 0\n");
+    fprintf(fpasm, "\tcmp eax, edx\n");
+    fprintf(fpasm, "\tjge mayor_igual%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_mayor_igual%d\n", etiqueta);
     fprintf(fpasm, "mayor_igual%d:\n", etiqueta);
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_mayor_igual%d:\n", etiqueta);
 }
 
 /*
@@ -452,24 +460,24 @@ SI SON DIRECCIONES O NO
 */
 void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
-    fprintf(fpasm, "pop dword eax\n");
-    fprintf(fpasm, " pop dword ebx\n");
-
-    if (es_variable1 == VARIABLE)
-    { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword eax, [eax]");
-    }
+    fprintf(fpasm, "\tpop dword eax\n");
+    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "mov dword ebx, [ebx]");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
-    fprintf(fpasm, "cmp eax, ebx\n");
-    fprintf(fpasm, "jl menor%d\n", etiqueta);
-    fprintf(fpasm, "push dword 0\n");
+    if (es_variable1 == VARIABLE)
+    { /* Si es variable es = 1 */
+        fprintf(fpasm, "\tmov dword ebx, [ebx]\n");
+    }
+
+    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tjl menor%d\n", etiqueta);
+    fprintf(fpasm, "\tpush dword 0\n");
     fprintf(fpasm, "menor%d:\n", etiqueta);
-    fprintf(fpasm, "push dword 1\n");
+    fprintf(fpasm, "\tpush dword 1\n");
 }
 
 /*
@@ -480,12 +488,12 @@ SI SON DIRECCIONES O NO
 void mayor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
     fprintf(fpasm, "\tpop dword edx\n");
+    fprintf(fpasm, "\tpop dword eax\n");
+
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
         fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
-
-    fprintf(fpasm, "\tpop dword eax\n");
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
