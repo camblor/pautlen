@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "generacion.h"
-#define MAX_ETIQUETAS 50
 
 int main(int argc, char **argv)
 {

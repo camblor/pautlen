@@ -240,7 +240,7 @@ void dividir(FILE *fpasm, int es_variable_1, int es_variable_2)
 
     fprintf(fpasm, "\tmov dword edx, 0\n");
     fprintf(fpasm, "\tcmp ebx, edx\n");
-    fprintf(fpasm, "\tje error_div_cero\n");
+    fprintf(fpasm, "\tje err_div0\n");
 
     fprintf(fpasm, "\tidiv ebx\n");
     fprintf(fpasm, "\tpush dword eax\n");
