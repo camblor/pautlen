@@ -460,24 +460,26 @@ SI SON DIRECCIONES O NO
 */
 void menor(FILE *fpasm, int es_variable1, int es_variable2, int etiqueta)
 {
+    fprintf(fpasm, "\tpop dword edx\n");
     fprintf(fpasm, "\tpop dword eax\n");
-    fprintf(fpasm, "\tpop dword ebx\n");
 
     if (es_variable2 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword eax, [eax]\n");
+        fprintf(fpasm, "\tmov dword edx, [edx]\n");
     }
 
     if (es_variable1 == VARIABLE)
     { /* Si es variable es = 1 */
-        fprintf(fpasm, "\tmov dword ebx, [ebx]\n");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
     }
 
-    fprintf(fpasm, "\tcmp eax, ebx\n");
+    fprintf(fpasm, "\tcmp eax, edx\n");
     fprintf(fpasm, "\tjl menor%d\n", etiqueta);
     fprintf(fpasm, "\tpush dword 0\n");
+    fprintf(fpasm, "\tjmp fin_menor%d\n", etiqueta);
     fprintf(fpasm, "menor%d:\n", etiqueta);
     fprintf(fpasm, "\tpush dword 1\n");
+    fprintf(fpasm, "fin_menor%d:\n", etiqueta);
 }
 
 /*
