@@ -112,7 +112,7 @@ void display() {
 	
    printf("\n");
 }
-
+/*
 int main() {
    dummyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
    dummyItem->data = -1;  
@@ -147,4 +147,4 @@ int main() {
    } else {
       printf("Element not found\n");
    }
-}
+}*/

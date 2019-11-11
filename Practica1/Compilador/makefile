@@ -1,52 +1,40 @@
-ejemplo1:
-	gcc -c ejemplo1.c generacion.c generacion.h
-	gcc -o ejemplo1 ejemplo1.c generacion.c generacion.h -lm
-	./ejemplo1 ejemplo1.asm
-	nasm -g -o ejemplo1.o -f elf32 ejemplo1.asm
-	gcc -m32 -o ejemplo1 ejemplo1.o alfalib.o
+# project name (generate executable with this name)
+TARGET   = ejemplo7
 
-ejemplo2:
-	gcc -c ejemplo2.c generacion.c generacion.h
-	gcc -o ejemplo2 ejemplo2.c generacion.c generacion.h -lm
-	./ejemplo2 ejemplo2.asm
-	nasm -g -o ejemplo2.o -f elf32 ejemplo2.asm
-	gcc -m32 -o ejemplo2 ejemplo2.o alfalib.o
+CC       = gcc
+# compiling flags here
+CFLAGS   =  -I.
 
-ejemplo3:
-	gcc -c ejemplo3.c generacion.c generacion.h
-	gcc -o ejemplo3 ejemplo3.c generacion.c generacion.h -lm
-	./ejemplo3 ejemplo3.asm
-	nasm -g -o ejemplo3.o -f elf32 ejemplo3.asm
-	gcc -m32 -o ejemplo3 ejemplo3.o alfalib.o
+LINKER   = gcc
+# linking flags here
+LFLAGS   =  -I. -lm
 
-ejemplo4:
-	gcc -c ejemplo4.c generacion.c generacion.h
-	gcc -o ejemplo4 ejemplo4.c generacion.c generacion.h -lm
-	./ejemplo4 ejemplo4.asm
-	nasm -g -o ejemplo4.o -f elf32 ejemplo4.asm
-	gcc -m32 -o ejemplo4 ejemplo4.o alfalib.o
+# change these to proper directories where each file should be
+SRCDIR   = src
+OBJDIR   = obj
+BINDIR   = bin
 
-ejemplo5:
-	gcc -c ejemplo5.c generacion.c generacion.h
-	gcc -o ejemplo5 ejemplo5.c generacion.c generacion.h -lm
-	./ejemplo5 ejemplo5.asm
-	nasm -g -o ejemplo5.o -f elf32 ejemplo5.asm
-	gcc -m32 -o ejemplo5 ejemplo5.o alfalib.o
+SOURCES  := $(wildcard $(SRCDIR)/*.c)
+INCLUDES := $(wildcard $(SRCDIR)/*.h)
+OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+rm       = rm -f
 
 
-ejemplo6:
-	gcc -c ejemplo6.c generacion.c generacion.h
-	gcc -o ejemplo6 ejemplo6.c generacion.c generacion.h -lm
-	./ejemplo6 ejemplo6.asm
-	nasm -g -o ejemplo6.o -f elf32 ejemplo6.asm
-	gcc -m32 -o ejemplo6 ejemplo6.o alfalib.o
+$(BINDIR)/$(TARGET): $(OBJECTS)
+	$(LINKER) $(LFLAGS) -o $@ $(OBJECTS)
+	@echo "Linking complete!"
 
-ejemplo7:
-	gcc -c ejemplo7.c generacion.c generacion.h
-	gcc -o ejemplo7 ejemplo7.c generacion.c generacion.h -lm
-	./ejemplo7 ejemplo7.asm
-	nasm -g -o ejemplo7.o -f elf32 ejemplo7.asm
-	gcc -m32 -o ejemplo7 ejemplo7.o alfalib.o
 
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled "$<" successfully!"
+
+.PHONY: clean
 clean:
-	rm -r ejemplo5.asm ejemplo5 generacion.h.gch generacion.o ejemplo5.o ejemplo4.asm ejemplo4 ejemplo4.o ejemplo6.asm ejemplo6 ejemplo6.o ejemplo1.asm ejemplo1 ejemplo1.o ejemplo2.asm ejemplo2 ejemplo2.o ejemplo3.asm ejemplo3 ejemplo3.o ejemplo7.asm ejemplo7 ejemplo7.o
+	@$(rm) $(OBJECTS)
+	@echo "Cleanup complete!"
+
+.PHONY: remove
+remove: clean
+	@$(rm) $(BINDIR)/$(TARGET)
+	@echo "Executable removed!"
