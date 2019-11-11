@@ -12,11 +12,11 @@ Ahora estamos trabajando en la tabla de simbolos y el analizador lexico (flex)
 ### Utilizacion
 
 ```bash
-  make
-  cd bin
+  	make
+  	cd bin
 	./ejemplo ejemplo.asm
-	nasm -g -o ejemplo.o -f elf32 ejemplo.asm
-	gcc -m32 -o ejemplo ejemplo.o alfalib.o
+	nasm -g -o ../obj/ejemplo7.o -f elf32 ejemplo7.asm
+	gcc -m32 -o ejemplo7 ../obj/ejemplo7.o ../obj/alfalib.o
 ```
 
 ## Autores
