@@ -38,24 +38,35 @@ int main(int argc, char const *argv[]) {
       case 100:
         fprintf(fout, "Reconocido %d: main\n", TOK_MAIN);
         break;
+
       case 101:
         fprintf(fout, "Reconocido %d: int\n", TOK_INT);
         break;
+
       case 103:
         fprintf(fout, "Reconocido %d: array\n", TOK_ARRAY);
         break;
+
       case 105:
         fprintf(fout, "Reconocido %d: if\n", TOK_IF);
         break;
+
       case 106:
         fprintf(fout, "Reconocido %d: else\n", TOK_ELSE);
         break;
+
       case 107:
         fprintf(fout, "Reconocido %d: while\n", TOK_WHILE);
         break;
+
       case 200:
         fprintf(fout, "Reconocido %d: puntoycoma\n", TOK_PUNTOYCOMA);
          break;
+
+      case 201:
+        fprintf(fout, "Reconocido %d: coma\n", TOK_COMA);
+        break;
+
       case 202:
         fprintf(fout, "Reconocido %d: parentesisizquierdo\n", TOK_PARENTESISIZQUIERDO);
         break;
@@ -83,10 +94,32 @@ int main(int argc, char const *argv[]) {
         fprintf(fout, "Reconocido %d: asterisco\n", TOK_ASTERISCO);
         break;
 
+      case 216:
+        fprintf(fout, "Reconocido %d: igual\n", TOK_IGUAL);
+        break;
+        
       case 218:
         fprintf(fout, "Reconocido %d: menorigual\n", TOK_MENORIGUAL);
         break;
-      
+
+      case 219:
+        fprintf(fout, "Reconocido %d: mayorigual\n", TOK_MAYORIGUAL);
+        break;
+
+      case 220:
+        fprintf(fout, "Reconocido %d: menor\n", TOK_MENOR);
+        break;
+
+      case 221:
+        fprintf(fout, "Reconocido %d: mayor\n", TOK_MAYOR);
+
+      case 300:
+        fprintf(fout, "Reconocido %d: identificador %s\n", TOK_IDENTIFICADOR, yytext);
+        break;
+
+      case 400:
+        fprintf(fout, "Reconocido %d: constante entera %s\n", TOK_CONSTANTE_ENTERA, yytext);
+        break;
     }
 
     ret = yylex();

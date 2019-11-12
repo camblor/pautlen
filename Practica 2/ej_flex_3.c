@@ -75,9 +75,6 @@ int main(int argc, char const *argv[]) {
         fprintf(fout, "Reconocido %d: mas\n", TOK_MAS);
         break;
 
-      case 210:
-        fprintf(fout, "Reconocido %d: menos\n", TOK_MENOS);
-        break;
 
       case 212:
         fprintf(fout, "Reconocido %d: asterisco\n", TOK_ASTERISCO);
@@ -86,7 +83,11 @@ int main(int argc, char const *argv[]) {
       case 218:
         fprintf(fout, "Reconocido %d: menorigual\n", TOK_MENORIGUAL);
         break;
-      
+
+      case 300:
+        fprintf(fout, "Reconocido %d: identificador %s\n", TOK_IDENTIFICADOR, yytext);
+        break;
+
     }
 
     ret = yylex();

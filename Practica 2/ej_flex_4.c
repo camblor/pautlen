@@ -86,7 +86,17 @@ int main(int argc, char const *argv[]) {
       case 218:
         fprintf(fout, "Reconocido %d: menorigual\n", TOK_MENORIGUAL);
         break;
-      
+
+      case 221:
+        fprintf(fout, "Reconocido %d: mayor\n", TOK_MAYOR);
+
+      case 300:
+        fprintf(fout, "Reconocido %d: identificador %s\n", TOK_IDENTIFICADOR, yytext);
+        break;
+
+      case 400:
+        fprintf(fout, "Reconocido %d: constante entera %s\n", TOK_CONSTANTE_ENTERA, yytext);
+        break;
     }
 
     ret = yylex();
