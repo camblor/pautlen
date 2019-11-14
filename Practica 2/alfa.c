@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include "tokens.h"
 
 extern int yylex();
@@ -6,8 +7,8 @@ extern FILE *yyin;
 FILE * fout;
 extern int yyleng;
 extern char *yytext;
-extern int lin;
-extern int col;
+extern int linea, columna;
+extern bool longitud, invalidchar;
 
 int main(int argc, char const *argv[]) {
 
@@ -34,6 +35,7 @@ int main(int argc, char const *argv[]) {
   ret = yylex();
 
   while(ret!=0 && ret != TOK_ERROR){
+    printf("%d\n", ret);
     switch (ret) {
       case 100:
         fprintf(fout, "Reconocido %d: main\n", TOK_MAIN);
@@ -42,7 +44,9 @@ int main(int argc, char const *argv[]) {
       case 101:
         fprintf(fout, "Reconocido %d: int\n", TOK_INT);
         break;
-
+      case 102:
+        fprintf(fout, "Reconocido %d: boolean\n", TOK_BOOLEAN);
+        break;
       case 103:
         fprintf(fout, "Reconocido %d: array\n", TOK_ARRAY);
         break;
@@ -58,7 +62,16 @@ int main(int argc, char const *argv[]) {
       case 107:
         fprintf(fout, "Reconocido %d: while\n", TOK_WHILE);
         break;
+      case 108:
+        fprintf(fout, "Reconocido %d: scanf\n", TOK_SCANF);
+        break;
+      case 109:
+        fprintf(fout, "Reconocido %d: printf\n", TOK_PRINTF);
+        break;
 
+      case 110:
+        fprintf(fout, "Reconocido %d: return\n", TOK_RETURN);
+        break;
       case 200:
         fprintf(fout, "Reconocido %d: puntoycoma\n", TOK_PUNTOYCOMA);
          break;
@@ -73,7 +86,12 @@ int main(int argc, char const *argv[]) {
       case 203:
         fprintf(fout, "Reconocido %d: parentesisderecho\n", TOK_PARENTESISDERECHO);
         break;
-
+      case 204:
+        fprintf(fout, "Reconocido %d: corcheteizquierdo\n", TOK_CORCHETEIZQUIERDO);
+        break;
+      case 205:
+        fprintf(fout, "Reconocido %d: corchetederecho\n", TOK_CORCHETEDERECHO);
+        break;
       case 206:
         fprintf(fout, "Reconocido %d: llaveizquierda\n", TOK_LLAVEIZQUIERDA);
         break;
@@ -97,7 +115,7 @@ int main(int argc, char const *argv[]) {
       case 216:
         fprintf(fout, "Reconocido %d: igual\n", TOK_IGUAL);
         break;
-        
+
       case 218:
         fprintf(fout, "Reconocido %d: menorigual\n", TOK_MENORIGUAL);
         break;
