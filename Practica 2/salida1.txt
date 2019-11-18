@@ -1,20 +1,19 @@
-TOK_MAIN	100	main
-TOK_LLAVEIZQUIERDA	206	{
-TOK_INT	101	int
-TOK_IDENTIFICADOR	300	x
-TOK_COMA	201	,
-TOK_IDENTIFICADOR	300	resultado
-TOK_PUNTOYCOMA	200	;
-TOK_SCANF	108	scanf
-TOK_IDENTIFICADOR	300	x
-TOK_PUNTOYCOMA	200	;
-TOK_IDENTIFICADOR	300	resultado
-TOK_ASIGNACION	208	=
-TOK_IDENTIFICADOR	300	x
-TOK_ASTERISCO	212	*
-TOK_IDENTIFICADOR	300	x
-TOK_PUNTOYCOMA	200	;
-TOK_PRINTF	109	printf
-TOK_IDENTIFICADOR	300	resultado
-TOK_PUNTOYCOMA	200	;
-TOK_LLAVEDERECHA	207	}
+Reconocido 100: main
+Reconocido 206: llaveizquierda
+Reconocido 101: int
+Reconocido 300: identificador x
+Reconocido 201: coma
+Reconocido 300: identificador resultado
+Reconocido 200: puntoycoma
+Reconocido 108: scanf
+Reconocido 300: identificador x
+Reconocido 200: puntoycoma
+Reconocido 300: identificador resultado
+Reconocido 300: identificador x
+Reconocido 212: asterisco
+Reconocido 300: identificador x
+Reconocido 200: puntoycoma
+Reconocido 300: identificador printf
+Reconocido 300: identificador resultado
+Reconocido 200: puntoycoma
+Reconocido 207: llavederecha

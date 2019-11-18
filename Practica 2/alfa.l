@@ -8,10 +8,13 @@ extern int linea;
 extern int columna;
 extern bool invalidchar;
 extern bool longitud;
+
 %}
 
 %option noyywrap
 
+NUMERO [0-9]
+LETRA [a-zA-Z]
 
 %%
 main { return TOK_MAIN; }
@@ -19,6 +22,7 @@ array { return TOK_ARRAY; }
 int { return TOK_INT; }
 bool { return TOK_BOOLEAN; }
 scanf { return TOK_SCANF; }
+printf { return TOK_PRINTF; }
 if { return TOK_IF; }
 else { return TOK_ELSE; }
 while { return TOK_WHILE; }
@@ -46,12 +50,13 @@ while { return TOK_WHILE; }
 "=" { return TOK_ASIGNACION; }
 true { return TOK_TRUE; }
 false { return TOK_FALSE; }
-[a-zA-Z][{a-zA-Z0-9}]{0,99} 	{return TOK_IDENTIFICADOR;}
-[0-9]{1,100} 					{return TOK_CONSTANTE_ENTERA;}
+return { return TOK_RETURN; }
+{LETRA}[{a-zA-Z0-9}]{0,99} 	{return TOK_IDENTIFICADOR;}
+{NUMERO}{1,100} 					{return TOK_CONSTANTE_ENTERA;}
 \t {columna += 4;}
 " " {columna++;}
 \n 	{linea++; columna=1;}
 "//".*\n {linea ++;columna=1;}
-[a-zA-Z][{a-zA-Z0-9}]{100,}	 	{longitud=true; return TOK_ERROR;}
-.								{invalidchar=true; return TOK_ERROR;}
+{LETRA}[{a-zA-Z0-9}]{100,}	 	{longitud=true; return TOK_ERROR;}
+. {invalidchar=true; return TOK_ERROR;}
 %%

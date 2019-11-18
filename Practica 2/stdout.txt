@@ -1,6 +1,0 @@
-Reconocido 100: main
-Reconocido 103: array
-Reconocido 101: int
-Reconocido 105: if
-Reconocido 106: else
-Reconocido 107: while
