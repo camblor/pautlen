@@ -3,17 +3,102 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <hash.h>
 
 #define SIZE 20
 
-struct DataItem {
+
+/*
+Struct: dataItem
+Descripcion: Elemento de la tabla de simbolos
+*/
+struct _dataItem {
    int data;   
    char* key;
 };
 
-struct DataItem* hashArray[SIZE]; 
-struct DataItem* dummyItem;
-struct DataItem* item;
+/*
+Struct: tablaSimbolos
+Descripcion: tabla de simbolos del compilador
+*/
+struct _tablaSimbolos{
+   int nElementos;
+   dataItem** elementos;
+};
+
+ dataItem* hashArray[SIZE]; 
+ dataItem* dummyItem;
+ dataItem* item;
+
+
+
+/*
+Funcion: crearTabla()
+Descripcion: Crea la tabla de simbolos.
+*/
+tablaSimbolos* crearTabla(){
+
+   tablaSimbolos* tabla = NULL;
+
+   tabla = malloc(sizeof(tablaSimbolos));
+   tabla->nElementos = 0;
+   tabla->elementos = NULL;
+
+   return tabla;
+
+}
+
+
+
+/*
+Funcion: insertarElemento(tablaSimbolos* tabla, void *elemento)
+Descripcion: Inserta un elemento en la tabla de simbolos.
+TODO: hash al elemento para insertarlo
+*/
+void insertarElemento(tablaSimbolos* tabla, void *elemento){
+
+   /* Si no hay elementos reserva memoria para el primero*/
+   if(tabla->nElementos == 0){
+      tabla->nElementos = 1;
+      tabla->elementos = malloc(sizeof(dataItem*) * tabla->nElementos);
+      if(tabla->elementos = NULL){
+         tabla->nElementos = 0;
+         fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
+         return;
+      }
+   }
+
+   /* Si ya hay elementos entonces reserva memoria para uno más e insertalo */
+   else{
+      
+      tabla->nElementos++;
+      tabla->elementos = realloc(tabla->elementos, sizeof(dataItem*) * tabla->nElementos);
+
+      if(tabla->elementos = NULL){
+         tabla->nElementos = 0;
+         fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
+         return;
+      }
+   }
+}
+
+
+/*
+Funcion: liberaTabla(tablaSimbolos* tabla)
+Descripcion: Libera la tabla de simbolos.
+TODO: hash al elemento para insertarlo
+*/
+void liberaTabla(tablaSimbolos* tablaSim){
+   int nElem = tablaSim->nElementos;
+   int i;
+
+   for(i=0; i < nElem; i++){
+      free(tablaSim->elementos[i]);
+   }
+   free(tablaSim->elementos);
+   free(tablaSim);
+}
+
 
 int hashCode(char* key) {
     int sum = 0;
@@ -26,7 +111,7 @@ int hashCode(char* key) {
    return sum % SIZE;
 }
 
-struct DataItem *search(char* key) {
+ dataItem *search(char* key) {
    //get the hash 
    int hashIndex = hashCode(key);  
 	
@@ -48,7 +133,7 @@ struct DataItem *search(char* key) {
 
 void insert(char* key,int data) {
 
-   struct DataItem *item = (struct DataItem*) malloc(sizeof(struct DataItem));
+   dataItem *item = (dataItem*) malloc(sizeof(dataItem));
    item->data = data;  
    item->key = key;
 
@@ -72,7 +157,7 @@ void insert(char* key,int data) {
    hashArray[hashIndex] = item;
 }
 
-struct DataItem* delete(struct DataItem* item) {
+struct dataItem* delete(dataItem* item) {
    char* key = item->key;
 
    //get the hash 
@@ -82,7 +167,7 @@ struct DataItem* delete(struct DataItem* item) {
    while(hashArray[hashIndex] != NULL) {
 	
       if(strcmp(hashArray[hashIndex]->key, key) == 0) {
-         struct DataItem* temp = hashArray[hashIndex]; 
+         struct dataItem* temp = hashArray[hashIndex]; 
 			
          //assign a dummy item at deleted position
          hashArray[hashIndex] = dummyItem; 
@@ -112,9 +197,12 @@ void display() {
 	
    printf("\n");
 }
+
+
+
 /*
 int main() {
-   dummyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
+   dummyItem = (struct dataItem*) malloc(sizeof(struct dataItem));
    dummyItem->data = -1;  
    dummyItem->key = ""; 
 
@@ -148,3 +236,54 @@ int main() {
       printf("Element not found\n");
    }
 }*/
+
+
+
+
+
+/*
+
+DeclararGlobal(id, desc_id):
+   if tablasimbolosglobal -> get(id) == NULL:
+      tablasimbolosglobal->set(id, desc_id);
+      return ok;
+   else:
+      return error;
+
+
+UsoGlobal(id):
+   dato = tablassimbolosglobal getid
+   if dato is null
+      return err;
+   else:
+      return dato;
+
+
+DeclararLocal(id, dest_id):
+   if tablasimboloslocal get id is null
+      tablasimboloslocal set id, desc_id
+      return ok
+   else
+      return error 
+
+UsoLocal(id):
+   dato = tablasimboloslocal getid;
+   if dato == null:
+      dato = tablasimbolosglobal set id, descid
+      if dato is null:
+         return error
+      else:
+         return dato
+
+declararfuncion(id, desc_id):
+   if tablasimbolosglobal getid isnt null:
+      return error
+   else
+      tablasimbolosglobal set id, desc_id
+      tablasimboloslocal init
+      tablasimboloslocal set id, descid
+      return ok;
+
+
+
+*/
