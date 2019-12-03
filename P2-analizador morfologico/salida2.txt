@@ -1,0 +1,13 @@
+Reconocido 100: main
+Reconocido 206: llaveizquierda
+Reconocido 101: int
+Reconocido 300: identificador x
+Reconocido 201: coma
+Reconocido 300: identificador y
+Reconocido 200: puntoycoma
+Reconocido 101: int
+Reconocido 300: identificador i
+Reconocido 201: coma
+Reconocido 300: identificador total
+Reconocido 200: puntoycoma
+Reconocido 101: int

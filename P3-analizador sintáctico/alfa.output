@@ -1,0 +1,543 @@
+Nonterminals useless in grammar
+
+   funciones
+   funcion
+   parametros_funcion
+   resto_parametros_funcion
+   parametro_funcion
+   declaraciones_funcion
+   sentencias
+   sentencia
+   sentencia_simple
+   bloque
+   asignacion
+   elemento_vector
+   condicional
+   bucle
+   lectura
+   escritura
+   retorno_funcion
+   exp
+   lista_expresiones
+   resto_lista_expresiones
+   comparacion
+   constante
+   constante_logica
+
+
+Terminals unused in grammar
+
+   TOK_MAIN
+   TOK_RETURN
+   TOK_SCANF
+   TOK_PRINTF
+   TOK_IF
+   TOK_ELSE
+   TOK_WHILE
+   TOK_OR
+   TOK_AND
+   TOK_DISTINTO
+   TOK_IGUAL
+   TOK_MAYORIGUAL
+   TOK_FUNCTION
+   TOK_TRUE
+   TOK_FALSE
+   '+'
+   '-'
+   'O'
+   '*'
+   '/'
+   'Y'
+   '('
+   ')'
+   '{'
+   '}'
+   '='
+   '!'
+   "<="
+   '<'
+   '>'
+
+
+Rules useless in grammar
+
+   23 funciones: funcion funciones
+
+   24 funcion: TOK_FUNCTION tipo identificador '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
+
+   25 parametros_funcion: parametro_funcion resto_parametros_funcion
+
+   26 resto_parametros_funcion: ';' parametro_funcion resto_parametros_funcion
+
+   27 parametro_funcion: tipo identificador
+
+   28 declaraciones_funcion: declaraciones
+
+   29 sentencias: sentencia
+   30           | sentencia sentencias
+
+   31 sentencia: sentencia_simple ';'
+   32          | bloque
+
+   33 sentencia_simple: asignacion
+   34                 | lectura
+   35                 | escritura
+   36                 | retorno_funcion
+
+   37 bloque: condicional
+   38       | bucle
+
+   39 asignacion: identificador '=' exp
+   40           | elemento_vector '=' exp
+
+   41 elemento_vector: identificador '[' exp ']'
+
+   42 condicional: TOK_IF '(' exp ')' '{' sentencias '}'
+   43            | TOK_IF '(' exp ')' '{' sentencias '}' TOK_ELSE '(' exp ')' '{' sentencias '}'
+
+   44 bucle: TOK_WHILE '(' exp ')' '{' sentencias '}'
+
+   45 lectura: TOK_SCANF identificador
+
+   46 escritura: TOK_PRINTF exp
+
+   47 retorno_funcion: TOK_RETURN exp
+
+   48 exp: exp '+' exp
+   49    | exp '-' exp
+   50    | exp '/' exp
+   51    | exp '*' exp
+   52    | '-' exp
+   53    | exp TOK_AND exp
+   54    | exp TOK_OR exp
+   55    | '!' exp
+   56    | identificador
+   57    | constante
+   58    | '(' exp ')'
+   59    | '(' comparacion ')'
+   60    | elemento_vector
+   61    | identificador '(' lista_expresiones ')'
+
+   62 lista_expresiones: exp
+
+   63 resto_lista_expresiones: %empty
+   64                        | ',' exp resto_lista_expresiones
+
+   65 comparacion: exp TOK_IGUAL exp
+   66            | exp TOK_DISTINTO exp
+   67            | exp "<=" exp
+   68            | exp TOK_MAYORIGUAL exp
+   69            | exp '<' exp
+   70            | exp '>' exp
+
+   71 constante: constante_logica
+   72          | constante_entera
+
+   73 constante_logica: TOK_TRUE
+   74                 | TOK_FALSE
+
+
+Grammar
+
+    0 $accept: declaraciones $end
+
+    1 declaraciones: declaracion
+    2              | declaracion declaraciones
+
+    3 declaracion: clase identificadores ';'
+
+    4 clase: clase_escalar
+    5      | clase_vector
+
+    6 clase_escalar: tipo
+
+    7 tipo: TOK_INT
+    8     | TOK_BOOLEAN
+
+    9 clase_vector: TOK_ARRAY tipo '[' constante_entera ']'
+
+   10 identificadores: identificador
+   11                | identificador ',' identificadores
+
+   12 constante_entera: numero
+
+   13 numero: digito
+   14       | numero digito
+
+   15 identificador: letra
+   16              | letra cola_identificador
+
+   17 cola_identificador: alfanumerico
+   18                   | alfanumerico cola_identificador
+
+   19 alfanumerico: letra
+   20             | digito
+
+   21 letra: TOK_IDENTIFICADOR
+
+   22 digito: TOK_CONSTANTE_ENTERA
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33)
+'(' (40)
+')' (41)
+'*' (42)
+'+' (43)
+',' (44) 11
+'-' (45)
+'/' (47)
+';' (59) 3
+'<' (60)
+'=' (61)
+'>' (62)
+'O' (79)
+'Y' (89)
+'[' (91) 9
+']' (93) 9
+'{' (123)
+'}' (125)
+error (256)
+TOK_MAIN (258)
+TOK_RETURN (259)
+TOK_ARRAY (260) 9
+TOK_INT (261) 7
+TOK_BOOLEAN (262) 8
+TOK_SCANF (263)
+TOK_PRINTF (264)
+TOK_IF (265)
+TOK_ELSE (266)
+TOK_WHILE (267)
+TOK_OR (268)
+TOK_AND (269)
+TOK_DISTINTO (270)
+TOK_IGUAL (271)
+TOK_MAYORIGUAL (272)
+TOK_FUNCTION (273)
+TOK_TRUE (274)
+TOK_FALSE (275)
+TOK_IDENTIFICADOR (276) 21
+TOK_CONSTANTE_ENTERA (277) 22
+"<=" (278)
+
+
+Nonterminals, with rules where they appear
+
+$accept (42)
+    on left: 0
+declaraciones (43)
+    on left: 1 2, on right: 0 2
+declaracion (44)
+    on left: 3, on right: 1 2
+clase (45)
+    on left: 4 5, on right: 3
+clase_escalar (46)
+    on left: 6, on right: 4
+tipo (47)
+    on left: 7 8, on right: 6 9
+clase_vector (48)
+    on left: 9, on right: 5
+identificadores (49)
+    on left: 10 11, on right: 3 11
+constante_entera (50)
+    on left: 12, on right: 9
+numero (51)
+    on left: 13 14, on right: 12 14
+identificador (52)
+    on left: 15 16, on right: 10 11
+cola_identificador (53)
+    on left: 17 18, on right: 16 18
+alfanumerico (54)
+    on left: 19 20, on right: 17 18
+letra (55)
+    on left: 21, on right: 15 16 19
+digito (56)
+    on left: 22, on right: 13 14 20
+
+
+State 0
+
+    0 $accept: . declaraciones $end
+
+    TOK_ARRAY    shift, and go to state 1
+    TOK_INT      shift, and go to state 2
+    TOK_BOOLEAN  shift, and go to state 3
+
+    declaraciones  go to state 4
+    declaracion    go to state 5
+    clase          go to state 6
+    clase_escalar  go to state 7
+    tipo           go to state 8
+    clase_vector   go to state 9
+
+
+State 1
+
+    9 clase_vector: TOK_ARRAY . tipo '[' constante_entera ']'
+
+    TOK_INT      shift, and go to state 2
+    TOK_BOOLEAN  shift, and go to state 3
+
+    tipo  go to state 10
+
+
+State 2
+
+    7 tipo: TOK_INT .
+
+    $default  reduce using rule 7 (tipo)
+
+
+State 3
+
+    8 tipo: TOK_BOOLEAN .
+
+    $default  reduce using rule 8 (tipo)
+
+
+State 4
+
+    0 $accept: declaraciones . $end
+
+    $end  shift, and go to state 11
+
+
+State 5
+
+    1 declaraciones: declaracion .
+    2              | declaracion . declaraciones
+
+    TOK_ARRAY    shift, and go to state 1
+    TOK_INT      shift, and go to state 2
+    TOK_BOOLEAN  shift, and go to state 3
+
+    $default  reduce using rule 1 (declaraciones)
+
+    declaraciones  go to state 12
+    declaracion    go to state 5
+    clase          go to state 6
+    clase_escalar  go to state 7
+    tipo           go to state 8
+    clase_vector   go to state 9
+
+
+State 6
+
+    3 declaracion: clase . identificadores ';'
+
+    TOK_IDENTIFICADOR  shift, and go to state 13
+
+    identificadores  go to state 14
+    identificador    go to state 15
+    letra            go to state 16
+
+
+State 7
+
+    4 clase: clase_escalar .
+
+    $default  reduce using rule 4 (clase)
+
+
+State 8
+
+    6 clase_escalar: tipo .
+
+    $default  reduce using rule 6 (clase_escalar)
+
+
+State 9
+
+    5 clase: clase_vector .
+
+    $default  reduce using rule 5 (clase)
+
+
+State 10
+
+    9 clase_vector: TOK_ARRAY tipo . '[' constante_entera ']'
+
+    '['  shift, and go to state 17
+
+
+State 11
+
+    0 $accept: declaraciones $end .
+
+    $default  accept
+
+
+State 12
+
+    2 declaraciones: declaracion declaraciones .
+
+    $default  reduce using rule 2 (declaraciones)
+
+
+State 13
+
+   21 letra: TOK_IDENTIFICADOR .
+
+    $default  reduce using rule 21 (letra)
+
+
+State 14
+
+    3 declaracion: clase identificadores . ';'
+
+    ';'  shift, and go to state 18
+
+
+State 15
+
+   10 identificadores: identificador .
+   11                | identificador . ',' identificadores
+
+    ','  shift, and go to state 19
+
+    $default  reduce using rule 10 (identificadores)
+
+
+State 16
+
+   15 identificador: letra .
+   16              | letra . cola_identificador
+
+    TOK_IDENTIFICADOR     shift, and go to state 13
+    TOK_CONSTANTE_ENTERA  shift, and go to state 20
+
+    $default  reduce using rule 15 (identificador)
+
+    cola_identificador  go to state 21
+    alfanumerico        go to state 22
+    letra               go to state 23
+    digito              go to state 24
+
+
+State 17
+
+    9 clase_vector: TOK_ARRAY tipo '[' . constante_entera ']'
+
+    TOK_CONSTANTE_ENTERA  shift, and go to state 20
+
+    constante_entera  go to state 25
+    numero            go to state 26
+    digito            go to state 27
+
+
+State 18
+
+    3 declaracion: clase identificadores ';' .
+
+    $default  reduce using rule 3 (declaracion)
+
+
+State 19
+
+   11 identificadores: identificador ',' . identificadores
+
+    TOK_IDENTIFICADOR  shift, and go to state 13
+
+    identificadores  go to state 28
+    identificador    go to state 15
+    letra            go to state 16
+
+
+State 20
+
+   22 digito: TOK_CONSTANTE_ENTERA .
+
+    $default  reduce using rule 22 (digito)
+
+
+State 21
+
+   16 identificador: letra cola_identificador .
+
+    $default  reduce using rule 16 (identificador)
+
+
+State 22
+
+   17 cola_identificador: alfanumerico .
+   18                   | alfanumerico . cola_identificador
+
+    TOK_IDENTIFICADOR     shift, and go to state 13
+    TOK_CONSTANTE_ENTERA  shift, and go to state 20
+
+    $default  reduce using rule 17 (cola_identificador)
+
+    cola_identificador  go to state 29
+    alfanumerico        go to state 22
+    letra               go to state 23
+    digito              go to state 24
+
+
+State 23
+
+   19 alfanumerico: letra .
+
+    $default  reduce using rule 19 (alfanumerico)
+
+
+State 24
+
+   20 alfanumerico: digito .
+
+    $default  reduce using rule 20 (alfanumerico)
+
+
+State 25
+
+    9 clase_vector: TOK_ARRAY tipo '[' constante_entera . ']'
+
+    ']'  shift, and go to state 30
+
+
+State 26
+
+   12 constante_entera: numero .
+   14 numero: numero . digito
+
+    TOK_CONSTANTE_ENTERA  shift, and go to state 20
+
+    $default  reduce using rule 12 (constante_entera)
+
+    digito  go to state 31
+
+
+State 27
+
+   13 numero: digito .
+
+    $default  reduce using rule 13 (numero)
+
+
+State 28
+
+   11 identificadores: identificador ',' identificadores .
+
+    $default  reduce using rule 11 (identificadores)
+
+
+State 29
+
+   18 cola_identificador: alfanumerico cola_identificador .
+
+    $default  reduce using rule 18 (cola_identificador)
+
+
+State 30
+
+    9 clase_vector: TOK_ARRAY tipo '[' constante_entera ']' .
+
+    $default  reduce using rule 9 (clase_vector)
+
+
+State 31
+
+   14 numero: numero digito .
+
+    $default  reduce using rule 14 (numero)
