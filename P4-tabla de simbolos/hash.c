@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <hash.h>
 
 #define SIZE 20
 
@@ -21,10 +20,16 @@ struct _dataItem {
 Struct: tablaSimbolos
 Descripcion: tabla de simbolos del compilador
 */
+
+typedef struct _dataItem dataItem;
+
+
 struct _tablaSimbolos{
    int nElementos;
    dataItem** elementos;
 };
+
+typedef struct _tablaSimbolos tablaSimbolos;
 
  dataItem* hashArray[SIZE]; 
  dataItem* dummyItem;
@@ -61,7 +66,7 @@ void insertarElemento(tablaSimbolos* tabla, void *elemento){
    if(tabla->nElementos == 0){
       tabla->nElementos = 1;
       tabla->elementos = malloc(sizeof(dataItem*) * tabla->nElementos);
-      if(tabla->elementos = NULL){
+      if(tabla->elementos == NULL){
          tabla->nElementos = 0;
          fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
          return;
@@ -74,7 +79,7 @@ void insertarElemento(tablaSimbolos* tabla, void *elemento){
       tabla->nElementos++;
       tabla->elementos = realloc(tabla->elementos, sizeof(dataItem*) * tabla->nElementos);
 
-      if(tabla->elementos = NULL){
+      if(tabla->elementos == NULL){
          tabla->nElementos = 0;
          fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
          return;
@@ -86,7 +91,6 @@ void insertarElemento(tablaSimbolos* tabla, void *elemento){
 /*
 Funcion: liberaTabla(tablaSimbolos* tabla)
 Descripcion: Libera la tabla de simbolos.
-TODO: hash al elemento para insertarlo
 */
 void liberaTabla(tablaSimbolos* tablaSim){
    int nElem = tablaSim->nElementos;
@@ -157,7 +161,7 @@ void insert(char* key,int data) {
    hashArray[hashIndex] = item;
 }
 
-struct dataItem* delete(dataItem* item) {
+dataItem* delete(dataItem* item) {
    char* key = item->key;
 
    //get the hash 
@@ -167,7 +171,7 @@ struct dataItem* delete(dataItem* item) {
    while(hashArray[hashIndex] != NULL) {
 	
       if(strcmp(hashArray[hashIndex]->key, key) == 0) {
-         struct dataItem* temp = hashArray[hashIndex]; 
+         dataItem* temp = hashArray[hashIndex]; 
 			
          //assign a dummy item at deleted position
          hashArray[hashIndex] = dummyItem; 
@@ -200,11 +204,18 @@ void display() {
 
 
 
-/*
+
 int main() {
-   dummyItem = (struct dataItem*) malloc(sizeof(struct dataItem));
+
+
+   tablaSimbolos* prueba = NULL;
+
+   dummyItem = ( dataItem*) malloc(sizeof( dataItem));
    dummyItem->data = -1;  
    dummyItem->key = ""; 
+
+   prueba = crearTabla();
+   liberaTabla(prueba);
 
    insert("1", 20);
    insert("2", 70);
@@ -235,7 +246,7 @@ int main() {
    } else {
       printf("Element not found\n");
    }
-}*/
+}
 
 
 
