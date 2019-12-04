@@ -59,12 +59,14 @@ extern int yydebug;
     TOK_AND = 269,
     TOK_DISTINTO = 270,
     TOK_IGUAL = 271,
-    TOK_MAYORIGUAL = 272,
-    TOK_FUNCTION = 273,
-    TOK_TRUE = 274,
-    TOK_FALSE = 275,
-    TOK_IDENTIFICADOR = 276,
-    TOK_CONSTANTE_ENTERA = 277
+    TOK_MENORIGUAL = 272,
+    TOK_MAYORIGUAL = 273,
+    TOK_FUNCTION = 274,
+    TOK_TRUE = 275,
+    TOK_FALSE = 276,
+    TOK_IDENTIFICADOR = 277,
+    TOK_CONSTANTE_ENTERA = 278,
+    left = 279
   };
 #endif
 
@@ -73,13 +75,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "alfa.y" /* yacc.c:1909  */
+#line 19 "alfa.y" /* yacc.c:1909  */
 
  char* cadena;
  int numero;
  
 
-#line 83 "alfa.tab.h" /* yacc.c:1909  */
+#line 85 "alfa.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
