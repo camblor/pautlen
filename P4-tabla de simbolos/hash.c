@@ -3,288 +3,376 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "hash.h"
 
-#define SIZE 20
-
+#define SIZE 100
 
 /*
 Struct: dataItem
 Descripcion: Elemento de la tabla de simbolos
 */
-struct _dataItem {
-   int data;   
-   char* key;
+struct _dataItem
+{
+   int data;
+   char *key;
 };
 
-/*
-Struct: tablaSimbolos
-Descripcion: tabla de simbolos del compilador
-*/
+dataItem *tablaGlobal[SIZE];
+dataItem **tablaLocal = NULL;
 
-typedef struct _dataItem dataItem;
+int ambito = 0;
+dataItem *dummyItem;
 
-
-struct _tablaSimbolos{
-   int nElementos;
-   dataItem** elementos;
-};
-
-typedef struct _tablaSimbolos tablaSimbolos;
-
- dataItem* hashArray[SIZE]; 
- dataItem* dummyItem;
- dataItem* item;
-
-
-
-/*
-Funcion: crearTabla()
-Descripcion: Crea la tabla de simbolos.
-*/
-tablaSimbolos* crearTabla(){
-
-   tablaSimbolos* tabla = NULL;
-
-   tabla = malloc(sizeof(tablaSimbolos));
-   tabla->nElementos = 0;
-   tabla->elementos = NULL;
-
-   return tabla;
-
-}
-
-
-
-/*
-Funcion: insertarElemento(tablaSimbolos* tabla, void *elemento)
-Descripcion: Inserta un elemento en la tabla de simbolos.
-TODO: hash al elemento para insertarlo
-*/
-void insertarElemento(tablaSimbolos* tabla, void *elemento){
-
-   /* Si no hay elementos reserva memoria para el primero*/
-   if(tabla->nElementos == 0){
-      tabla->nElementos = 1;
-      tabla->elementos = malloc(sizeof(dataItem*) * tabla->nElementos);
-      if(tabla->elementos == NULL){
-         tabla->nElementos = 0;
-         fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
-         return;
-      }
-   }
-
-   /* Si ya hay elementos entonces reserva memoria para uno más e insertalo */
-   else{
-      
-      tabla->nElementos++;
-      tabla->elementos = realloc(tabla->elementos, sizeof(dataItem*) * tabla->nElementos);
-
-      if(tabla->elementos == NULL){
-         tabla->nElementos = 0;
-         fprintf(stderr, "Error de reserva de memoria al insertar elemento.");
-         return;
-      }
-   }
-}
-
-
-/*
-Funcion: liberaTabla(tablaSimbolos* tabla)
-Descripcion: Libera la tabla de simbolos.
-*/
-void liberaTabla(tablaSimbolos* tablaSim){
-   int nElem = tablaSim->nElementos;
+int hashCode(char *key)
+{
+   int sum = 0;
    int i;
+   int length = strlen(key);
 
-   for(i=0; i < nElem; i++){
-      free(tablaSim->elementos[i]);
+   for (i = 0; i < length; i++)
+   {
+      sum += key[i];
    }
-   free(tablaSim->elementos);
-   free(tablaSim);
-}
-
-
-int hashCode(char* key) {
-    int sum = 0;
-    int i;
-    int length = strlen(key);
-
-    for(i=0; i<length; i++){
-        sum += key[i];
-    }
    return sum % SIZE;
 }
 
- dataItem *search(char* key) {
-   //get the hash 
-   int hashIndex = hashCode(key);  
-	
-   //move in array until an empty 
-   while(hashArray[hashIndex] != NULL) {
-	
-      if( strcmp(hashArray[hashIndex]->key, key) == 0 )
-         return hashArray[hashIndex]; 
-			
-      //go to next cell
+/*
+Funcion: search
+Descripcion: Busca un elemento en la tabla hash pasada como argumento
+*/
+dataItem *search(dataItem **tabla, char *key)
+{
+   /*get the hash*/
+   int hashIndex = hashCode(key);
+
+   /*printf("HASH = (\"%s\", %d)\n", key, hashIndex);*/
+
+   /*move in array until an empty*/
+   while (tabla[hashIndex] != NULL)
+   {
+
+      if (strcmp(tabla[hashIndex]->key, key) == 0)
+         return tabla[hashIndex];
+
+      /*go to next cell*/
       ++hashIndex;
-		
-      //wrap around the table
+
+      /*wrap around the table*/
       hashIndex %= SIZE;
-   }        
-	
-   return NULL;        
-}
-
-void insert(char* key,int data) {
-
-   dataItem *item = (dataItem*) malloc(sizeof(dataItem));
-   item->data = data;  
-   item->key = key;
-
-   if(search(key) != NULL){
-       return;
    }
 
-   //get the hash 
+   return NULL;
+}
+
+/*
+Funcion: insert
+Descripcion: inserta un elemento en la tabla hash pasada como argumento
+*/
+int insert(dataItem **tabla, char *key, int data)
+{
+
+   dataItem *item = (dataItem *)malloc(sizeof(dataItem));
+   item->key = malloc(strlen(key) * sizeof(char) + sizeof(char));
+   strcpy(item->key, key);
+   item->data = data;
+
+   if (search(tabla, key) != NULL)
+   {
+      free(item->key);
+      free(item);
+      return 0;
+   }
+
+   //get the hash
    int hashIndex = hashCode(key);
-   
 
    //move in array until an empty or deleted cell
-   while(hashArray[hashIndex] != NULL && (strcmp(hashArray[hashIndex]->key, "") != 0)) {
+   while (tabla[hashIndex] != NULL && (strcmp(tabla[hashIndex]->key, "") != 0))
+   {
       //go to next cell
       ++hashIndex;
-		
+
       //wrap around the table
       hashIndex %= SIZE;
    }
-	
-   hashArray[hashIndex] = item;
+
+   tabla[hashIndex] = item;
+   return 1;
 }
 
-dataItem* delete(dataItem* item) {
-   char* key = item->key;
+dataItem *delete (dataItem **tabla, dataItem *item)
+{
+   char *key = item->key;
 
-   //get the hash 
+   //get the hash
    int hashIndex = hashCode(key);
 
    //move in array until an empty
-   while(hashArray[hashIndex] != NULL) {
-	
-      if(strcmp(hashArray[hashIndex]->key, key) == 0) {
-         dataItem* temp = hashArray[hashIndex]; 
-			
+   while (tabla[hashIndex] != NULL)
+   {
+
+      if (strcmp(tabla[hashIndex]->key, key) == 0)
+      {
+         dataItem *temp = tabla[hashIndex];
+
          //assign a dummy item at deleted position
-         hashArray[hashIndex] = dummyItem; 
+         tabla[hashIndex] = dummyItem;
          return temp;
       }
-		
+
       //go to next cell
       ++hashIndex;
-		
+
       //wrap around the table
       hashIndex %= SIZE;
-   }      
-	
-   return NULL;        
+   }
+
+   return NULL;
 }
 
-void display() {
+void display(dataItem **tabla)
+{
    int i = 0;
-	
-   for(i = 0; i<SIZE; i++) {
-	
-      if(hashArray[i] != NULL)
-         printf(" (%s,%d)",hashArray[i]->key,hashArray[i]->data);
+
+   for (i = 0; i < SIZE; i++)
+   {
+
+      if (tabla[i] != NULL)
+      {
+         printf(" (%s,%d)", tabla[i]->key, tabla[i]->data);
+      }
+
       else
+      {
          printf(" ~~ ");
+      }
+
+      if (i % 10 == 0 && i > 0)
+      {
+         printf("\n");
+      }
    }
-	
+
    printf("\n");
 }
 
+void liberaTabla(dataItem **tabla)
+{
+   int i;
 
+   for (i = 0; i < SIZE; i++)
+   {
+      if (tabla[i] != NULL)
+      {
+         free(tabla[i]->key);
+         free(tabla[i]);
+      }
+   }
+}
 
+int strsearch(char *string, char character)
+{
+   int len = strlen(string);
+   int i;
 
-int main() {
+   for (i = 0; i < len; i++)
+   {
+      if (string[i] == character)
+      {
+         return 1;
+      }
+   }
+   return 0;
+}
 
+int checkFuncion(char *string)
+{
+   int len = strlen(string);
+   int i;
 
-   tablaSimbolos* prueba = NULL;
+   for (i = 0; i < len; i < i++)
+   {
+      if (
+          i + 6 < len &&
+          string[i] == 'f' &&
+          string[i + 1] == 'u' &&
+          string[i + 2] == 'n' &&
+          string[i + 3] == 'c' &&
+          string[i + 4] == 'i' &&
+          string[i + 5] == 'o' &&
+          string[i + 6] == 'n')
+      {
+         return 1;
+      }
+   }
+   return 0;
+}
 
-   dummyItem = ( dataItem*) malloc(sizeof( dataItem));
-   dummyItem->data = -1;  
-   dummyItem->key = ""; 
+int checkCierre(char *string)
+{
+   int len = strlen(string);
+   int i;
 
-   prueba = crearTabla();
-   liberaTabla(prueba);
+   for (i = 0; i < len; i < i++)
+   {
+      if (
+          i + 5 < len &&
+          string[i] == 'c' &&
+          string[i + 1] == 'i' &&
+          string[i + 2] == 'e' &&
+          string[i + 3] == 'r' &&
+          string[i + 4] == 'r' &&
+          string[i + 5] == 'e'
+      )
+      {
+         return 1;
+      }
+   }
+   return 0;
+}
 
-   insert("1", 20);
-   insert("2", 70);
-   insert("42", 80);
-   insert("4", 25);
-   insert("12", 44);
-   insert("14", 32);
-   insert("14", 32);
-   insert("14", 33);
-   insert("17", 11);
-   insert("13", 78);
-   insert("37", 97);
+int main()
+{
+   /*Variables*/
+   FILE *fp;
+   char *line = NULL;
+   size_t len = 0;
+   ssize_t read;
+   char *test = NULL;
+   char *dato = NULL;
+   char *valor = NULL;
 
-   display();
-   item = search("37");
-
-   if(item != NULL) {
-      printf("Element found: %d\n", item->data);
-   } else {
-      printf("Element not found\n");
+   /*Abrimos el fichero*/
+   fp = fopen("entrada", "r");
+   if (fp == NULL)
+   {
+      exit(EXIT_FAILURE);
    }
 
-   delete(item);
-   item = search("37");
+   /* Leemos el fichero */
+   while ((read = getline(&line, &len, fp)) != -1)
+   {
 
-   if(item != NULL) {
-      printf("Element found: %d\n", item->data);
-   } else {
-      printf("Element not found\n");
+      /* Si en la linea hay un espacio (2 columnas) */
+      if (strsearch(line, ' '))
+      {
+         /* Se sacan ambos valores */
+         test = strtok(line, " ");
+         int i = 0;
+         while (test != NULL)
+         {
+            if (i == 0)
+            {
+               dato = test;
+            }
+            else
+            {
+               valor = test;
+               valor[strlen(valor) - 1] = 0;
+            }
+            i++;
+            test = strtok(NULL, " ");
+         }
+
+         /* Se comprueba si es la declaracion de una funcion */
+
+         if (checkFuncion(dato))
+         {
+            printf("FUNCION\n");
+            declararFuncion(dato, atoi(valor));
+            ambito=1;
+         } else if (checkCierre(dato)){
+            printf("CIERRE\n");
+            ambito = 2;
+         }
+
+         /* Se insertan en la tabla */
+         if (ambito == 0)
+         {
+            if (declararGlobal(dato, atoi(valor)) == 1)
+            {
+               printf("INSERTADO\n");
+            }
+            else
+            {
+               printf("NO-INSERTADO\n");
+            }
+         }
+         else if (ambito == 1)
+         {
+            if (declararLocal(dato, atoi(valor)) == 1)
+            {
+               printf("INSERTADO\n");
+            }
+            else
+            {
+               printf("NO-INSERTADO\n");
+            }
+         } else{
+            ambito = 0;
+         }
+      }
+   }
+
+   display(tablaGlobal);
+   printf("--------------------------\n");
+   display(tablaLocal);
+   printf("USOLOCAL: %s-%d\n", usoGlobal("uno")->key, usoGlobal("uno")->data);
+
+   /*Liberar recursos*/
+   fclose(fp);
+   if (line)
+   {
+      free(line);
+   }
+   liberaTabla(tablaLocal);
+   liberaTabla(tablaGlobal);
+   exit(EXIT_SUCCESS);
+}
+
+int declararGlobal(char *id, int desc_id)
+{
+   return insert(tablaGlobal, id, desc_id);
+}
+
+dataItem *usoGlobal(char *id)
+{
+   return search(tablaGlobal, id);
+}
+
+int declararLocal(char *id, int desc_id)
+{
+   insert(tablaLocal, id, desc_id);
+}
+
+dataItem *usoLocal(char *id)
+{
+   return search(tablaLocal, id);
+}
+
+
+int declararFuncion(char* id, int desc_id){
+   int i;
+   if(search(tablaGlobal, id) == NULL){
+      insert(tablaGlobal, id, desc_id);
+      if (tablaLocal!=NULL){
+         liberaTabla(tablaLocal);
+      }
+      tablaLocal = malloc(sizeof(dataItem*) * SIZE);
+      for(i=0;i<SIZE;i++){
+         tablaLocal[i] = NULL;
+      }
+      insert(tablaLocal, id, desc_id);
+
+      //INICIALIZA LOCAL
+      return 1;
+   } else{
+      return 0;
    }
 }
 
 
-
-
-
 /*
-
-DeclararGlobal(id, desc_id):
-   if tablasimbolosglobal -> get(id) == NULL:
-      tablasimbolosglobal->set(id, desc_id);
-      return ok;
-   else:
-      return error;
-
-
-UsoGlobal(id):
-   dato = tablassimbolosglobal getid
-   if dato is null
-      return err;
-   else:
-      return dato;
-
-
-DeclararLocal(id, dest_id):
-   if tablasimboloslocal get id is null
-      tablasimboloslocal set id, desc_id
-      return ok
-   else
-      return error 
-
-UsoLocal(id):
-   dato = tablasimboloslocal getid;
-   if dato == null:
-      dato = tablasimbolosglobal set id, descid
-      if dato is null:
-         return error
-      else:
-         return dato
 
 declararfuncion(id, desc_id):
    if tablasimbolosglobal getid isnt null:
