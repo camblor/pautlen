@@ -100,6 +100,11 @@ int insert(dataItem **tabla, char *key, int data)
    return 1;
 }
 
+
+/*
+Funcion: delete
+Descripcion: elimina un elemento en la tabla hash pasada como argumento
+*/
 dataItem *delete (dataItem **tabla, dataItem *item)
 {
    char *key = item->key;
@@ -130,9 +135,15 @@ dataItem *delete (dataItem **tabla, dataItem *item)
    return NULL;
 }
 
+
+/*
+Funcion: display
+Descripcion: imprime la tabla hash pasada como argumento
+*/
 void display(dataItem **tabla)
 {
    int i = 0;
+   int j = 0;
 
    for (i = 0; i < SIZE; i++)
    {
@@ -140,14 +151,10 @@ void display(dataItem **tabla)
       if (tabla[i] != NULL)
       {
          printf(" (%s,%d)", tabla[i]->key, tabla[i]->data);
+         j++;
       }
 
-      else
-      {
-         printf(" ~~ ");
-      }
-
-      if (i % 10 == 0 && i > 0)
+      if (j % 10 == 0 && j > 0)
       {
          printf("\n");
       }
@@ -156,6 +163,10 @@ void display(dataItem **tabla)
    printf("\n");
 }
 
+/*
+Funcion: liberaTabla
+Descripcion: libera la tabla hash pasada como argumento
+*/
 void liberaTabla(dataItem **tabla)
 {
    int i;
@@ -317,7 +328,6 @@ int main()
    display(tablaGlobal);
    printf("--------------------------\n");
    display(tablaLocal);
-   printf("USOLOCAL: %s-%d\n", usoGlobal("uno")->key, usoGlobal("uno")->data);
 
    /*Liberar recursos*/
    fclose(fp);
@@ -330,27 +340,48 @@ int main()
    exit(EXIT_SUCCESS);
 }
 
+
+/*
+Funcion: declararGlobal
+Desc: Declara variable global
+*/
 int declararGlobal(char *id, int desc_id)
 {
    return insert(tablaGlobal, id, desc_id);
 }
 
+/*
+Funcion: usoGlobal
+Desc: Usa variable global
+*/
 dataItem *usoGlobal(char *id)
 {
    return search(tablaGlobal, id);
 }
 
+/*
+Funcion: declararLocal
+Desc: Declara variable local
+*/
 int declararLocal(char *id, int desc_id)
 {
    insert(tablaLocal, id, desc_id);
 }
 
+
+/*
+Funcion: usoLocal
+Desc: Usa variable local
+*/
 dataItem *usoLocal(char *id)
 {
    return search(tablaLocal, id);
 }
 
-
+/*
+Funcion: declararFuncion
+Desc: Declara funcion global y abre ambito local
+*/
 int declararFuncion(char* id, int desc_id){
    int i;
    if(search(tablaGlobal, id) == NULL){
@@ -382,7 +413,4 @@ declararfuncion(id, desc_id):
       tablasimboloslocal init
       tablasimboloslocal set id, descid
       return ok;
-
-
-
 */
