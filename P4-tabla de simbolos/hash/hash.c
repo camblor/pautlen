@@ -36,7 +36,6 @@ dataItem **tablaLocal = NULL;
 
 int ambito = 0;
 dataItem *dummyItem;
-int variableglobal = 0;
 
 /*
 Funcion: hash
@@ -272,6 +271,7 @@ int procesar(char *input)
    /*Variables*/
    int i;
    FILE *fp;
+   FILE *output;
    char *line = NULL;
    size_t len = 0;
    ssize_t read;
@@ -283,6 +283,11 @@ int procesar(char *input)
    fp = fopen(input, "r");
    if (fp == NULL)
    {
+      exit(EXIT_FAILURE);
+   }
+
+   output = fopen("output", "w+");
+   if(output == NULL){
       exit(EXIT_FAILURE);
    }
 
@@ -316,16 +321,17 @@ int procesar(char *input)
          if (checkFuncion(dato))
          {
             if (declararFuncion(dato, atoi(valor)) == 1){
-               fprintf(stdout, "FUNCION INSERTADA\n");
-               ambito = 1;
+               fprintf(output, "%s\n", dato);
+               ambito = 3;
             } else{
-               fprintf(stdout, "FUNCION NOINSERTADA\n");
+               fprintf(output, "-1 %s\n", dato);
+               ambito = 2;
             }
             
          }
          else if (checkCierre(dato))
          {
-            fprintf(stdout, "CIERRE\n");
+            fprintf(output, "CIERRE\n");
             ambito = 2;
          }
 
@@ -334,38 +340,47 @@ int procesar(char *input)
          {
             if (declararGlobal(dato, atoi(valor)) == 1)
             {
-               fprintf(stdout, "INSERTADO GLOBAL\n");
+               fprintf(output, "%s\n", dato);
             }
             else
             {
-               fprintf(stdout, "NO-INSERTADO GLOBAL\n");
+               fprintf(output, "-1 %s\n", dato);
             }
          }
          else if (ambito == 1)
          {
             if (declararLocal(dato, atoi(valor)) == 1)
             {
-               fprintf(stdout, "INSERTADO LOCAL\n");
+               fprintf(output, "%s\n", dato);
             }
             else
             {
-               fprintf(stdout, "NO-INSERTADO LOCAL\n");
+              fprintf(output, "-1 %s\n", dato);
             }
          }
-         else
+         else if (ambito == 2)
          {
             ambito = 0;
+         } else if (ambito == 3){
+            ambito = 1;
          }
+         printf("DECLARACION\n");
+      }
+      /* Si no hay (son solo búsquedas)*/
+      else {
+         printf("BUSQUEDA\n");
+         fprintf(output, "BUSQUEDA\n");
+
       }
    }
 
    display(tablaGlobal);
    printf("--------------------------\n");
    display(tablaLocal);
-   printf("\n%d\n", variableglobal);
 
    /*Liberar recursos*/
    fclose(fp);
+   fclose(output);
    if (line)
    {
       free(line);
@@ -428,7 +443,6 @@ int declararFuncion(char *id, int desc_id)
          liberaTablaLocal(tablaLocal);
       }
       tablaLocal = malloc(sizeof(dataItem *) * SIZE);
-      variableglobal++;
       if (tablaLocal == NULL){
          fprintf(stderr, "ERROR MEMORIA\n");
          exit(EXIT_FAILURE);
