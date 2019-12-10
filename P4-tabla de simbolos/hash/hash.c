@@ -4,25 +4,39 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "hash.h"
 
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 #define SIZE 100
 
 /*
 Struct: dataItem
 Descripcion: Elemento de la tabla de simbolos
 */
-struct _dataItem
+typedef struct _dataItem
 {
    int data;
    char *key;
-};
+} dataItem;
+
+int hash(char *key);
+int procesar(char *input);
+dataItem *search(dataItem **tabla, char *key);
+void display(dataItem **tabla);
+int strsearch(char *string, char character);
+int insert(dataItem **tabla, char *key, int data);
+int declararGlobal(char *id, int desc_id);
+dataItem *usoGlobal(char *id);
+int declararLocal(char *id, int desc_id);
+dataItem *usoLocal(char *id);
+int declararFuncion(char *id, int desc_id);
 
 dataItem *tablaGlobal[SIZE];
 dataItem **tablaLocal = NULL;
 
 int ambito = 0;
 dataItem *dummyItem;
+int variableglobal = 0;
 
 /*
 Funcion: hash
@@ -30,12 +44,13 @@ Desc: Genera el hash de un string pasado como argumento.
 */
 int hash(char *str)
 {
-    unsigned long hash = 5381;
-    int c;
-    while ((c = *str++)){
+   unsigned long hash = 5381;
+   int c;
+   while ((c = *str++))
+   {
       hash = ((hash << 5) + hash) + c;
-    }
-    return hash % SIZE;
+   }
+   return hash % SIZE;
 }
 
 /*
@@ -103,7 +118,6 @@ int insert(dataItem **tabla, char *key, int data)
    return 1;
 }
 
-
 /*
 Funcion: delete
 Descripcion: elimina un elemento en la tabla hash pasada como argumento
@@ -138,7 +152,6 @@ dataItem *delete (dataItem **tabla, dataItem *item)
    return NULL;
 }
 
-
 /*
 Funcion: display
 Descripcion: imprime la tabla hash pasada como argumento
@@ -170,7 +183,7 @@ void display(dataItem **tabla)
 Funcion: liberaTabla
 Descripcion: libera la tabla hash pasada como argumento
 */
-void liberaTabla(dataItem **tabla)
+void liberaTablaGlobal(dataItem **tabla)
 {
    int i;
 
@@ -182,6 +195,16 @@ void liberaTabla(dataItem **tabla)
          free(tabla[i]);
       }
    }
+}
+
+/*
+Funcion: liberaTabla
+Descripcion: libera la tabla hash pasada como argumento
+*/
+void liberaTablaLocal(dataItem **tabla)
+{
+   liberaTablaGlobal(tabla);
+   free(tabla);
 }
 
 int strsearch(char *string, char character)
@@ -236,8 +259,7 @@ int checkCierre(char *string)
           string[i + 2] == 'e' &&
           string[i + 3] == 'r' &&
           string[i + 4] == 'r' &&
-          string[i + 5] == 'e'
-      )
+          string[i + 5] == 'e')
       {
          return 1;
       }
@@ -245,7 +267,7 @@ int checkCierre(char *string)
    return 0;
 }
 
-int main()
+int procesar(char *input)
 {
    /*Variables*/
    int i;
@@ -258,7 +280,7 @@ int main()
    char *valor = NULL;
 
    /*Abrimos el fichero*/
-   fp = fopen("entrada", "r");
+   fp = fopen(input, "r");
    if (fp == NULL)
    {
       exit(EXIT_FAILURE);
@@ -293,11 +315,17 @@ int main()
 
          if (checkFuncion(dato))
          {
-            printf("FUNCION\n");
-            declararFuncion(dato, atoi(valor));
-            ambito=1;
-         } else if (checkCierre(dato)){
-            printf("CIERRE\n");
+            if (declararFuncion(dato, atoi(valor)) == 1){
+               fprintf(stdout, "FUNCION INSERTADA\n");
+               ambito = 1;
+            } else{
+               fprintf(stdout, "FUNCION NOINSERTADA\n");
+            }
+            
+         }
+         else if (checkCierre(dato))
+         {
+            fprintf(stdout, "CIERRE\n");
             ambito = 2;
          }
 
@@ -306,24 +334,26 @@ int main()
          {
             if (declararGlobal(dato, atoi(valor)) == 1)
             {
-               printf("INSERTADO\n");
+               fprintf(stdout, "INSERTADO GLOBAL\n");
             }
             else
             {
-               printf("NO-INSERTADO\n");
+               fprintf(stdout, "NO-INSERTADO GLOBAL\n");
             }
          }
          else if (ambito == 1)
          {
             if (declararLocal(dato, atoi(valor)) == 1)
             {
-               printf("INSERTADO\n");
+               fprintf(stdout, "INSERTADO LOCAL\n");
             }
             else
             {
-               printf("NO-INSERTADO\n");
+               fprintf(stdout, "NO-INSERTADO LOCAL\n");
             }
-         } else{
+         }
+         else
+         {
             ambito = 0;
          }
       }
@@ -332,6 +362,7 @@ int main()
    display(tablaGlobal);
    printf("--------------------------\n");
    display(tablaLocal);
+   printf("\n%d\n", variableglobal);
 
    /*Liberar recursos*/
    fclose(fp);
@@ -339,11 +370,10 @@ int main()
    {
       free(line);
    }
-   liberaTabla(tablaLocal);
-   liberaTabla(tablaGlobal);
+   liberaTablaLocal(tablaLocal);
+   liberaTablaGlobal(tablaGlobal);
    exit(EXIT_SUCCESS);
 }
-
 
 /*
 Funcion: declararGlobal
@@ -372,7 +402,6 @@ int declararLocal(char *id, int desc_id)
    return insert(tablaLocal, id, desc_id);
 }
 
-
 /*
 Funcion: usoLocal
 Desc: Usa variable local
@@ -386,24 +415,36 @@ dataItem *usoLocal(char *id)
 Funcion: declararFuncion
 Desc: Declara funcion global y abre ambito local
 */
-int declararFuncion(char* id, int desc_id){
+int declararFuncion(char *id, int desc_id)
+{
    int i;
-   if(search(tablaGlobal, id) == NULL){
+   if (search(tablaGlobal, id) == NULL)
+   {
+      /*Ambito global*/
       insert(tablaGlobal, id, desc_id);
-      if (tablaLocal!=NULL){
-         liberaTabla(tablaLocal);
+      /*Nuevo ambito local*/
+      if (tablaLocal != NULL)
+      {
+         liberaTablaLocal(tablaLocal);
       }
-      tablaLocal = malloc(sizeof(dataItem*) * SIZE);
-      for(i=0;i<SIZE;i++){
+      tablaLocal = malloc(sizeof(dataItem *) * SIZE);
+      variableglobal++;
+      if (tablaLocal == NULL){
+         fprintf(stderr, "ERROR MEMORIA\n");
+         exit(EXIT_FAILURE);
+      }
+      for (i = 0; i < SIZE; i++)
+      {
          tablaLocal[i] = NULL;
       }
       insert(tablaLocal, id, desc_id);
       return 1;
-   } else{
+   }
+   else
+   {
       return 0;
    }
 }
-
 
 /*
 
