@@ -3,7 +3,7 @@
 
 typedef struct _dataItem dataItem;
 
-int hashCode(char *key);
+int hash(char *key);
 dataItem *search(dataItem** tabla, char *key);
 void display(dataItem** tabla);
 int strsearch(char *string, char character);

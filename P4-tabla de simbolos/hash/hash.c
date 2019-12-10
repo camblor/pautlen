@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,17 +24,18 @@ dataItem **tablaLocal = NULL;
 int ambito = 0;
 dataItem *dummyItem;
 
-int hashCode(char *key)
+/*
+Funcion: hash
+Desc: Genera el hash de un string pasado como argumento.
+*/
+int hash(char *str)
 {
-   int sum = 0;
-   int i;
-   int length = strlen(key);
-
-   for (i = 0; i < length; i++)
-   {
-      sum += key[i];
-   }
-   return sum % SIZE;
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)){
+      hash = ((hash << 5) + hash) + c;
+    }
+    return hash % SIZE;
 }
 
 /*
@@ -43,7 +45,7 @@ Descripcion: Busca un elemento en la tabla hash pasada como argumento
 dataItem *search(dataItem **tabla, char *key)
 {
    /*get the hash*/
-   int hashIndex = hashCode(key);
+   int hashIndex = hash(key);
 
    /*printf("HASH = (\"%s\", %d)\n", key, hashIndex);*/
 
@@ -70,6 +72,7 @@ Descripcion: inserta un elemento en la tabla hash pasada como argumento
 */
 int insert(dataItem **tabla, char *key, int data)
 {
+   int hashIndex;
 
    dataItem *item = (dataItem *)malloc(sizeof(dataItem));
    item->key = malloc(strlen(key) * sizeof(char) + sizeof(char));
@@ -83,16 +86,16 @@ int insert(dataItem **tabla, char *key, int data)
       return 0;
    }
 
-   //get the hash
-   int hashIndex = hashCode(key);
+   /*get the hash*/
+   hashIndex = hash(key);
 
-   //move in array until an empty or deleted cell
+   /*move in array until an empty or deleted cell*/
    while (tabla[hashIndex] != NULL && (strcmp(tabla[hashIndex]->key, "") != 0))
    {
-      //go to next cell
+      /*go to next cell*/
       ++hashIndex;
 
-      //wrap around the table
+      /*wrap around the table*/
       hashIndex %= SIZE;
    }
 
@@ -109,10 +112,10 @@ dataItem *delete (dataItem **tabla, dataItem *item)
 {
    char *key = item->key;
 
-   //get the hash
-   int hashIndex = hashCode(key);
+   /*get the hash*/
+   int hashIndex = hash(key);
 
-   //move in array until an empty
+   /*move in array until an empty*/
    while (tabla[hashIndex] != NULL)
    {
 
@@ -120,15 +123,15 @@ dataItem *delete (dataItem **tabla, dataItem *item)
       {
          dataItem *temp = tabla[hashIndex];
 
-         //assign a dummy item at deleted position
+         /*assign a dummy item at deleted position*/
          tabla[hashIndex] = dummyItem;
          return temp;
       }
 
-      //go to next cell
+      /*go to next cell*/
       ++hashIndex;
 
-      //wrap around the table
+      /*wrap around the table*/
       hashIndex %= SIZE;
    }
 
@@ -201,7 +204,7 @@ int checkFuncion(char *string)
    int len = strlen(string);
    int i;
 
-   for (i = 0; i < len; i < i++)
+   for (i = 0; i < len; i++)
    {
       if (
           i + 6 < len &&
@@ -224,7 +227,7 @@ int checkCierre(char *string)
    int len = strlen(string);
    int i;
 
-   for (i = 0; i < len; i < i++)
+   for (i = 0; i < len; i++)
    {
       if (
           i + 5 < len &&
@@ -245,6 +248,7 @@ int checkCierre(char *string)
 int main()
 {
    /*Variables*/
+   int i;
    FILE *fp;
    char *line = NULL;
    size_t len = 0;
@@ -269,7 +273,7 @@ int main()
       {
          /* Se sacan ambos valores */
          test = strtok(line, " ");
-         int i = 0;
+         i = 0;
          while (test != NULL)
          {
             if (i == 0)
@@ -365,7 +369,7 @@ Desc: Declara variable local
 */
 int declararLocal(char *id, int desc_id)
 {
-   insert(tablaLocal, id, desc_id);
+   return insert(tablaLocal, id, desc_id);
 }
 
 
@@ -394,8 +398,6 @@ int declararFuncion(char* id, int desc_id){
          tablaLocal[i] = NULL;
       }
       insert(tablaLocal, id, desc_id);
-
-      //INICIALIZA LOCAL
       return 1;
    } else{
       return 0;

@@ -5,6 +5,7 @@
 #include <string.h>
 #include "hash.h"
 
+#define _GNU_SOURCE
 #define SIZE 100
 
 int main()
