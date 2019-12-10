@@ -278,6 +278,9 @@ int procesar(char *input)
    char *test = NULL;
    char *dato = NULL;
    char *valor = NULL;
+   dataItem* result1 = NULL;
+   dataItem* result2 = NULL;
+
 
    /*Abrimos el fichero*/
    fp = fopen(input, "r");
@@ -296,7 +299,7 @@ int procesar(char *input)
    {
 
       /* Si en la linea hay un espacio (2 columnas) */
-      if (strsearch(line, ' '))
+      if (strsearch(line, ' ') && strlen(line) > 0)
       {
          /* Se sacan ambos valores */
          test = strtok(line, " ");
@@ -331,7 +334,7 @@ int procesar(char *input)
          }
          else if (checkCierre(dato))
          {
-            fprintf(output, "CIERRE\n");
+            fprintf(output, "cierre\n");
             ambito = 2;
          }
 
@@ -364,19 +367,32 @@ int procesar(char *input)
          } else if (ambito == 3){
             ambito = 1;
          }
-         printf("DECLARACION\n");
       }
       /* Si no hay (son solo búsquedas)*/
-      else {
-         printf("BUSQUEDA\n");
-         fprintf(output, "BUSQUEDA\n");
+      else if (strlen(line) > 0){
+         line[strlen(line)-1] = 0;
+         line[strlen(line)-1] = 0;
+         
+         if(tablaLocal != NULL){
+            result1 =search(tablaLocal, line);   
+         }
+         result2 = search(tablaGlobal, line);
+         if(result1 != NULL){
+            fprintf(output, "%s %d\n", line, result1->data);
+         } else if (result2 != NULL){
+            fprintf(output, "%s %d\n", line, result2->data);
+         } else if (strlen(line)>0){
+            fprintf(output, "%s -1\n", line);
+         }
 
       }
    }
 
+   /*
    display(tablaGlobal);
    printf("--------------------------\n");
    display(tablaLocal);
+   */
 
    /*Liberar recursos*/
    fclose(fp);
