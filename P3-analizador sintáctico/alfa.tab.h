@@ -66,7 +66,8 @@ extern int yydebug;
     TOK_FALSE = 276,
     TOK_IDENTIFICADOR = 277,
     TOK_CONSTANTE_ENTERA = 278,
-    left = 279
+    TOK_ERROR = 279,
+    left = 280
   };
 #endif
 
@@ -75,13 +76,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "alfa.y" /* yacc.c:1909  */
+#line 18 "alfa.y" /* yacc.c:1909  */
 
- char* cadena;
+ char cadena[100];
  int numero;
  
 
-#line 85 "alfa.tab.h" /* yacc.c:1909  */
+#line 86 "alfa.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

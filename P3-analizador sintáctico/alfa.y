@@ -6,6 +6,7 @@
 
   void yyerror(const char *error);
   extern int linea ,columna;
+  extern int error;
   extern FILE *yyin;
   extern FILE *salida;
   extern int yylex();
@@ -47,7 +48,7 @@
 left TOK_OR TOK_AND
 %left TOK_DISTINTO TOK_IGUAL
 %left '<' '>' TOK_MAYORIGUAL TOK_MENORIGUAL
-%left '!'
+%right '!'
 %start programa
 
 %%
@@ -387,9 +388,9 @@ digito: TOK_CONSTANTE_ENTERA
 %%
 
 
-void yyerror(const char * error) {
-    if(!error) {
-        printf("****Error sintactico en [linea %d, columna %d]\n", linea, columna);
+void yyerror(const char * perror) {
+    if(error==0) {
+        printf("****Error sintactico en [lin %d, col %d]\n", linea, columna-1);
     }
     error = 0;
 }
