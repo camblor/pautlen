@@ -14,8 +14,7 @@ SALIDAS = misalida_sin_1.txt misalida_sin_2.txt misalida_sin_3.txt
 EJEC = pruebaSintactico
 ######################################################
 
-all: pruebaSintactico
-pruebas: prueba1 prueba2 prueba3
+all: pruebaSintactico misalida
 
 pruebaSintactico: pruebaSintactico.o y.tab.o lex.yy.o
 	 $(CC) $(CFLAGS) -o $@ $^
@@ -24,7 +23,7 @@ pruebaSintactico.o: pruebaSintactico.c y.tab.c
 	$(CC) -c $(CFLAGS) $<
 
 lex.yy.o: lex.yy.c y.tab.c
-		$(CC) -c -lfl $(CFLAGS) $<
+	$(CC) -c -lfl $(CFLAGS) $<
 
 lex.yy.c: alfa.l
 	flex $^
@@ -45,17 +44,6 @@ misalida_sin_2.txt: pruebaSintactico
 
 misalida_sin_3.txt: pruebaSintactico
 	./$^ $(PRUEBAS)entrada_sin_3.txt $(PRUEBAS)$@
-
-tests: test1 test2 test3
-
-test1: misalida_sin_1.txt
-	diff -bB $(PRUEBAS)salida_sin_1.txt $(PRUEBAS)$^
-
-test2: misalida_sin_2.txt
-	diff -bB $(PRUEBAS)salida_sin_2.txt $(PRUEBAS)$^
-
-test3: misalida_sin_3.txt
-	diff -bB $(PRUEBAS)salida_sin_3.txt $(PRUEBAS)$^
 
 .PHONY : clean
 	clean:

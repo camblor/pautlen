@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "y.tab.h"
+#include "../inc/alfa.h"
+#include "../inc/y.tab.h"
 
 FILE *yyin;
 FILE *salida;
 int error = 0;
+
 int linea = 1;
 int columna = 1;
 bool longitud = false;
