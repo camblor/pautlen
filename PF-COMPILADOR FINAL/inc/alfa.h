@@ -11,7 +11,6 @@ typedef struct {
   int valor_entero;
   int es_direccion;
   int etiqueta;
-  char cadena[100];
   int numero;
 }tipo_atributos;
 

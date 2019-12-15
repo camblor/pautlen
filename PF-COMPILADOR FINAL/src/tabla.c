@@ -20,7 +20,7 @@ struct _dataItem
 };
 
 int hash(char *lexema);
-void display(dataItem **tabla);
+
 int strsearch(char *string, char character);
 
 

@@ -13,7 +13,7 @@ LFLAGS   =  -I. -lm
 SRCDIR   = src
 OBJDIR   = obj
 BINDIR   = bin
-INCDIR   = bin
+INCDIR   = inc
 
 rm       = rm -f
 
@@ -51,6 +51,7 @@ y.tab.c: $(SRCDIR)/alfa.y
 .PHONY: clean
 clean:
 	@$(rm) $(OBJDIR)/*
+	@$(rm) hola.txt sintactico
 	@echo "Cleanup complete!"
 
 .PHONY: remove

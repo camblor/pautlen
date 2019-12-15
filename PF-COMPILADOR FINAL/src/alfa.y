@@ -79,6 +79,10 @@ programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
         {
           fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");
           tablaGlobal = tablaInit();
+          if (tablaGlobal){
+            insertaElemento(tablaGlobal, "lmfao", 22);
+            display(tablaGlobal);
+          }
         }
 
 
