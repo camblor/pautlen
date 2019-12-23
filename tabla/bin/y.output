@@ -8,7 +8,7 @@ Grammar
 
     0 $accept: programa $end
 
-    1 programa: TOK_MAIN '{' declaraciones escritura1 funciones escritura2 sentencias '}'
+    1 programa: TOK_MAIN '{' escritura1 declaraciones funciones escritura2 sentencias '}'
 
     2 escritura1: %empty
 
@@ -251,7 +251,7 @@ State 0
 
 State 1
 
-    1 programa: TOK_MAIN . '{' declaraciones escritura1 funciones escritura2 sentencias '}'
+    1 programa: TOK_MAIN . '{' escritura1 declaraciones funciones escritura2 sentencias '}'
 
     '{'  shift, and go to state 3
 
@@ -265,18 +265,11 @@ State 2
 
 State 3
 
-    1 programa: TOK_MAIN '{' . declaraciones escritura1 funciones escritura2 sentencias '}'
+    1 programa: TOK_MAIN '{' . escritura1 declaraciones funciones escritura2 sentencias '}'
 
-    TOK_ARRAY    shift, and go to state 5
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    $default  reduce using rule 2 (escritura1)
 
-    declaraciones  go to state 8
-    declaracion    go to state 9
-    clase          go to state 10
-    clase_escalar  go to state 11
-    tipo           go to state 12
-    clase_vector   go to state 13
+    escritura1  go to state 5
 
 
 State 4
@@ -288,261 +281,254 @@ State 4
 
 State 5
 
-   12 clase_vector: TOK_ARRAY . tipo '[' TOK_CONSTANTE_ENTERA ']'
+    1 programa: TOK_MAIN '{' escritura1 . declaraciones funciones escritura2 sentencias '}'
 
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    TOK_ARRAY    shift, and go to state 6
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
 
-    tipo  go to state 14
+    declaraciones  go to state 9
+    declaracion    go to state 10
+    clase          go to state 11
+    clase_escalar  go to state 12
+    tipo           go to state 13
+    clase_vector   go to state 14
 
 
 State 6
+
+   12 clase_vector: TOK_ARRAY . tipo '[' TOK_CONSTANTE_ENTERA ']'
+
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
+
+    tipo  go to state 15
+
+
+State 7
 
    10 tipo: TOK_INT .
 
     $default  reduce using rule 10 (tipo)
 
 
-State 7
+State 8
 
    11 tipo: TOK_BOOLEAN .
 
     $default  reduce using rule 11 (tipo)
 
 
-State 8
-
-    1 programa: TOK_MAIN '{' declaraciones . escritura1 funciones escritura2 sentencias '}'
-
-    $default  reduce using rule 2 (escritura1)
-
-    escritura1  go to state 15
-
-
 State 9
 
-    4 declaraciones: declaracion .
-    5              | declaracion . declaraciones
+    1 programa: TOK_MAIN '{' escritura1 declaraciones . funciones escritura2 sentencias '}'
 
-    TOK_ARRAY    shift, and go to state 5
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    TOK_FUNCTION  shift, and go to state 16
 
-    $default  reduce using rule 4 (declaraciones)
+    $default  reduce using rule 16 (funciones)
 
-    declaraciones  go to state 16
-    declaracion    go to state 9
-    clase          go to state 10
-    clase_escalar  go to state 11
-    tipo           go to state 12
-    clase_vector   go to state 13
+    funciones  go to state 17
+    funcion    go to state 18
 
 
 State 10
 
-    6 declaracion: clase . identificadores ';'
+    4 declaraciones: declaracion .
+    5              | declaracion . declaraciones
 
-    TOK_IDENTIFICADOR  shift, and go to state 17
+    TOK_ARRAY    shift, and go to state 6
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
 
-    identificadores  go to state 18
-    identificador    go to state 19
+    $default  reduce using rule 4 (declaraciones)
+
+    declaraciones  go to state 19
+    declaracion    go to state 10
+    clase          go to state 11
+    clase_escalar  go to state 12
+    tipo           go to state 13
+    clase_vector   go to state 14
 
 
 State 11
+
+    6 declaracion: clase . identificadores ';'
+
+    TOK_IDENTIFICADOR  shift, and go to state 20
+
+    identificadores  go to state 21
+    identificador    go to state 22
+
+
+State 12
 
     7 clase: clase_escalar .
 
     $default  reduce using rule 7 (clase)
 
 
-State 12
+State 13
 
     9 clase_escalar: tipo .
 
     $default  reduce using rule 9 (clase_escalar)
 
 
-State 13
+State 14
 
     8 clase: clase_vector .
 
     $default  reduce using rule 8 (clase)
 
 
-State 14
+State 15
 
    12 clase_vector: TOK_ARRAY tipo . '[' TOK_CONSTANTE_ENTERA ']'
 
-    '['  shift, and go to state 20
-
-
-State 15
-
-    1 programa: TOK_MAIN '{' declaraciones escritura1 . funciones escritura2 sentencias '}'
-
-    TOK_FUNCTION  shift, and go to state 21
-
-    $default  reduce using rule 16 (funciones)
-
-    funciones  go to state 22
-    funcion    go to state 23
+    '['  shift, and go to state 23
 
 
 State 16
+
+   17 funcion: TOK_FUNCTION . tipo identificador '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
+
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
+
+    tipo  go to state 24
+
+
+State 17
+
+    1 programa: TOK_MAIN '{' escritura1 declaraciones funciones . escritura2 sentencias '}'
+
+    $default  reduce using rule 3 (escritura2)
+
+    escritura2  go to state 25
+
+
+State 18
+
+   15 funciones: funcion . funciones
+
+    TOK_FUNCTION  shift, and go to state 16
+
+    $default  reduce using rule 16 (funciones)
+
+    funciones  go to state 26
+    funcion    go to state 18
+
+
+State 19
 
     5 declaraciones: declaracion declaraciones .
 
     $default  reduce using rule 5 (declaraciones)
 
 
-State 17
+State 20
 
    73 identificador: TOK_IDENTIFICADOR .
 
     $default  reduce using rule 73 (identificador)
 
 
-State 18
+State 21
 
     6 declaracion: clase identificadores . ';'
 
-    ';'  shift, and go to state 24
-
-
-State 19
-
-   13 identificadores: identificador .
-   14                | identificador . ',' identificadores
-
-    ','  shift, and go to state 25
-
-    $default  reduce using rule 13 (identificadores)
-
-
-State 20
-
-   12 clase_vector: TOK_ARRAY tipo '[' . TOK_CONSTANTE_ENTERA ']'
-
-    TOK_CONSTANTE_ENTERA  shift, and go to state 26
-
-
-State 21
-
-   17 funcion: TOK_FUNCTION . tipo identificador '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
-
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
-
-    tipo  go to state 27
+    ';'  shift, and go to state 27
 
 
 State 22
 
-    1 programa: TOK_MAIN '{' declaraciones escritura1 funciones . escritura2 sentencias '}'
+   13 identificadores: identificador .
+   14                | identificador . ',' identificadores
 
-    $default  reduce using rule 3 (escritura2)
+    ','  shift, and go to state 28
 
-    escritura2  go to state 28
+    $default  reduce using rule 13 (identificadores)
 
 
 State 23
 
-   15 funciones: funcion . funciones
+   12 clase_vector: TOK_ARRAY tipo '[' . TOK_CONSTANTE_ENTERA ']'
 
-    TOK_FUNCTION  shift, and go to state 21
-
-    $default  reduce using rule 16 (funciones)
-
-    funciones  go to state 29
-    funcion    go to state 23
+    TOK_CONSTANTE_ENTERA  shift, and go to state 29
 
 
 State 24
 
-    6 declaracion: clase identificadores ';' .
+   17 funcion: TOK_FUNCTION tipo . identificador '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
 
-    $default  reduce using rule 6 (declaracion)
+    TOK_IDENTIFICADOR  shift, and go to state 20
+
+    identificador  go to state 30
 
 
 State 25
 
-   14 identificadores: identificador ',' . identificadores
+    1 programa: TOK_MAIN '{' escritura1 declaraciones funciones escritura2 . sentencias '}'
 
-    TOK_IDENTIFICADOR  shift, and go to state 17
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
-    identificadores  go to state 30
-    identificador    go to state 19
+    sentencias        go to state 37
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
 State 26
-
-   12 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA . ']'
-
-    ']'  shift, and go to state 31
-
-
-State 27
-
-   17 funcion: TOK_FUNCTION tipo . identificador '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
-
-    TOK_IDENTIFICADOR  shift, and go to state 17
-
-    identificador  go to state 32
-
-
-State 28
-
-    1 programa: TOK_MAIN '{' declaraciones escritura1 funciones escritura2 . sentencias '}'
-
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
-
-    sentencias        go to state 39
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
-
-
-State 29
 
    15 funciones: funcion funciones .
 
     $default  reduce using rule 15 (funciones)
 
 
+State 27
+
+    6 declaracion: clase identificadores ';' .
+
+    $default  reduce using rule 6 (declaracion)
+
+
+State 28
+
+   14 identificadores: identificador ',' . identificadores
+
+    TOK_IDENTIFICADOR  shift, and go to state 20
+
+    identificadores  go to state 48
+    identificador    go to state 22
+
+
+State 29
+
+   12 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA . ']'
+
+    ']'  shift, and go to state 49
+
+
 State 30
-
-   14 identificadores: identificador ',' identificadores .
-
-    $default  reduce using rule 14 (identificadores)
-
-
-State 31
-
-   12 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA ']' .
-
-    $default  reduce using rule 12 (clase_vector)
-
-
-State 32
 
    17 funcion: TOK_FUNCTION tipo identificador . '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
 
     '('  shift, and go to state 50
 
 
-State 33
+State 31
 
    35 asignacion: TOK_IDENTIFICADOR . '=' exp
    37 elemento_vector: TOK_IDENTIFICADOR . '[' exp ']'
@@ -551,7 +537,7 @@ State 33
     '='  shift, and go to state 52
 
 
-State 34
+State 32
 
    43 retorno_funcion: TOK_RETURN . exp
 
@@ -571,14 +557,14 @@ State 34
     constante_entera  go to state 65
 
 
-State 35
+State 33
 
    41 lectura: TOK_SCANF . TOK_IDENTIFICADOR
 
     TOK_IDENTIFICADOR  shift, and go to state 66
 
 
-State 36
+State 34
 
    42 escritura: TOK_PRINTF . exp
 
@@ -598,7 +584,7 @@ State 36
     constante_entera  go to state 65
 
 
-State 37
+State 35
 
    38 condicional: TOK_IF . '(' exp ')' '{' sentencias '}'
    39            | TOK_IF . '(' exp ')' '{' sentencias '}' TOK_ELSE '{' sentencias '}'
@@ -606,116 +592,130 @@ State 37
     '('  shift, and go to state 68
 
 
-State 38
+State 36
 
    40 bucle: TOK_WHILE . '(' exp ')' '{' sentencias '}'
 
     '('  shift, and go to state 69
 
 
-State 39
+State 37
 
-    1 programa: TOK_MAIN '{' declaraciones escritura1 funciones escritura2 sentencias . '}'
+    1 programa: TOK_MAIN '{' escritura1 declaraciones funciones escritura2 sentencias . '}'
 
     '}'  shift, and go to state 70
 
 
-State 40
+State 38
 
    25 sentencias: sentencia .
    26           | sentencia . sentencias
 
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
     $default  reduce using rule 25 (sentencias)
 
     sentencias        go to state 71
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
-State 41
+State 39
 
    27 sentencia: sentencia_simple . ';'
 
     ';'  shift, and go to state 72
 
 
-State 42
+State 40
 
    28 sentencia: bloque .
 
     $default  reduce using rule 28 (sentencia)
 
 
-State 43
+State 41
 
    29 sentencia_simple: asignacion .
 
     $default  reduce using rule 29 (sentencia_simple)
 
 
-State 44
+State 42
 
    36 asignacion: elemento_vector . '=' exp
 
     '='  shift, and go to state 73
 
 
-State 45
+State 43
 
    33 bloque: condicional .
 
     $default  reduce using rule 33 (bloque)
 
 
-State 46
+State 44
 
    34 bloque: bucle .
 
     $default  reduce using rule 34 (bloque)
 
 
-State 47
+State 45
 
    30 sentencia_simple: lectura .
 
     $default  reduce using rule 30 (sentencia_simple)
 
 
-State 48
+State 46
 
    31 sentencia_simple: escritura .
 
     $default  reduce using rule 31 (sentencia_simple)
 
 
-State 49
+State 47
 
    32 sentencia_simple: retorno_funcion .
 
     $default  reduce using rule 32 (sentencia_simple)
 
 
+State 48
+
+   14 identificadores: identificador ',' identificadores .
+
+    $default  reduce using rule 14 (identificadores)
+
+
+State 49
+
+   12 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA ']' .
+
+    $default  reduce using rule 12 (clase_vector)
+
+
 State 50
 
    17 funcion: TOK_FUNCTION tipo identificador '(' . parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
 
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
 
     $default  reduce using rule 19 (parametros_funcion)
 
@@ -1006,7 +1006,7 @@ State 69
 
 State 70
 
-    1 programa: TOK_MAIN '{' declaraciones escritura1 funciones escritura2 sentencias '}' .
+    1 programa: TOK_MAIN '{' escritura1 declaraciones funciones escritura2 sentencias '}' .
 
     $default  reduce using rule 1 (programa)
 
@@ -1587,8 +1587,8 @@ State 100
 
    20 resto_parametros_funcion: ';' . parametro_funcion resto_parametros_funcion
 
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
 
     tipo               go to state 74
     parametro_funcion  go to state 121
@@ -1964,18 +1964,18 @@ State 120
 
    17 funcion: TOK_FUNCTION tipo identificador '(' parametros_funcion ')' '{' . declaraciones_funcion sentencias '}'
 
-    TOK_ARRAY    shift, and go to state 5
-    TOK_INT      shift, and go to state 6
-    TOK_BOOLEAN  shift, and go to state 7
+    TOK_ARRAY    shift, and go to state 6
+    TOK_INT      shift, and go to state 7
+    TOK_BOOLEAN  shift, and go to state 8
 
     $default  reduce using rule 24 (declaraciones_funcion)
 
     declaraciones          go to state 127
-    declaracion            go to state 9
-    clase                  go to state 10
-    clase_escalar          go to state 11
-    tipo                   go to state 12
-    clase_vector           go to state 13
+    declaracion            go to state 10
+    clase                  go to state 11
+    clase_escalar          go to state 12
+    tipo                   go to state 13
+    clase_vector           go to state 14
     declaraciones_funcion  go to state 128
 
 
@@ -2029,48 +2029,48 @@ State 125
    38 condicional: TOK_IF '(' exp ')' '{' . sentencias '}'
    39            | TOK_IF '(' exp ')' '{' . sentencias '}' TOK_ELSE '{' sentencias '}'
 
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
     sentencias        go to state 131
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
 State 126
 
    40 bucle: TOK_WHILE '(' exp ')' '{' . sentencias '}'
 
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
     sentencias        go to state 132
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
 State 127
@@ -2084,24 +2084,24 @@ State 128
 
    17 funcion: TOK_FUNCTION tipo identificador '(' parametros_funcion ')' '{' declaraciones_funcion . sentencias '}'
 
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
     sentencias        go to state 133
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
 State 129
@@ -2210,24 +2210,24 @@ State 139
 
    39 condicional: TOK_IF '(' exp ')' '{' sentencias '}' TOK_ELSE '{' . sentencias '}'
 
-    TOK_IDENTIFICADOR  shift, and go to state 33
-    TOK_RETURN         shift, and go to state 34
-    TOK_SCANF          shift, and go to state 35
-    TOK_PRINTF         shift, and go to state 36
-    TOK_IF             shift, and go to state 37
-    TOK_WHILE          shift, and go to state 38
+    TOK_IDENTIFICADOR  shift, and go to state 31
+    TOK_RETURN         shift, and go to state 32
+    TOK_SCANF          shift, and go to state 33
+    TOK_PRINTF         shift, and go to state 34
+    TOK_IF             shift, and go to state 35
+    TOK_WHILE          shift, and go to state 36
 
     sentencias        go to state 140
-    sentencia         go to state 40
-    sentencia_simple  go to state 41
-    bloque            go to state 42
-    asignacion        go to state 43
-    elemento_vector   go to state 44
-    condicional       go to state 45
-    bucle             go to state 46
-    lectura           go to state 47
-    escritura         go to state 48
-    retorno_funcion   go to state 49
+    sentencia         go to state 38
+    sentencia_simple  go to state 39
+    bloque            go to state 40
+    asignacion        go to state 41
+    elemento_vector   go to state 42
+    condicional       go to state 43
+    bucle             go to state 44
+    lectura           go to state 45
+    escritura         go to state 46
+    retorno_funcion   go to state 47
 
 
 State 140
