@@ -65,6 +65,9 @@
 %type <atributos> identificador
 %type <atributos> if_exp
 %type <atributos> if_exp_sentencias
+%type <atributos> while_exp_sentencias
+%type <atributos> while_exp
+%type <atributos> while
 
 
 
@@ -313,9 +316,32 @@ if_exp: TOK_IF '(' exp ')' '{'
           }
         }
 
-bucle: TOK_WHILE '('exp')' '{'sentencias'}'
+bucle: while_exp_sentencias
         {
           fprintf(salida, ";R52:\t<bucle> ::= while (<exp>) {<sentencias>}\n");
+        }
+
+while_exp_sentencias: while_exp sentencias '}'
+        {
+          $$.etiqueta = $1.etiqueta;
+          while_fin(salida, $1.etiqueta);
+        }
+
+while_exp: while '(' exp ')' '{'
+        {
+          if($3.tipo != BOOLEAN){
+            printf("ERROR - bucle de no-booleanos\n");
+          }
+          else {
+            $$.etiqueta = $1.etiqueta;
+            while_exp_pila(salida, $3.es_direccion, $$.etiqueta);
+          }
+        }
+
+while: TOK_WHILE
+        {
+          $$.etiqueta = etiqueta++;
+          while_inicio(salida, $$.etiqueta);
         }
 
 lectura: TOK_SCANF TOK_IDENTIFICADOR

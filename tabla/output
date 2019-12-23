@@ -19,39 +19,8 @@ main:
 	push dword _x2
 	call scan_int
 	add esp, 4
-;D:	+
-	push dword _x1
-	push dword _x2
-	pop dword ebx
-	pop dword eax
-	mov dword eax, [eax]
-	mov dword ebx, [ebx]
-	add eax, ebx
-	push dword eax
-;D:	==
-	push dword _x1
-	push dword _x2
-	pop dword edx
-	pop dword eax
-	mov dword edx, [edx]
-	mov dword eax, [eax]
-	cmp eax, edx
-	je igual0
-	push dword 0
-	jmp fin_igual0
-igual0:
-	push dword 1
-fin_igual0:
-	pop dword eax
-	mov [_y1], eax 
-	push dword _y1
-	pop dword eax
-	mov eax, [eax]
-	push dword eax
-	call print_boolean
-	add esp, 4
-	call print_endofline
-;D:	if
+;D:	while
+inicio_while0:
 ;D:	==
 	push dword _x1
 	push dword _x2
@@ -66,8 +35,9 @@ fin_igual0:
 igual1:
 	push dword 1
 fin_igual1:
-	jmp near fin_ifelse2
-fin_then2:
+	pop eax
+	cmp eax, 0
+	je near fin_while0
 	push dword _x1
 	pop dword eax
 	mov eax, [eax]
@@ -75,16 +45,14 @@ fin_then2:
 	call print_int
 	add esp, 4
 	call print_endofline
-fin_ifelse2:
-;D:	else
 	push dword _x2
 	pop dword eax
 	mov eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-;R40:	<bloque> ::= <condicional>
+	mov [_x1], eax
+	jmp near inicio_while0
+fin_while0:
+;R52:	<bucle> ::= while (<exp>) {<sentencias>}
+;R41:	<bloque> ::= <bucle>
 	jmp fin
 fin_indice_fuera_rango:
 	push dword err_index
