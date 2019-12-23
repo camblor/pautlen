@@ -1671,7 +1671,7 @@ yyreduce:
 
           else{
             (yyvsp[-2].atributos).valor_entero = (yyvsp[0].atributos).valor_entero;          
-            asignar(salida, (yyvsp[-2].atributos).lexema, 0);            
+            asignar(salida, (yyvsp[-2].atributos).lexema, (yyvsp[0].atributos).es_direccion);
           }
 
           
@@ -1873,7 +1873,7 @@ yyreduce:
             (yyval.atributos).tipo = itemActual->data->tipo;
             (yyval.atributos).es_direccion = 1;
             (yyval.atributos).valor_entero = (yyvsp[0].atributos).valor_entero;
-            
+
 
             /* Asignamos valor */
             printf("metido %s\n", (yyvsp[0].atributos).lexema);

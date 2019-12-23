@@ -264,7 +264,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
           else{
             $1.valor_entero = $3.valor_entero;          
-            asignar(salida, $1.lexema, 0);            
+            asignar(salida, $1.lexema, $3.es_direccion);
           }
 
           
@@ -405,7 +405,7 @@ exp: exp '+' exp
             $$.tipo = itemActual->data->tipo;
             $$.es_direccion = 1;
             $$.valor_entero = $1.valor_entero;
-            
+
 
             /* Asignamos valor */
             printf("metido %s\n", $1.lexema);

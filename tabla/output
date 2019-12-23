@@ -17,7 +17,8 @@ main:
 	mov [_x], eax 
 	push dword _x
 	pop dword eax
-	mov [_res], eax 
+	mov eax, [eax]
+	mov [_res], eax
 	push dword _res
 	pop dword eax
 	mov eax, [eax]
