@@ -232,9 +232,33 @@ bloque: condicional
 asignacion: TOK_IDENTIFICADOR '=' exp
         {
           /*fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");*/
-          if(buscaElemento(tablaGlobal, $1.lexema) != NULL){
-            $1.valor_entero = $3.valor_entero;
+          itemActual = buscaElemento(tablaGlobal, $1.lexema);
+          if(itemActual == NULL){
+            printf("ERROR itemActual == NULL\n");
           }
+
+          if (itemActual->data->categoria == 3){
+            printf("ERROR itemActual->data->categoria == 3\n");
+          }
+
+          if(itemActual->data->clase == VECTOR){
+            printf("ERROR itemActual->data->clase == VECTOR\n");
+          }
+
+          if(itemActual->data->tipo != $3.tipo){
+            printf("ERROR itemActual->data->tipo != $3.tipo\n");
+          }
+
+          $1.valor_entero = $3.valor_entero;
+          
+          /* 
+          Generar el código para 
+          desapilar la parte derecha de la asignación:   pop dword eax
+          si la expresión es una dirección ($3.es_direccion == 1) (una variable) 
+          Acceder a memoria por el valor adecuado: mov dword eax , [eax]
+          realizar la asignación :    mov dword [$1.lexema], eax
+          */
+
         }
         |elemento_vector '=' exp
         {
@@ -364,24 +388,31 @@ exp: exp '+' exp
         }
         |constante
         {
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
           /*fprintf(salida, ";R81:\t<exp> ::= <constante>\n");*/
         }
         |'('exp')'
         {
-          fprintf(salida, ";R82:\t<exp> ::= (<exp>)\n");
-          $$.valor_entero = $2.valor_entero;
+          /*fprintf(salida, ";R82:\t<exp> ::= (<exp>)\n");*/
+          $$.tipo = $2.tipo;
+          $$.es_direccion = $2.es_direccion;
         }
         |comparacion
         {
-          fprintf(salida, ";R83:\t<exp> ::= <comparacion>\n");
+          /*fprintf(salida, ";R83:\t<exp> ::= <comparacion>\n");*/
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
         }
         |elemento_vector
         {
-          fprintf(salida, ";R85:\t<exp> ::= <elemento_vector>\n");
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
+          /*fprintf(salida, ";R85:\t<exp> ::= <elemento_vector>\n");*/
         }
         |TOK_IDENTIFICADOR '('lista_expresiones')'
         {
-          fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");
+          /*fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");*/
         }
 
 lista_expresiones: exp resto_lista_expresiones
@@ -427,21 +458,35 @@ comparacion: exp TOK_IGUAL exp
           fprintf(salida, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
         }
 
-constante: constante_logica | constante_entera
+constante: constante_logica
+        {
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
+        } 
+        | constante_entera
+        {
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
+        }
 
 constante_logica: TOK_TRUE
         {
-          fprintf(salida, ";R102:\t<constante_logica> ::= true\n");
+          $$.tipo = BOOLEAN;
+          $$.es_direccion = 0;
         }
         |TOK_FALSE
         {
-          fprintf(salida, ";R103:\t<constante_logica> ::= false\n");
+          $$.tipo = BOOLEAN;
+          $$.es_direccion = 0;
         }
 
 constante_entera: TOK_CONSTANTE_ENTERA
         {
           /* Sintesis del valor */
           $$.valor_entero = $1.valor_entero;
+          $$.tipo = INT;
+          $$.es_direccion = 0;
+          /*TODO: CONSTANTE A NASM*/
         }
 
 identificador: TOK_IDENTIFICADOR
