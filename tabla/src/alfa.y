@@ -71,7 +71,8 @@
 %type <atributos> while_exp_sentencias
 %type <atributos> while_exp
 %type <atributos> while
-
+%type <atributos> fn_declaration
+%type <atributos> fn_name
 
 
 %token TOK_MAIN
@@ -191,9 +192,64 @@ funciones: funcion funciones
           /*fprintf(salida, ";R21:\t<funciones> ::= \n");*/
         }
 
-funcion: TOK_FUNCTION tipo identificador '('parametros_funcion')' '{'declaraciones_funcion sentencias'}'
+funcion: fn_declaration sentencias '}'
         {
           fprintf(salida, ";R22:\t<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}\n");
+          vaciar(tablaActual);
+          tablaActual = tablaGlobal;
+          itemActual = buscaElemento(tablaActual, $1.lexema);
+
+          if(itemActual == NULL){
+            printf("ERROR - No creo que sea posible pero compruebo\n");
+          }
+
+          itemActual->data->num_parametros = num_parametros_actual;
+        }
+
+
+fn_declaration : fn_name '('parametros_funcion ')' '{' declaraciones_funcion 
+        {
+          itemActual = buscaElemento(tablaActual, $1.lexema);
+
+          if(itemActual == NULL){
+            printf("ERROR - No creo que sea posible pero compruebo\n");
+          }
+          itemActual->data->num_parametros = num_parametros_actual;
+          strcpy($$.lexema, $1.lexema);
+
+          declararFuncion(salida, $1.lexema, num_variables_locales_actual);
+        }
+
+fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
+        {
+          itemActual = buscaElemento(tablaActual, $3.lexema);
+
+          if(itemActual != NULL){
+            printf("ERROR - YA EXISTE IDENTIFICADOR\n");
+          }
+          else{
+            strcpy($$.lexema, $3.lexema);
+            categoria_actual = FUNCION;
+            clase_actual = ESCALAR;
+            num_variables_locales_actual = 0;
+            pos_variable_local_actual = 1;
+            num_parametros_actual = 0;
+            pos_parametro_actual = 0;
+
+            infoActual = malloc(sizeof(datainfo));
+            infoActual->categoria = categoria_actual;
+            infoActual->clase = clase_actual;
+            infoActual->tipo = tipo_actual;
+            infoActual->tamanio_vector = tamanio_vector_actual;
+            infoActual->num_variables_locales = num_variables_locales_actual;
+            infoActual->pos_variable_local = pos_variable_local_actual;
+            infoActual->num_parametros = num_parametros_actual;
+            infoActual->pos_parametro = pos_parametro_actual;
+
+            insertaElemento(tablaActual, $3.lexema, infoActual);
+            tablaActual = tablaLocal;
+            insertaElemento(tablaActual, $3.lexema, infoActual);
+          }
         }
 
 parametros_funcion: parametro_funcion resto_parametros_funcion

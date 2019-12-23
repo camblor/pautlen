@@ -33,5 +33,6 @@ int declararLocal(dataItem** tablaLocal, char *id, datainfo *desc_id);
 dataItem *usoLocal(dataItem** tablaLocal, char *id);
 int tablaDeclararFuncion(dataItem** tablaGlobal, dataItem** tablaLocal, char *id, datainfo *desc_id);
 void display(dataItem **tabla);
+void vaciar(dataItem **tabla);
 
 #endif
