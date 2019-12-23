@@ -95,9 +95,8 @@
 
 programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
         {
-          /*fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");*/
+          /* Final del fichero */
           escribir_fin(salida);
-          
         }
 
 
@@ -115,39 +114,33 @@ declaracion: clase identificadores ';'
           /*fprintf(salida, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");*/
         }
 
-clase: clase_escalar
-        {
-          /*fprintf(salida, ";R5:\t<clase> ::= <clase_escalar>\n");*/
-          
-        }
-        |clase_vector
-        {
-          fprintf(salida, ";R6:\t<clase> ::= <clase_vector>\n");
-        }
+clase: clase_escalar | clase_vector
 
 clase_escalar: tipo
         {
+          /* Obtenemos clase */
           clase_actual = ESCALAR;
-          /*fprintf(salida, ";R9:\t<clase_escalar> ::= <tipo>\n");*/
+          /* Tipo se obtiene en tipo */
         }
 
 tipo: TOK_INT
         {
+          /* Obtenemos tipo */
           tipo_actual = INT;
-          /*fprintf(salida, ";R10:\t<tipo> ::= int\n");*/
         }
         |TOK_BOOLEAN
         {
+          /* Obtenemos tipo */
           tipo_actual = BOOLEAN;
-          fprintf(salida, ";R11:\t<tipo> ::= boolean\n");
         }
 
 clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
         {
+          /* Obtenemos clase */
           clase_actual = VECTOR;
-          tamanio_vector_actual = $4.valor_entero;
-          fprintf(salida, ";R15:\t<clase_vector> ::= array <tipo> [TOK_CONSTANTE_ENTERA]\n");
-          
+          /* Tipo se obtiene en accion semantica de tipo*/
+          /* Obtenemos tamanyo del vector*/
+          tamanio_vector_actual = $4.valor_entero;          
         }
 
 identificadores: identificador
@@ -225,23 +218,7 @@ sentencia: sentencia_simple ';'
           /*fprintf(salida, ";R33:\t<sentencia> ::= <bloque>");*/
         }
 
-sentencia_simple: asignacion
-        {
-          /*fprintf(salida, ";R34:\t<sentencia_simple> ::= <asignacion>\n");*/
-        }
-        |lectura
-        {
-          
-          /*fprintf(salida, ";R35:\t<sentencia_simple> ::= <lectura>\n");*/
-        }
-        |escritura
-        {
-          /*fprintf(salida, ";R36:\t<sentencia_simple> ::= <escritura>\n");*/
-        }
-        |retorno_funcion
-        {
-          /*fprintf(salida, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");*/
-        }
+sentencia_simple: asignacion | lectura | escritura | retorno_funcion
 
 bloque: condicional
         {
@@ -330,51 +307,55 @@ escritura: TOK_PRINTF exp
             } else{
               printf("ERROR AMBITO\n");
             }
-            printf("lul: %d\n", itemActual->data->clase);
+            printf("leeel: %d\n", itemActual->data->clase);
           }
           
         }
 
 retorno_funcion: TOK_RETURN exp
         {
-          /*fprintf(salida, ";R61:\t<retorno_funcion> ::= return <exp>\n");*/
+          /*retornarFuncion(fd_asm, 0);*/
+          /*retornarFuncion(fd_asm, 1);*/
         }
 
 exp: exp '+' exp
         {
-          /*fprintf(salida, ";R72:\t<exp> ::= <exp> + <exp>\n");*/
+          /* Sumamos las dos expresiones */
           $$.valor_entero = $1.valor_entero + $3.valor_entero;
         }
         |exp '-' exp
         {
-          /*fprintf(salida, ";R73:\t<exp> ::= <exp> - <exp>\n");*/
+          /* Restamos las dos expresiones */
           $$.valor_entero = $1.valor_entero - $3.valor_entero;
         }
         |exp '/' exp
         {
-          /*fprintf(salida, ";R74:\t<exp> ::= <exp> / <exp>\n");*/
+          /* Dividimos las dos expresiones */
           $$.valor_entero = $1.valor_entero / $3.valor_entero;
         }
         |exp '*' exp
         {
-          /*fprintf(salida, ";R75:\t<exp> ::= <exp> * <exp>\n");*/
+          /* Multiplicamos las dos expresiones */
           $$.valor_entero = $1.valor_entero * $3.valor_entero;
         }
         |'-' exp
         {
-          /*fprintf(salida, ";R76:\t<exp> ::= -<exp>\n");*/
+          /* Multiplicamos por -1 la expresion */
           $$.valor_entero = -1 * $2.valor_entero;
         }
         |exp TOK_AND exp
         {
+          /* AND LOGICO entre las dos expresiones */
           fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");
         }
         |exp TOK_OR exp
         {
+          /* OR LOGICO entre las dos expresiones */
           fprintf(salida, ";R78:\t<exp> ::= <exp> || <exp>\n");
         }
         |'!'exp
         {
+          /* NEGAMOS la expresion (logica) */
           fprintf(salida, ";R79:\t<exp> ::= !<exp>\n");
         }
         |TOK_IDENTIFICADOR
@@ -446,14 +427,7 @@ comparacion: exp TOK_IGUAL exp
           fprintf(salida, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
         }
 
-constante: constante_logica
-        {
-          /*fprintf(salida, ";R99:\t<constante> ::= <constante_logica>\n");*/
-        }
-        |constante_entera
-        {
-          /*fprintf(salida, ";R100:\t<constante> ::= <constante_entera>\n");*/
-        }
+constante: constante_logica | constante_entera
 
 constante_logica: TOK_TRUE
         {
@@ -466,12 +440,12 @@ constante_logica: TOK_TRUE
 
 constante_entera: TOK_CONSTANTE_ENTERA
         {
-          /*fprintf(salida, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");*/
+          /* Sintesis del valor */
+          $$.valor_entero = $1.valor_entero;
         }
 
 identificador: TOK_IDENTIFICADOR
         {
-          /*fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");*/
 
           declarar_variable(salida, $1.lexema, tipo_actual, 1);
 
