@@ -39,9 +39,10 @@ int main(int argc, char **argv)
     return 0;
   }
 
-
+  tablaGlobal = tablaInit();
+  tablaLocal = tablaInit();
   yyparse();
-
+  display(tablaGlobal);
 
   liberaTabla(tablaGlobal);
   if(tablaLocal != NULL){

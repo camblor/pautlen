@@ -100,7 +100,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 30 "src/alfa.y" /* yacc.c:1909  */
+#line 39 "src/alfa.y" /* yacc.c:1909  */
 
   tipo_atributos atributos;
  

@@ -13,9 +13,20 @@
 ;R18:	<identificadores> ::= <identificador>
 ;R19:	<identificadores> ::= <identificador> , <identificadores>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:	scanf
+;D:	x
 ;R2:	<declaraciones> ::= <declaracion>
 ;R21:	<funciones> ::= 
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	=
+;D:	10
+;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
+;R100:	<constante> ::= <constante_entera>
+;R81:	<exp> ::= <constante>
+;D:	;
+;R43:	<asignacion> ::= <identificador> = <exp>
+;R34:	<sentencia_simple> ::= <asignacion>
+;R32:	<sentencia> ::= <sentencia_simple> ;
+;D:	scanf
 ;D:	x
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;R54:	<lectura> ::= scanf <identificador>
@@ -47,6 +58,7 @@
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	}
 ;R30:	<sentencias> ::= <sentencia>
+;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R31:	<sentencias> ::= <sentencia> <sentencias>
 ;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }

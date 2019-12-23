@@ -19,6 +19,14 @@ struct _dataItem
    char *lexema;
 };
 
+
+struct _info{
+   int categoria;
+   int clase;
+   int tipo;
+   int tamano;
+};
+
 int hash(char *lexema);
 
 int strsearch(char *string, char character);
@@ -70,6 +78,9 @@ dataItem *buscaElemento(dataItem **tabla, char *lexema)
 {
    /*get the hash*/
    int hashIndex = hash(lexema);
+
+   if (tabla==NULL)
+   printf("tabla es NULL");
 
    /*move in array until an empty*/
    while (tabla[hashIndex] != NULL)

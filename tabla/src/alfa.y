@@ -18,9 +18,18 @@
   extern int yyleng;
   extern bool invalidchar;
   extern bool longitud;
-  int tipo_actual;                                                                
-  int clase_actual;
 
+  /*Diferenciar globales y locales*/
+  int ambito;
+
+  /*Informacion de lo que estamos analizando*/
+  int categoria_actual;
+  int clase_actual;
+  int tipo_actual;
+  int tamanio_vector_actual;
+  int pos_variable_local_actual;
+
+  /*Tablas de simbolos*/
   extern dataItem** tablaGlobal;
   extern dataItem** tablaLocal;
 
@@ -80,11 +89,8 @@
 programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
         {
           fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");
-          tablaGlobal = tablaInit();
-          if (tablaGlobal){
-            insertaElemento(tablaGlobal, "lmfao", 22);
-            display(tablaGlobal);
-          }
+          
+          ambito = 0;
         }
 
 
@@ -113,20 +119,24 @@ clase: clase_escalar
 
 clase_escalar: tipo
         {
+          clase_actual = ESCALAR;
           fprintf(salida, ";R9:\t<clase_escalar> ::= <tipo>\n");
         }
 
 tipo: TOK_INT
         {
+          tipo_actual = INT;
           fprintf(salida, ";R10:\t<tipo> ::= int\n");
         }
         |TOK_BOOLEAN
         {
+          tipo_actual = BOOLEAN;
           fprintf(salida, ";R11:\t<tipo> ::= boolean\n");
         }
 
 clase_vector: TOK_ARRAY tipo '['constante_entera']'
         {
+          clase_actual = VECTOR;
           fprintf(salida, ";R15:\t<clase_escalar> ::= array <tipo> [<constante_entera>]\n");
         }
 
@@ -406,6 +416,19 @@ constante_entera: TOK_CONSTANTE_ENTERA
 identificador: TOK_IDENTIFICADOR
         {
           fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+          
+          if(ambito==0){
+            if (tipo_actual == INT){
+              printf("estamos con un entero\n");
+            }
+            if(clase_actual == ESCALAR){
+              printf("estamos con un escalar\n");
+            }
+            printf("%s %d\n", $1.lexema, $1.valor_entero);
+            insertaElemento(tablaGlobal, $1.lexema, $1.valor_entero);
+          } else if(ambito==1){
+            printf("local\n");
+          }
         }
 
 

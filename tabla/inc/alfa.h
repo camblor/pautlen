@@ -17,11 +17,11 @@ typedef struct {
 
 /* CLASES */
 #define ESCALAR 1
-#define VECTOR 3
+#define VECTOR 2
 
 /* TIPOS */
 #define INT 1
-#define BOOLEAN 3
+#define BOOLEAN 2
 
 
 #endif
