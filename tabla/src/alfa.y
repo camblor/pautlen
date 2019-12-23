@@ -18,6 +18,8 @@
   extern bool invalidchar;
   extern bool longitud;
 
+  char itoa[100];
+
   /*Diferenciar globales y locales*/
   int ambito;
 
@@ -270,14 +272,16 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           realizar la asignación :    mov dword [$1.lexema], eax
           */
 
-          escribir_operando(salida, "2", 0);
+          sprintf(itoa, "%d", $1.valor_entero);
+
+          escribir_operando(salida, itoa, 0);
           asignar(salida, "x", 0);
           escribir_operando(salida, "x", 1);
 
         }
         |elemento_vector '=' exp
         {
-          fprintf(salida, "R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+          /*fprintf(salida, "R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");*/
         }
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
