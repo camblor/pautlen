@@ -404,6 +404,7 @@ exp: exp '+' exp
           else {
             $$.tipo = itemActual->data->tipo;
             $$.es_direccion = 1;
+            $$.valor_entero = $1.valor_entero;
             
 
             /* Asignamos valor */
