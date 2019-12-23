@@ -108,7 +108,7 @@
 
 %%
 
-programa: TOK_MAIN '{'escritura1 declaraciones funciones escritura2 sentencias'}'
+programa: TOK_MAIN '{'escritura1 declaraciones escritura2 funciones escritura3 sentencias'}'
         {
           /* Final del fichero */
           escribir_fin(salida);
@@ -124,6 +124,11 @@ escritura1:
 escritura2:
         {
           escribir_segmento_codigo(salida);
+          
+        }
+
+escritura3:
+        {
           escribir_inicio_main(salida);
         }
 

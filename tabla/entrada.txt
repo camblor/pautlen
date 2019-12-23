@@ -3,8 +3,8 @@ main {
   int x1;
 
   function int fibo(int arg){
-    int x1;
-    scanf x1;
+    int x2;
+    scanf x2;
   }
 
   x1 = 666;
