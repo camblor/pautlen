@@ -35,7 +35,7 @@ void escribir_cabecera_bss(FILE *fpasm)
 
     fprintf(fpasm, "segment .bss \n");
 	fprintf(fpasm, "\t__esp resd 1\n");
-	
+
 }
 
 /*
@@ -114,7 +114,7 @@ void escribir_fin(FILE *fpasm)
 	fprintf(fpasm, "\tcall print_string\n");
 	fprintf(fpasm, "\tadd esp, 4\n");
 	fprintf(fpasm, "\tcall print_endofline\n");
-	
+
     fprintf(fpasm, "fin:\n");
 	fprintf(fpasm, "\tmov dword esp, [__esp]\n");
 	fprintf(fpasm, "\tret\n");
@@ -741,7 +741,7 @@ void while_fin( FILE * fpasm, int etiqueta){
   fprintf(fpasm, "fin_while%d:\n", etiqueta);
 }
 
-void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, int exp_es_direccion){
+void escribir_elemento_vector(FILE * fpasm, char * nombre_vector, int tam_max, int exp_es_direccion){
   if(!fpasm) return;
 
   fprintf(fpasm, "\tpop dword eax\n");

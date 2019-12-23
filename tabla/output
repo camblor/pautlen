@@ -4,8 +4,6 @@ segment .data
 segment .bss 
 	__esp resd 1
 	_x1 resd 1
-	_x2 resd 1
-	_y1 resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -13,58 +11,3 @@ segment .text
 	extern alfa_malloc, alfa_free, ld_float
 main:
 	mov dword [__esp] , esp
-	push dword _x1
-	call scan_int
-	add esp, 4
-	push dword _x2
-	call scan_int
-	add esp, 4
-;D:	while
-inicio_while0:
-;D:	==
-	push dword _x1
-	push dword _x2
-	pop dword edx
-	pop dword eax
-	mov dword edx, [edx]
-	mov dword eax, [eax]
-	cmp eax, edx
-	je igual1
-	push dword 0
-	jmp fin_igual1
-igual1:
-	push dword 1
-fin_igual1:
-	pop eax
-	cmp eax, 0
-	je near fin_while0
-	push dword _x1
-	pop dword eax
-	mov eax, [eax]
-	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	push dword _x2
-	pop dword eax
-	mov eax, [eax]
-	mov [_x1], eax
-	jmp near inicio_while0
-fin_while0:
-;R52:	<bucle> ::= while (<exp>) {<sentencias>}
-;R41:	<bloque> ::= <bucle>
-	jmp fin
-fin_indice_fuera_rango:
-	push dword err_index
-	call print_string
-	add esp, 4
-	call print_endofline
-	jmp fin
-division_cero:
-	push dword err_div0
-	call print_string
-	add esp, 4
-	call print_endofline
-fin:
-	mov dword esp, [__esp]
-	ret

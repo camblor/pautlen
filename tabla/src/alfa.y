@@ -11,6 +11,7 @@
 
   void yyerror(const char *error);
   extern int linea ,columna;
+  extern int error;
   extern FILE *yyin;
   extern FILE *salida;
   extern int yylex();
@@ -19,7 +20,8 @@
   extern bool longitud;
 
   char itoa[100];
-
+  int cuantos_no;
+  int tipoErrorSemantico = 0;
   /*Diferenciar globales y locales*/
   int ambito;
 
@@ -34,6 +36,7 @@
   int pos_parametro_actual;
 
   extern int etiqueta;
+
 
   /*Tablas de simbolos*/
   extern dataItem** tablaGlobal;
@@ -161,9 +164,13 @@ clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
         {
           /* Obtenemos clase */
           clase_actual = VECTOR;
-          /* Tipo se obtiene en accion semantica de tipo*/
-          /* Obtenemos tamanyo del vector*/
           tamanio_vector_actual = $4.valor_entero;
+          if (tamanio_vector_actual>64 || tamanio_vector_actual<1){
+            error = -1;
+            tipoErrorSemantico = 2;
+            yyerror ($4.lexema);
+            return -1;
+          }
         }
 
 identificadores: identificador
@@ -255,19 +262,31 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           /*fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");*/
           itemActual = buscaElemento(tablaGlobal, $1.lexema);
           if(itemActual == NULL){
-            printf("ERROR itemActual == NULL\n");
+            error = -1;
+            tipoErrorSemantico = 1;
+            yyerror($1.lexema);
+            return -1;
           }
 
           else if (itemActual->data->categoria == FUNCION){
-            printf("ERROR itemActual->data->categoria == FUNCION\n");
+            error = -1;
+            tipoErrorSemantico = 8;
+            yyerror($1.lexema);
+            return -1;
           }
 
           else if(itemActual->data->clase == VECTOR){
-            printf("ERROR itemActual->data->clase == VECTOR\n");
+            error = -1;
+            tipoErrorSemantico = 8;
+            yyerror($1.lexema);
+            return -1;
           }
 
           else if(itemActual->data->tipo != $3.tipo){
-            printf("ERROR itemActual->data->tipo != $3.tipo\n");
+            error = -1;
+            tipoErrorSemantico = 8;
+            yyerror($1.lexema);
+            return -1;
           }
 
           else{
@@ -285,7 +304,39 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
         {
-          fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");
+
+          itemActual = buscaElemento(tablaActual, $1.lexema);
+          if (itemActual==NULL){
+            tipoErrorSemantico=1;
+            yyerror($1.lexema);
+          }
+
+          if (itemActual->data->categoria==FUNCION){
+            error = -1;
+            tipoErrorSemantico=9;
+            yyerror($1.lexema);
+            return -1;
+          }
+          printf("Tipo variable: %d\n", itemActual->data->categoria);
+          if (itemActual->data->categoria!=VECTOR){
+            error = -1;
+            tipoErrorSemantico=9;
+            yyerror($1.lexema);
+            return -1;
+          }
+
+          if($3.tipo!=INT){
+            error = -1;
+            tipoErrorSemantico=10;
+            yyerror($1.lexema);
+            return -1;
+          }
+          $$.tipo = VECTOR;
+          $$.es_direccion=1;
+          escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
+
+
+          /*fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");*/
         }
 
 condicional: if_exp_sentencias
@@ -308,7 +359,10 @@ if_exp: TOK_IF '(' exp ')' '{'
         {
 
           if($3.tipo != BOOLEAN){
-            printf("ERROR - Condicional de no-booleanos\n");
+            error = -1;
+            tipoErrorSemantico = 5;
+            yyerror($3.lexema);
+            return -1;
           }
           else {
             $$.etiqueta = etiqueta++;
@@ -330,7 +384,10 @@ while_exp_sentencias: while_exp sentencias '}'
 while_exp: while '(' exp ')' '{'
         {
           if($3.tipo != BOOLEAN){
-            printf("ERROR - bucle de no-booleanos\n");
+            error = -1;
+            tipoErrorSemantico = 6;
+            yyerror($1.lexema);
+            return -1;
           }
           else {
             $$.etiqueta = $1.etiqueta;
@@ -346,23 +403,25 @@ while: TOK_WHILE
 
 lectura: TOK_SCANF TOK_IDENTIFICADOR
         {
-          /* Si al buscar el identificdor en la tabla de símbolos, no está... salir con ERROR */
-          /* Si la categoría o la clase no es la adecuada
-          (no se puede leer sobre el id de una función ni en algo queno sea escalar)...
-          salir con ERROR*/
-          /* Se aplia la dirección sobre la que se va a leer*/
-            /* Generar código para escribir push dword _$2.lexema */
-          /* Invoca a la función de librería adecuada al tipo del ID*/
 
           itemActual = buscaElemento(tablaActual, $2.lexema);
           if(!itemActual){
-            printf("ERROR\n");
+            error = -1;
+            tipoErrorSemantico = 1;
+            yyerror($2.lexema);
+            return -1;
           }
           else if(itemActual->data->categoria == FUNCION){
-            printf("ERROR\n");
+            error = -1;
+            tipoErrorSemantico = 0;
+            yyerror($2.lexema);
+            return -1;
           }
           else if(itemActual->data->clase != ESCALAR){
-            printf("ERROR\n");
+            error = -1;
+            tipoErrorSemantico = 0;
+            yyerror($2.lexema);
+            return -1;
           }
           else{
             leer(salida, itemActual->lexema, itemActual->data->tipo);
@@ -375,9 +434,11 @@ escritura: TOK_PRINTF exp
           /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
 
           itemActual = buscaElemento(tablaActual, $2.lexema);
-          printf("Da error en %s\n", $2.lexema);
           if(!itemActual){
-            printf("ERROR - No existe el elemento\n");
+            error = -1;
+            tipoErrorSemantico = 1;
+            yyerror($2.lexema);
+          return -1;
           }
           else if ($2.es_direccion == 1){
             escribir(salida, 1, itemActual->data->tipo);
@@ -395,7 +456,10 @@ exp: exp '+' exp
         {
           /* Sumamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-            printf("ERROR\n");
+          error = -1;
+          tipoErrorSemantico = 3;
+          yyerror($1.lexema);
+          return -1;
           }
           else if ($1.tipo == INT || $3.tipo == INT){
             sumar(salida, $1.es_direccion, $3.es_direccion);
@@ -408,7 +472,10 @@ exp: exp '+' exp
         {
           /* Restamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-            printf("ERROR - Resta de booleanos\n");
+            error = -1;
+            tipoErrorSemantico = 3;
+            yyerror($1.lexema);
+            return -1;
           }
           else if($1.tipo == INT || $3.tipo == INT){
             restar(salida, $1.es_direccion, $3.es_direccion);
@@ -421,7 +488,10 @@ exp: exp '+' exp
         {
           /* Dividimos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-            printf("ERROR - Division de booleanos\n");
+            error = -1;
+            tipoErrorSemantico = 3;
+            yyerror($1.lexema);
+            return -1;
           }
           else if($1.tipo == INT || $3.tipo == INT){
             dividir(salida, $1.es_direccion, $3.es_direccion);
@@ -434,7 +504,10 @@ exp: exp '+' exp
         {
           /* Multiplicamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-            printf("ERROR - Multiplicacion de booleanos\n");
+            error = -1;
+            tipoErrorSemantico = 3;
+            yyerror($1.lexema);
+            return -1;
           }
           else if($1.tipo == INT || $3.tipo == INT){
             multiplicar(salida, $1.es_direccion, $3.es_direccion);
@@ -446,22 +519,59 @@ exp: exp '+' exp
         |'-' exp
         {
           /* Multiplicamos por -1 la expresion */
+          if ($2.tipo == BOOLEAN){
+            error = -1;
+            tipoErrorSemantico = 3;
+            yyerror($2.lexema);
+            return -1;
+          }
+          cambiar_signo(salida, $2.es_direccion);
           $$.valor_entero = -1 * $2.valor_entero;
+          $$.tipo = INT;
+          $$.es_direccion=0;
         }
         |exp TOK_AND exp
         {
           /* AND LOGICO entre las dos expresiones */
-          fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");
+          if ($1.tipo == INT || $3.tipo == INT){
+            error = -1;
+            tipoErrorSemantico = 4;
+            yyerror($1.lexema);
+            return -1;
+          }
+          y(salida, $1.es_direccion, $3.es_direccion);
+          $$.tipo = BOOLEAN;
+          $$.es_direccion=0;
+          /*fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");*/
         }
         |exp TOK_OR exp
         {
           /* OR LOGICO entre las dos expresiones */
-          fprintf(salida, ";R78:\t<exp> ::= <exp> || <exp>\n");
+          if ($1.tipo == INT || $3.tipo == INT){
+            error = -1;
+            tipoErrorSemantico = 4;
+            yyerror($1.lexema);
+            return -1;
+          }
+          o(salida, $1.es_direccion, $3.es_direccion);
+          $$.tipo = BOOLEAN;
+          $$.es_direccion=0;
+          /*fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");*/
         }
         |'!'exp
         {
           /* NEGAMOS la expresion (logica) */
-          fprintf(salida, ";R79:\t<exp> ::= !<exp>\n");
+          if ($2.tipo == INT){
+            error = -1;
+            tipoErrorSemantico = 4;
+            yyerror($2.lexema);
+            return -1;
+          }
+          no(salida, $2.es_direccion, cuantos_no);
+          $$.tipo = BOOLEAN;
+          $$.es_direccion=0;
+          cuantos_no++;
+          /*fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");*/
         }
         |TOK_IDENTIFICADOR
         {
@@ -666,7 +776,10 @@ identificador: TOK_IDENTIFICADOR
           infoActual->pos_parametro = pos_parametro_actual;
 
           if(!insertaElemento(tablaActual, $1.lexema, infoActual)){
-            printf("Ya existe ese elemento\n");
+            error = -1;
+            tipoErrorSemantico = 13;
+            yyerror($1.lexema);
+            return -1;
           }
         }
 
@@ -674,9 +787,40 @@ identificador: TOK_IDENTIFICADOR
 %%
 
 
-void yyerror(const char * error) {
-    if(!error) {
-        printf("****Error sintactico en [linea %d, columna %d]\n", linea, columna);
+void yyerror(const char * perror) {
+printf("%d\n", error);
+    if(error==-1) {
+    if (tipoErrorSemantico==0)
+    			fprintf(stderr,"****Error semantico en lin %d: %s\n",linea,perror);
+    		else if (tipoErrorSemantico==1)
+    			fprintf(stderr,"****Error semantico en lin %d: Acceso a variable no declarada (%s).\n",linea,perror);
+    		else if (tipoErrorSemantico==2)
+    			fprintf(stderr,"****Error semantico en lin %d: El tamanyo del vector <%s> excede los limites permitidos (1,64).\n",linea,perror);
+        else if(tipoErrorSemantico==3)
+          fprintf(stderr, "****Error semantico en lin %d: Operacion aritmetica con operandos boolean.", linea);
+        else if (tipoErrorSemantico==4)
+          fprintf(stderr, "****Error semantico en lin %d: Operacion logica con operandos int.", linea);
+        else if (tipoErrorSemantico==5)
+          fprintf(stderr, "****Error semantico en lin %d: Condicional con condicion de tipo int.", linea);
+        else if (tipoErrorSemantico==6)
+          fprintf(stderr, "****Error semantico en lin %d: Bucle con condicion de tipo int.", linea);
+        else if (tipoErrorSemantico==7)
+          fprintf(stderr, "****Error semantico en lin %d: Numero incorrecto de parametros en llamada a funcion.", linea);
+        else if (tipoErrorSemantico==8)
+          fprintf(stderr, "****Error semantico en lin %d: Asignacion incompatible.", linea);
+        else if (tipoErrorSemantico==9)
+          fprintf(stderr, "****Error semantico en lin %d: Intento de indexacion de una variable que no es de tipo vector.", linea);
+        else if (tipoErrorSemantico==10)
+          fprintf(stderr, "****Error semantico en lin %d: El indice en una operacion de indexacion tiene que ser de tipo entero", linea);
+        else if (tipoErrorSemantico==11)
+          fprintf(stderr, "****Error semantico en lin %d: Sentencia de retorno fuera del cuerpo de una función.", linea);
+        else if (tipoErrorSemantico==12)
+          fprintf(stderr, "****Error semantico en lin %d: No esta permitido el uso de llamadas a funciones como parametros de otras funciones.", linea);
+        else if (tipoErrorSemantico==13){
+          fprintf(stderr, "****Error semantico en lin %d: Declaracion duplicada.", linea);
+        }
+    		else
+    			fprintf(stderr,"****Error semantico en lin %d: Funcion <%s> sin sentencia de retorno.\n",linea,perror);
     }
     error = 0;
 }
