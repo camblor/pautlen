@@ -6,6 +6,7 @@ segment .bss
 	_x1 resd 1
 	_x2 resd 1
 	_res resd 1
+	_y1 resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -32,11 +33,27 @@ main:
 	push dword eax
 	pop dword eax
 	mov [_res], eax 
-	push dword _res
+;D:	==
+	push dword _x1
+	push dword _x2
+	pop dword edx
+	pop dword eax
+	mov dword edx, [edx]
+	mov dword eax, [eax]
+	cmp eax, edx
+	je igual1
+	push dword 0
+	jmp fin_igual1
+igual1:
+	push dword 1
+fin_igual1:
+	pop dword eax
+	mov [_y1], eax 
+	push dword _y1
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
-	call print_int
+	call print_boolean
 	add esp, 4
 	call print_endofline
 	jmp fin

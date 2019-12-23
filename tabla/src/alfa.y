@@ -19,6 +19,7 @@
   extern bool longitud;
 
   char itoa[100];
+  int etiqueta=1;
 
   /*Diferenciar globales y locales*/
   int ambito;
@@ -494,6 +495,15 @@ resto_lista_expresiones: ',' exp resto_lista_expresiones
 comparacion: exp TOK_IGUAL exp
         {
           /*fprintf(salida, ";R93:\t<comparacion> ::= <exp> == <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              igual(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+
+            }
+          }
         }
         |exp TOK_DISTINTO exp
         {

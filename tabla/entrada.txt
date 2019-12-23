@@ -1,7 +1,10 @@
 main {
     int x1, x2, res;
+    boolean y1;
     scanf x1;
     scanf x2;
     res = x1 / 5;
-    printf res;
+
+    y1 = (x1==x2);
+    printf y1;
 }
