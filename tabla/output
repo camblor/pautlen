@@ -4,6 +4,7 @@ segment .data
 segment .bss 
 	__esp resd 1
 	_x resd 1
+	_res resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -16,6 +17,10 @@ main:
 	mov [_x], eax 
 	push dword _x
 	push dword _x
+	pop dword eax
+	mov [_x], eax 
+	push dword _x
+	push dword _res
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
