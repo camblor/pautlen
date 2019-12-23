@@ -13,8 +13,26 @@
 ;R18:	<identificadores> ::= <identificador>
 ;R19:	<identificadores> ::= <identificador> , <identificadores>
 ;R4:	<declaracion> ::= <clase> <identificadores> ;
+;D:	array
+;D:	boolean
+;R11:	<tipo> ::= boolean
+;D:	[
+;D:	8
+;D:	]
+;R15:	<clase_vector> ::= array <tipo> [TOK_CONSTANTE_ENTERA]
+;R6:	<clase> ::= <clase_vector>
+;D:	A1
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	,
+;D:	A2
+;R108:	<identificador> ::= TOK_IDENTIFICADOR
+;D:	;
+;R18:	<identificadores> ::= <identificador>
+;R19:	<identificadores> ::= <identificador> , <identificadores>
+;R4:	<declaracion> ::= <clase> <identificadores> ;
 ;D:	x
 ;R2:	<declaraciones> ::= <declaracion>
+;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R21:	<funciones> ::= 
 ;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	=

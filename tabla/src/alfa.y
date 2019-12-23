@@ -23,7 +23,6 @@
   int ambito;
 
   /*Informacion de lo que estamos analizando*/
-  char* lexema_actual[MAX_LONG_ID+1];
   int categoria_actual;
   int clase_actual;
   int tipo_actual;
@@ -112,6 +111,7 @@ declaracion: clase identificadores ';'
 clase: clase_escalar
         {
           fprintf(salida, ";R5:\t<clase> ::= <clase_escalar>\n");
+          
         }
         |clase_vector
         {
@@ -246,6 +246,7 @@ asignacion: identificador '=' exp
           if(buscaElemento(tablaGlobal, $1.lexema) != NULL){
             printf("Funciona y todo xD\n");
             buscaElemento(tablaGlobal, $1.lexema)->data = $3.valor_entero;
+            $1.valor_entero = $3.valor_entero;
           }
         }
         |elemento_vector '=' exp
@@ -435,7 +436,9 @@ identificador: TOK_IDENTIFICADOR
               printf("estamos con un escalar\n");
             }
             printf("%s %d\n", $1.lexema, $1.valor_entero);
-            insertaElemento(tablaGlobal, $1.lexema, $1.valor_entero);
+            if(!insertaElemento(tablaGlobal, $1.lexema, $1.valor_entero)){
+              printf("Ya existe ese elemento\n");
+            }
           } else if(ambito==1){
             printf("local\n");
           }

@@ -43,7 +43,7 @@ int {
     fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_INT;
 }
-bool {
+boolean {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
     fprintf(salida, ";D:\t%s\n", yytext);
