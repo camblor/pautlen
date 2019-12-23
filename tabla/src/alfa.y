@@ -384,6 +384,26 @@ exp: exp '+' exp
         }
         |TOK_IDENTIFICADOR
         {
+
+          itemActual = buscaElemento(tablaActual, $1.lexema);
+
+          /*Si no lo encuentra error*/
+          if (itemActual == NULL){
+            printf("ERROR - Identificador no valido\n");
+          }
+          /*Si categoria es funicon error*/
+          else if(itemActual->data->categoria == 3){
+            printf("ERROR - Suma de funciones\n");
+          }
+          /*Si clase es vector error*/ 
+          else if (itemActual->data->clase == VECTOR){
+            printf("ERROR - Suma de vectores\n");
+          }
+          /*CORRECTO*/
+          else {
+            $$.tipo = itemActual->data->tipo;
+            $$.es_direccion = 1;
+          }
           /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
         }
         |constante
