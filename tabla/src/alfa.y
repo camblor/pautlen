@@ -443,7 +443,6 @@ identificador: TOK_IDENTIFICADOR
           infoActual->pos_variable_local = pos_variable_local_actual;
           infoActual->num_parametros = num_parametros_actual;
           infoActual->pos_parametro = pos_parametro_actual;
-
           
           if(!insertaElemento(tablaActual, $1.lexema, infoActual)){
             printf("Ya existe ese elemento\n");
