@@ -13,7 +13,7 @@ segment .bss
 	_fibo:
 	push ebp
 	mov ebp, esp
-	sub esp, 0
+	sub esp, 4
 	push dword _x1
 	call scan_int
 	add esp, 4

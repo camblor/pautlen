@@ -73,6 +73,7 @@
 %type <atributos> while
 %type <atributos> fn_declaration
 %type <atributos> fn_name
+%type <atributos> idpf
 
 
 %token TOK_MAIN
@@ -270,9 +271,31 @@ resto_parametros_funcion: ';' parametro_funcion resto_parametros_funcion
           fprintf(salida, ";R26:\t<resto_parametros_funcion> ::= \n");
         }
 
-parametro_funcion: tipo TOK_IDENTIFICADOR
+parametro_funcion: tipo idpf
         {
           fprintf(salida, ";R27:\t<parametro_funcion> ::= <tipo> <TOK_IDENTIFICADOR>\n");
+        }
+
+idpf: TOK_IDENTIFICADOR 
+        {
+
+          infoActual = malloc(sizeof(datainfo));
+          infoActual->categoria = categoria_actual;
+          infoActual->clase = clase_actual;
+          infoActual->tipo = tipo_actual;
+          infoActual->tamanio_vector = tamanio_vector_actual;
+          infoActual->num_variables_locales = num_variables_locales_actual;
+          infoActual->pos_variable_local = pos_variable_local_actual;
+          infoActual->num_parametros = num_parametros_actual;
+          infoActual->pos_parametro = pos_parametro_actual;
+
+          if(!insertaElemento(tablaActual, $1.lexema, infoActual)){
+            printf("ERROR\n");
+          }
+
+          strcpy($$.lexema,$1.lexema);
+          num_parametros_actual++;
+          pos_parametro_actual++;
         }
 
 declaraciones_funcion: declaraciones
@@ -819,6 +842,11 @@ constante_entera: TOK_CONSTANTE_ENTERA
 
 identificador: TOK_IDENTIFICADOR
         {
+          if(tablaActual==tablaLocal){
+            pos_variable_local_actual++;
+            num_variables_locales_actual++;
+          }
+
           categoria_actual = VARIABLE;
           declarar_variable(salida, $1.lexema, tipo_actual, 1);
           infoActual = malloc(sizeof(datainfo));
