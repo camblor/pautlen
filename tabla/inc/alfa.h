@@ -1,5 +1,6 @@
 #ifndef _ALFA_H
 #define _ALFA_H
+#include "../inc/generacion.h"
 
 
 #define MAX_LONG_ID 100

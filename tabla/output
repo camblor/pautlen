@@ -1,76 +1,38 @@
-;D:	main
-;D:	{
-;D:	int
-;R10:	<tipo> ::= int
-;R9:	<clase_escalar> ::= <tipo>
-;R5:	<clase> ::= <clase_escalar>
-;D:	x
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	,
-;D:	resultado
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	;
-;R18:	<identificadores> ::= <identificador>
-;R19:	<identificadores> ::= <identificador> , <identificadores>
-;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:	array
-;D:	boolean
-;R11:	<tipo> ::= boolean
-;D:	[
-;D:	8
-;D:	]
-;R15:	<clase_vector> ::= array <tipo> [TOK_CONSTANTE_ENTERA]
-;R6:	<clase> ::= <clase_vector>
-;D:	A1
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	,
-;D:	A2
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;D:	;
-;R18:	<identificadores> ::= <identificador>
-;R19:	<identificadores> ::= <identificador> , <identificadores>
-;R4:	<declaracion> ::= <clase> <identificadores> ;
-;D:	x
-;R2:	<declaraciones> ::= <declaracion>
-;R3:	<declaraciones> ::= <declaracion> <declaraciones>
-;R21:	<funciones> ::= 
-;D:	=
-;D:	10
-;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
-;R100:	<constante> ::= <constante_entera>
-;R81:	<exp> ::= <constante>
-;D:	;
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;R34:	<sentencia_simple> ::= <asignacion>
-;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	scanf
-;D:	x
-;R54:	<lectura> ::= scanf <TOK_IDENTIFICADOR>
-;R35:	<sentencia_simple> ::= <lectura>
-;D:	;
-;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	resultado
-;D:	=
-;D:	x
-;D:	*
-;R80:	<exp> ::= <TOK_IDENTIFICADOR>
-;D:	x
-;D:	;
-;R80:	<exp> ::= <TOK_IDENTIFICADOR>
-;R75:	<exp> ::= <exp> * <exp>
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;R34:	<sentencia_simple> ::= <asignacion>
-;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	printf
-;D:	resultado
-;D:	;
-;R80:	<exp> ::= <TOK_IDENTIFICADOR>
-;R56:	<escritura> ::= printf <exp>
-;R36:	<sentencia_simple> ::= <escritura>
-;R32:	<sentencia> ::= <sentencia_simple> ;
-;D:	}
-;R30:	<sentencias> ::= <sentencia>
-;R31:	<sentencias> ::= <sentencia> <sentencias>
-;R31:	<sentencias> ::= <sentencia> <sentencias>
-;R31:	<sentencias> ::= <sentencia> <sentencias>
-;R1:	<programa> ::= main { <declaraciones> <funciones> <sentencias> }
+segment .data 
+	err_div0 db "Error al dividir entre 0"
+	err_index db "Indice de vector fuera de rango"
+segment .bss 
+	__esp resd 1
+	_x resd 1
+	_resultado resd 1
+segment .text
+	global main
+	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
+	extern print_endofline, print_blank, print_string
+	extern alfa_malloc, alfa_free, ld_float
+main:
+	mov dword [__esp] , esp
+	push dword _x
+	call scan_int
+	add esp, 4
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	jmp fin
+fin_indice_fuera_rango:
+	push dword err_index
+	call print_string
+	add esp, 4
+	call print_endofline
+	jmp fin
+division_cero:
+	push dword err_div0
+	call print_string
+	add esp, 4
+	call print_endofline
+fin:
+	mov dword esp, [__esp]
+	ret

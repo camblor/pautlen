@@ -5,7 +5,6 @@
   #include <stdbool.h>
   #include "../inc/alfa.h"
   #include "../inc/tabla.h"
-  #include "../inc/generacion.h"
   
 
   tipo_atributos hola;
@@ -38,6 +37,7 @@
 
   extern dataItem** tablaActual;
 
+  dataItem* itemActual;
   extern datainfo * infoActual;
 
 %}
@@ -95,28 +95,29 @@
 
 programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
         {
-          fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");
+          /*fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");*/
+          escribir_fin(salida);
           
         }
 
 
 declaraciones: declaracion
         {
-          fprintf(salida, ";R2:\t<declaraciones> ::= <declaracion>\n");
+          /*fprintf(salida, ";R2:\t<declaraciones> ::= <declaracion>\n");*/
         }
         |declaracion declaraciones
         {
-          fprintf(salida, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");
+          /*fprintf(salida, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");*/
         }
 
 declaracion: clase identificadores ';'
         {
-          fprintf(salida, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");
+          /*fprintf(salida, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");*/
         }
 
 clase: clase_escalar
         {
-          fprintf(salida, ";R5:\t<clase> ::= <clase_escalar>\n");
+          /*fprintf(salida, ";R5:\t<clase> ::= <clase_escalar>\n");*/
           
         }
         |clase_vector
@@ -127,13 +128,13 @@ clase: clase_escalar
 clase_escalar: tipo
         {
           clase_actual = ESCALAR;
-          fprintf(salida, ";R9:\t<clase_escalar> ::= <tipo>\n");
+          /*fprintf(salida, ";R9:\t<clase_escalar> ::= <tipo>\n");*/
         }
 
 tipo: TOK_INT
         {
           tipo_actual = INT;
-          fprintf(salida, ";R10:\t<tipo> ::= int\n");
+          /*fprintf(salida, ";R10:\t<tipo> ::= int\n");*/
         }
         |TOK_BOOLEAN
         {
@@ -151,20 +152,22 @@ clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
 
 identificadores: identificador
         {
-          fprintf(salida, ";R18:\t<identificadores> ::= <identificador>\n");
+          /*fprintf(salida, ";R18:\t<identificadores> ::= <identificador>\n");*/
         }
         |identificador ',' identificadores
         {
-          fprintf(salida, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");
+          /*fprintf(salida, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");*/
+          escribir_segmento_codigo(salida);
+          escribir_inicio_main(salida);
         }
 
 funciones: funcion funciones
         {
-          fprintf(salida, ";R20:\t<funciones> ::= <funcion> <funciones>\n");
+          /*fprintf(salida, ";R20:\t<funciones> ::= <funcion> <funciones>\n");*/
         }
         |
         {
-          fprintf(salida, ";R21:\t<funciones> ::= \n");
+          /*fprintf(salida, ";R21:\t<funciones> ::= \n");*/
         }
 
 funcion: TOK_FUNCTION tipo identificador '('parametros_funcion')' '{'declaraciones_funcion sentencias'}'
@@ -206,37 +209,38 @@ declaraciones_funcion: declaraciones
 
 sentencias: sentencia
         {
-          fprintf(salida, ";R30:\t<sentencias> ::= <sentencia>\n");
+          /*fprintf(salida, ";R30:\t<sentencias> ::= <sentencia>\n");*/
         }
         | sentencia sentencias
         {
-          fprintf(salida, ";R31:\t<sentencias> ::= <sentencia> <sentencias>\n");
+          /*fprintf(salida, ";R31:\t<sentencias> ::= <sentencia> <sentencias>\n");*/
         }
 
 sentencia: sentencia_simple ';'
         {
-          fprintf(salida, ";R32:\t<sentencia> ::= <sentencia_simple> ;\n");
+         /* fprintf(salida, ";R32:\t<sentencia> ::= <sentencia_simple> ;\n");*/
         }
         |bloque
         {
-          fprintf(salida, ";R33:\t<sentencia> ::= <bloque>");
+          /*fprintf(salida, ";R33:\t<sentencia> ::= <bloque>");*/
         }
 
 sentencia_simple: asignacion
         {
-          fprintf(salida, ";R34:\t<sentencia_simple> ::= <asignacion>\n");
+          /*fprintf(salida, ";R34:\t<sentencia_simple> ::= <asignacion>\n");*/
         }
         |lectura
         {
-          fprintf(salida, ";R35:\t<sentencia_simple> ::= <lectura>\n");
+          
+          /*fprintf(salida, ";R35:\t<sentencia_simple> ::= <lectura>\n");*/
         }
         |escritura
         {
-          fprintf(salida, ";R36:\t<sentencia_simple> ::= <escritura>\n");
+          /*fprintf(salida, ";R36:\t<sentencia_simple> ::= <escritura>\n");*/
         }
         |retorno_funcion
         {
-          fprintf(salida, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");
+          /*fprintf(salida, ";R38:\t<sentencia_simple> ::= <retorno_funcion>\n");*/
         }
 
 bloque: condicional
@@ -250,7 +254,7 @@ bloque: condicional
 
 asignacion: TOK_IDENTIFICADOR '=' exp
         {
-          fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");
+          /*fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");*/
           if(buscaElemento(tablaGlobal, $1.lexema) != NULL){
             $1.valor_entero = $3.valor_entero;
           }
@@ -288,43 +292,61 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
           /* Se aplia la dirección sobre la que se va a leer*/
             /* Generar código para escribir push dword _$2.lexema */
           /* Invoca a la función de librería adecuada al tipo del ID*/
+          itemActual = buscaElemento(tablaActual, $2.lexema);
+          if(!itemActual){
+            printf("ERROR\n");
+          } else{
 
-          fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");
+            if (itemActual->data->clase != 1){
+              printf("ERROR\n");
+            }
+            if (tablaActual == tablaGlobal){
+              leer(salida, itemActual->lexema, itemActual->data->tipo);
+            } else if (tablaActual == tablaLocal){
+              printf("ambito local\n");
+            } else{
+              printf("ERROR AMBITO\n");
+            }
+            printf("lul: %d\n", itemActual->data->clase);
+          }
+          /*fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");*/
         }
 
 escritura: TOK_PRINTF exp
         {
-          fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");
+          /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
+          escribir(salida, 1, buscaElemento(tablaGlobal, $2.lexema)->data->tipo);
         }
 
 retorno_funcion: TOK_RETURN exp
         {
-          fprintf(salida, ";R61:\t<retorno_funcion> ::= return <exp>\n");
+          /*fprintf(salida, ";R61:\t<retorno_funcion> ::= return <exp>\n");*/
         }
 
 exp: exp '+' exp
         {
-          fprintf(salida, ";R72:\t<exp> ::= <exp> + <exp>\n");
+          /*fprintf(salida, ";R72:\t<exp> ::= <exp> + <exp>\n");*/
           $$.valor_entero = $1.valor_entero + $3.valor_entero;
         }
         |exp '-' exp
         {
-          fprintf(salida, ";R73:\t<exp> ::= <exp> - <exp>\n");
+          /*fprintf(salida, ";R73:\t<exp> ::= <exp> - <exp>\n");*/
           $$.valor_entero = $1.valor_entero - $3.valor_entero;
         }
         |exp '/' exp
         {
-          fprintf(salida, ";R74:\t<exp> ::= <exp> / <exp>\n");
+          /*fprintf(salida, ";R74:\t<exp> ::= <exp> / <exp>\n");*/
           $$.valor_entero = $1.valor_entero / $3.valor_entero;
         }
         |exp '*' exp
         {
-          fprintf(salida, ";R75:\t<exp> ::= <exp> * <exp>\n");
+          /*fprintf(salida, ";R75:\t<exp> ::= <exp> * <exp>\n");*/
           $$.valor_entero = $1.valor_entero * $3.valor_entero;
         }
         |'-' exp
         {
-          fprintf(salida, ";R76:\t<exp> ::= -<exp>\n");
+          /*fprintf(salida, ";R76:\t<exp> ::= -<exp>\n");*/
+          $$.valor_entero = -1 * $2.valor_entero;
         }
         |exp TOK_AND exp
         {
@@ -340,11 +362,11 @@ exp: exp '+' exp
         }
         |TOK_IDENTIFICADOR
         {
-          fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");
+          /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
         }
         |constante
         {
-          fprintf(salida, ";R81:\t<exp> ::= <constante>\n");
+          /*fprintf(salida, ";R81:\t<exp> ::= <constante>\n");*/
         }
         |'('exp')'
         {
@@ -366,25 +388,25 @@ exp: exp '+' exp
 
 lista_expresiones: exp resto_lista_expresiones
         {
-          fprintf(salida, "R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
+          /*fprintf(salida, "R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");*/
         }
         |
         {
-          fprintf(salida, "R90:\t<lista_expresiones> ::= \n");
+          /*fprintf(salida, "R90:\t<lista_expresiones> ::= \n");*/
         }
 
 resto_lista_expresiones: ',' exp resto_lista_expresiones
         {
-          fprintf(salida, ";R91:\t<resto_lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");
+          /*fprintf(salida, ";R91:\t<resto_lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");*/
         }
         |
         {
-          fprintf(salida, ";R92:\t<resto_lista_expresiones> ::= \n");
+          /*fprintf(salida, ";R92:\t<resto_lista_expresiones> ::= \n");*/
         }
 
 comparacion: exp TOK_IGUAL exp
         {
-          fprintf(salida, ";R93:\t<comparacion> ::= <exp> == <exp>\n");
+          /*fprintf(salida, ";R93:\t<comparacion> ::= <exp> == <exp>\n");*/
         }
         |exp TOK_DISTINTO exp
         {
@@ -409,11 +431,11 @@ comparacion: exp TOK_IGUAL exp
 
 constante: constante_logica
         {
-          fprintf(salida, ";R99:\t<constante> ::= <constante_logica>\n");
+          /*fprintf(salida, ";R99:\t<constante> ::= <constante_logica>\n");*/
         }
         |constante_entera
         {
-          fprintf(salida, ";R100:\t<constante> ::= <constante_entera>\n");
+          /*fprintf(salida, ";R100:\t<constante> ::= <constante_entera>\n");*/
         }
 
 constante_logica: TOK_TRUE
@@ -427,12 +449,14 @@ constante_logica: TOK_TRUE
 
 constante_entera: TOK_CONSTANTE_ENTERA
         {
-          fprintf(salida, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
+          /*fprintf(salida, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");*/
         }
 
 identificador: TOK_IDENTIFICADOR
         {
-          fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+          /*fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");*/
+
+          declarar_variable(salida, $1.lexema, tipo_actual, 1);
 
           infoActual = malloc(sizeof(datainfo));
           infoActual->categoria = categoria_actual;

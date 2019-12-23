@@ -28,37 +28,31 @@ LETRA [a-zA-Z]
 main {
     columna+=yyleng; 
     strcpy(yylval.atributos.lexema, yytext); 
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_MAIN;
 }
 array {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_ARRAY;
 }
 int {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_INT;
 }
 boolean {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_BOOLEAN;
 }
 scanf {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_SCANF;
 }
 printf {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_PRINTF;
 }
 if {
@@ -81,50 +75,43 @@ while {
 }
 ";" {
     columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
+    /*strcpy(yylval.atributos.lexema, yytext);*/
     return yytext[0];
 }
 "," {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
+    /*fprintf(salida, ";D:\t%s\n", yytext);*/
     return yytext[0];
 }
 "{" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "}" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "[" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "]" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "(" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 ")" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "+" {
@@ -142,7 +129,6 @@ while {
 "*" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 "/" {
@@ -208,7 +194,6 @@ while {
 "=" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 true {
@@ -238,14 +223,12 @@ return {
 {LETRA}[{a-zA-Z0-9}]{0,99} {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema,yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_IDENTIFICADOR;
 }
 {NUMERO}{1,100} {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
     yylval.atributos.valor_entero=atoi(yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
     return TOK_CONSTANTE_ENTERA;
 }
 \t {

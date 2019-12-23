@@ -19,14 +19,18 @@ rm       = rm -f
 
 all: sintactico
 
-sintactico: sintactico.o y.tab.o lex.yy.o tabla.o
-	 $(CC) $(CFLAGS) -o $@ $(OBJDIR)/sintactico.o $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/tabla.o
+sintactico: sintactico.o y.tab.o lex.yy.o tabla.o generacion.o
+	 $(CC) $(CFLAGS) -o $@ $(OBJDIR)/sintactico.o $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/tabla.o $(OBJDIR)/generacion.o
 
 sintactico.o: $(SRCDIR)/sintactico.c y.tab.c
 	$(CC) -c $(CFLAGS) $<
 	mv $@ $(OBJDIR)
 
 tabla.o: $(SRCDIR)/tabla.c
+	$(CC) -c $(CFLAGS) $<
+	mv $@ $(OBJDIR)
+
+generacion.o: $(SRCDIR)/generacion.c
 	$(CC) -c $(CFLAGS) $<
 	mv $@ $(OBJDIR)
 
