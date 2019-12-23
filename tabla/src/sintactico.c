@@ -44,8 +44,6 @@ int main(int argc, char **argv)
   tablaGlobal = tablaInit();
   tablaLocal = tablaInit();
   tablaActual = tablaGlobal;
-  escribir_subseccion_data(salida);
-  escribir_cabecera_bss(salida);
   
   
   yyparse();

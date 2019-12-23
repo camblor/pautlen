@@ -93,10 +93,22 @@
 
 %%
 
-programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
+programa: TOK_MAIN '{'declaraciones escritura1 funciones escritura2 sentencias'}'
         {
           /* Final del fichero */
           escribir_fin(salida);
+        }
+
+escritura1:
+        {
+          escribir_subseccion_data(salida);
+          escribir_cabecera_bss(salida);
+          escribir_segmento_codigo(salida);
+        }
+
+escritura2:
+        {
+          escribir_inicio_main(salida);
         }
 
 
@@ -150,8 +162,6 @@ identificadores: identificador
         |identificador ',' identificadores
         {
           /*fprintf(salida, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");*/
-          escribir_segmento_codigo(salida);
-          escribir_inicio_main(salida);
         }
 
 funciones: funcion funciones
@@ -404,6 +414,7 @@ exp: exp '+' exp
             $$.tipo = itemActual->data->tipo;
             $$.es_direccion = 1;
           }
+          /* TODO: Escritura en ensamblador de la introduccion en la pila de la dirección del identificador: push dword  _$1.lexema */
           /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
         }
         |constante
