@@ -315,7 +315,24 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
 escritura: TOK_PRINTF exp
         {
           /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
-          escribir(salida, 1, buscaElemento(tablaGlobal, $2.lexema)->data->tipo);
+          itemActual = buscaElemento(tablaActual, $2.lexema);
+          if(!itemActual){
+            printf("ERROR\n");
+          } else{
+
+            if (itemActual->data->clase != 1){
+              printf("ERROR\n");
+            }
+            if (tablaActual == tablaGlobal){
+              escribir(salida, 1, buscaElemento(tablaGlobal, $2.lexema)->data->tipo);
+            } else if (tablaActual == tablaLocal){
+              printf("ambito local\n");
+            } else{
+              printf("ERROR AMBITO\n");
+            }
+            printf("lul: %d\n", itemActual->data->clase);
+          }
+          
         }
 
 retorno_funcion: TOK_RETURN exp
