@@ -1671,7 +1671,7 @@ yyreduce:
 
           else{
             (yyvsp[-2].atributos).valor_entero = (yyvsp[0].atributos).valor_entero;          
-            asignar(salida, "x", 0);
+            asignar(salida, (yyvsp[-2].atributos).lexema, 0);            
           }
 
           

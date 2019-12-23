@@ -264,7 +264,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
           else{
             $1.valor_entero = $3.valor_entero;          
-            asignar(salida, "x", 0);
+            asignar(salida, $1.lexema, 0);            
           }
 
           

@@ -1,5 +1,6 @@
 main {
-int x;
+int x, res;
 x = 8;
-printf x;
+res = x;
+printf res;
 }
