@@ -345,16 +345,14 @@ exp: exp '+' exp
         {
           /* Sumamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-              printf("ERROR\n");
-            }
-            else{
-              if ($1.es_direccion==1 && $3.es_direccion==1){
-              sumar(salida, $1.es_direccion, $3.es_direccion);
-              $$.valor_entero = $1.valor_entero + $3.valor_entero;
-              $$.tipo = INT;
-              $$.es_direccion=0;
-              }
-            }
+            printf("ERROR\n");
+          }
+          else if ($1.tipo == INT || $3.tipo == INT){
+            sumar(salida, $1.es_direccion, $3.es_direccion);
+            $$.valor_entero = $1.valor_entero + $3.valor_entero;
+            $$.tipo = INT;
+            $$.es_direccion=0;
+          }
         }
         |exp '-' exp
         {
