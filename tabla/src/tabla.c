@@ -34,12 +34,17 @@ Funcion: tablaInit
 Desc: Inicializa la tabla de simbolos global
 */
 dataItem** tablaInit(){
-   dataItem** tablaGlobal = (dataItem**) malloc(sizeof(dataItem*) * SIZE);
-   if(tablaGlobal == NULL){
+   int i;
+   dataItem** tabla = (dataItem**) malloc(sizeof(dataItem*) * SIZE);
+   if(tabla == NULL){
       fprintf(stderr, "Error creacion tabla de simbolos\n");
       return NULL;
    }
-   return tablaGlobal;
+
+   for(i=0;i<SIZE;i++){
+      tabla[i] = NULL;
+   }
+   return tabla;
 }
 
 /*
@@ -120,39 +125,6 @@ int insertaElemento(dataItem **tabla, char *lexema, int data)
    return 1;
 }
 
-/*
-Funcion: eliminaElemento
-Descripcion: elimina un elemento en la tabla hash pasada como argumento
-*/
-dataItem* eliminaElemento(dataItem **tabla, dataItem *item)
-{
-   char *lexema = item->lexema;
-
-   /*get the hash*/
-   int hashIndex = hash(lexema);
-
-   /*move in array until an empty*/
-   while (tabla[hashIndex] != NULL)
-   {
-
-      if (strcmp(tabla[hashIndex]->lexema, lexema) == 0)
-      {
-         dataItem *temp = tabla[hashIndex];
-
-         /*assign a dummy item at deleted position*/
-         tabla[hashIndex] = dummyItem;
-         return temp;
-      }
-
-      /*go to next cell*/
-      ++hashIndex;
-
-      /*wrap around the table*/
-      hashIndex %= SIZE;
-   }
-
-   return NULL;
-}
 
 /*
 Funcion: display
@@ -181,13 +153,14 @@ void display(dataItem **tabla)
    printf("\n");
 }
 
+
 /*
-Funcion: liberaTabla
-Descripcion: libera la tabla hash pasada como argumento
+Funcion: vaciar
+Descripcion: vacia la tabla hash pasada como argumento
 */
-void liberaTablaGlobal(dataItem **tabla)
+void vaciar(dataItem **tabla)
 {
-   int i;
+   int i = 0;
 
    for (i = 0; i < SIZE; i++)
    {
@@ -203,11 +176,22 @@ void liberaTablaGlobal(dataItem **tabla)
 Funcion: liberaTabla
 Descripcion: libera la tabla hash pasada como argumento
 */
-void liberaTablaLocal(dataItem **tabla)
+void liberaTabla(dataItem **tabla)
 {
-   liberaTablaGlobal(tabla);
+   int i;
+
+   for (i = 0; i < SIZE; i++)
+   {
+      if (tabla[i] != NULL)
+      {
+         free(tabla[i]->lexema);
+         free(tabla[i]);
+      }
+   }
+
    free(tabla);
 }
+
 
 int strsearch(char *string, char character)
 {
@@ -217,51 +201,6 @@ int strsearch(char *string, char character)
    for (i = 0; i < len; i++)
    {
       if (string[i] == character)
-      {
-         return 1;
-      }
-   }
-   return 0;
-}
-
-int checkFuncion(char *string)
-{
-   int len = strlen(string);
-   int i;
-
-   for (i = 0; i < len; i++)
-   {
-      if (
-          i + 6 < len &&
-          string[i] == 'f' &&
-          string[i + 1] == 'u' &&
-          string[i + 2] == 'n' &&
-          string[i + 3] == 'c' &&
-          string[i + 4] == 'i' &&
-          string[i + 5] == 'o' &&
-          string[i + 6] == 'n')
-      {
-         return 1;
-      }
-   }
-   return 0;
-}
-
-int checkCierre(char *string)
-{
-   int len = strlen(string);
-   int i;
-
-   for (i = 0; i < len; i++)
-   {
-      if (
-          i + 5 < len &&
-          string[i] == 'c' &&
-          string[i + 1] == 'i' &&
-          string[i + 2] == 'e' &&
-          string[i + 3] == 'r' &&
-          string[i + 4] == 'r' &&
-          string[i + 5] == 'e')
       {
          return 1;
       }
@@ -317,21 +256,7 @@ int tablaDeclararFuncion(dataItem** tablaGlobal, dataItem** tablaLocal, char *id
       /*Ambito global*/
       insertaElemento(tablaGlobal, id, desc_id);
       /*Nuevo ambito local*/
-      if (tablaLocal != NULL)
-      {
-         liberaTablaLocal(tablaLocal);
-      }
-      /*Creacion tabla local*/
-      tablaLocal = malloc(sizeof(dataItem *) * SIZE);
-      if (tablaLocal == NULL)
-      {
-         fprintf(stderr, "ERROR MEMORIA\n");
-         exit(EXIT_FAILURE);
-      }
-      for (i = 0; i < SIZE; i++)
-      {
-         tablaLocal[i] = NULL;
-      }
+      vaciar(tablaLocal);
       /*Insercion de la propia funcion en la tabla local*/
       insertaElemento(tablaLocal, id, desc_id);
       return 1;

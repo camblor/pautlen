@@ -3,7 +3,7 @@ TARGET   = ejemplo7
 
 CC       = gcc
 # compiling flags here
-CFLAGS   =  -I.
+CFLAGS   =  -I. -g
 
 LINKER   = gcc
 # linking flags here
@@ -47,6 +47,12 @@ y.tab.c: $(SRCDIR)/alfa.y
 	mv y.tab.c $(SRCDIR)
 	mv y.tab.h $(INCDIR)
 	mv y.output $(BINDIR)
+
+exec:
+	./sintactico entrada.txt output
+
+valgrind:
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./sintactico entrada.txt output
 
 .PHONY: clean
 clean:

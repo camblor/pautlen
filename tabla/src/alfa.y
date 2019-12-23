@@ -20,8 +20,10 @@
   extern bool longitud;
   int tipo_actual;                                                                
   int clase_actual;
-  dataItem** tablaGlobal = NULL;
-  dataItem** tablaLocal = NULL;
+
+  extern dataItem** tablaGlobal;
+  extern dataItem** tablaLocal;
+
 %}
 
 %union
@@ -396,18 +398,9 @@ constante_logica: TOK_TRUE
           fprintf(salida, ";R103:\t<constante_logica> ::= false\n");
         }
 
-constante_entera: numero
+constante_entera: TOK_CONSTANTE_ENTERA
         {
-          fprintf(salida, ";R104:\t<constante_entera> ::= <numero>\n");
-        }
-
-numero: digito
-        {
-          fprintf(salida, ";R105:\t<numero> ::= <digito>\n");
-        }
-        |numero digito
-        {
-          fprintf(salida, ";R106:\t<numero> ::= <numero> <digito>\n");
+          fprintf(salida, ";R104:\t<constante_entera> ::= TOK_CONSTANTE_ENTERA\n");
         }
 
 identificador: TOK_IDENTIFICADOR
@@ -415,10 +408,6 @@ identificador: TOK_IDENTIFICADOR
           fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
         }
 
-digito: TOK_CONSTANTE_ENTERA
-        {
-          fprintf(salida, ";R115:\t<digito> ::= TOK_CONSTANTE_ENTERA\t");
-        }
 
 %%
 

@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "../inc/tabla.h"
 #include "../inc/alfa.h"
 #include "../inc/y.tab.h"
+
 
 FILE *yyin;
 FILE *salida;
@@ -12,6 +14,8 @@ int linea = 1;
 int columna = 1;
 bool longitud = false;
 bool invalidchar = false;
+dataItem** tablaGlobal;
+dataItem** tablaLocal;
 
 int main(int argc, char **argv)
 {
@@ -34,7 +38,16 @@ int main(int argc, char **argv)
     fclose(yyin);
     return 0;
   }
+
+
   yyparse();
+
+
+  liberaTabla(tablaGlobal);
+  if(tablaLocal != NULL){
+    liberaTabla(tablaLocal);
+  }
+  
 
   fclose(salida);
   fclose(yyin);
