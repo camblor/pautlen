@@ -5,7 +5,6 @@ segment .bss
 	__esp resd 1
 	_x1 resd 1
 	_x2 resd 1
-	_res resd 1
 	_y1 resd 1
 segment .text
 	global main
@@ -20,20 +19,16 @@ main:
 	push dword _x2
 	call scan_int
 	add esp, 4
-;D:	/
+;D:	+
 	push dword _x1
-	push dword 5
+	push dword _x2
 	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
-	mov dword edx, 0
-	cmp ebx, edx
-	je err_div0
-	idiv ebx
+	mov dword ebx, [ebx]
+	add eax, ebx
 	push dword eax
-	pop dword eax
-	mov [_res], eax 
-;D:	>
+;D:	==
 	push dword _x1
 	push dword _x2
 	pop dword edx
@@ -41,12 +36,12 @@ main:
 	mov dword edx, [edx]
 	mov dword eax, [eax]
 	cmp eax, edx
-	jg mayor1
+	je igual0
 	push dword 0
-	jmp fin_mayor1
-mayor1:
+	jmp fin_igual0
+igual0:
 	push dword 1
-fin_mayor1:
+fin_igual0:
 	pop dword eax
 	mov [_y1], eax 
 	push dword _y1
@@ -56,6 +51,44 @@ fin_mayor1:
 	call print_boolean
 	add esp, 4
 	call print_endofline
+;D:	if
+;D:	==
+	push dword _x1
+	push dword _x2
+	pop dword edx
+	pop dword eax
+	mov dword edx, [edx]
+	mov dword eax, [eax]
+	cmp eax, edx
+	je igual1
+	push dword 0
+	jmp fin_igual1
+igual1:
+	push dword 1
+fin_igual1:
+	pop eax
+	cmp eax, 0
+	je near fin_then2
+	jmp near fin_ifelse2
+fin_then2:
+	push dword _x1
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+fin_ifelse2:
+;D:	else
+	push dword _x2
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+;R51:	<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}
+;R40:	<bloque> ::= <condicional>
 	jmp fin
 fin_indice_fuera_rango:
 	push dword err_index

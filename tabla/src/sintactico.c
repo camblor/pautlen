@@ -18,6 +18,7 @@ dataItem** tablaGlobal;
 dataItem** tablaLocal;
 dataItem** tablaActual;
 datainfo * infoActual;
+int etiqueta = 0;
 
 int main(int argc, char **argv)
 {

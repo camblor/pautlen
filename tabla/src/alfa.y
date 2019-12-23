@@ -19,7 +19,6 @@
   extern bool longitud;
 
   char itoa[100];
-  int etiqueta=1;
 
   /*Diferenciar globales y locales*/
   int ambito;
@@ -33,6 +32,8 @@
   int pos_variable_local_actual;
   int num_parametros_actual;
   int pos_parametro_actual;
+
+  extern int etiqueta;
 
   /*Tablas de simbolos*/
   extern dataItem** tablaGlobal;
@@ -62,6 +63,9 @@
 %type <atributos> constante_entera
 %type <atributos> constante_logica
 %type <atributos> identificador
+%type <atributos> if_exp
+%type <atributos> if_exp_sentencias
+
 
 
 %token TOK_MAIN
@@ -281,13 +285,31 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
           fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");
         }
 
-condicional: TOK_IF '('exp')' '{'sentencias'}'
+condicional: if_exp_sentencias
         {
           fprintf(salida, ";R50:\t<condicional> ::= if (<exp>) {<sentencias>}\n");
         }
-        |TOK_IF '('exp')' '{'sentencias'}' TOK_ELSE '{'sentencias'}'
+        | if_exp_sentencias TOK_ELSE '{' sentencias '}'
         {
           fprintf(salida, ";R51:\t<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}\n");
+        }
+
+if_exp_sentencias: if_exp sentencias '}'
+        {
+          $$.etiqueta = $1.etiqueta;
+          ifthenelse_fin(salida, $$.etiqueta);
+        }
+if_exp: TOK_IF '(' exp ')' '{'
+        {
+
+          if($3.tipo != BOOLEAN){
+            printf("ERROR - Condicional de no-booleanos\n");
+          } 
+          else {
+            $$.etiqueta = etiqueta++;
+            ifthenelse_inicio(salida, $$.es_direccion, $$.etiqueta);
+            ifthenelse_fin_then(salida, $$.etiqueta);
+          }
         }
 
 bucle: TOK_WHILE '('exp')' '{'sentencias'}'

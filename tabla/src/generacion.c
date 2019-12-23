@@ -687,7 +687,7 @@ void ifthen_inicio(FILE *fpasm, int exp_es_variable, int etiqueta)
     fprintf(fpasm, "\tpop eax\n");
     if (exp_es_variable == 1)
         fprintf(fpasm, "\tmov eax, [eax]\n");
-    fprintf(fpasm, "cmp eax, 0");
+    fprintf(fpasm, "\tcmp eax, 0\n");
     fprintf(fpasm, "\tje near fin_then%d\n", etiqueta);
 }
 
