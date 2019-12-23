@@ -3,7 +3,6 @@
 main {
   int x, resultado;
   x=10;
-  scanf x; // Esta linea lee el valor de x
   resultado = x*x; // Esta linea calcula el cuadrado de x
   printf resultado; // Esta linea imprime el resultado
 }

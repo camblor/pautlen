@@ -270,6 +270,10 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           realizar la asignación :    mov dword [$1.lexema], eax
           */
 
+          escribir_operando(salida, "2", 0);
+          asignar(salida, "x", 0);
+          escribir_operando(salida, "x", 1);
+
         }
         |elemento_vector '=' exp
         {

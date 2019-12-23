@@ -12,9 +12,14 @@ segment .text
 	extern alfa_malloc, alfa_free, ld_float
 main:
 	mov dword [__esp] , esp
+	push dword 2
+	pop dword eax
+	mov [_x], eax 
 	push dword _x
-	call scan_int
-	add esp, 4
+	push dword 2
+	pop dword eax
+	mov [_x], eax 
+	push dword _x
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
