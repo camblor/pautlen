@@ -5,6 +5,6 @@ main {
     scanf x2;
     res = x1 / 5;
 
-    y1 = (x1==x2);
+    y1 = (x1>x2);
     printf y1;
 }

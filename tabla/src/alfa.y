@@ -507,23 +507,63 @@ comparacion: exp TOK_IGUAL exp
         }
         |exp TOK_DISTINTO exp
         {
-          fprintf(salida, ";R94:\t<comparacion> ::= <exp> != <exp>\n");
+          /*fprintf(salida, ";R94:\t<comparacion> ::= <exp> != <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              distinto(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+            }
+          }
         }
         |exp TOK_MENORIGUAL exp
         {
-          fprintf(salida, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");
+          /*fprintf(salida, ";R95:\t<comparacion> ::= <exp> <= <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              menor_igual(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+            }
+          }
         }
         |exp TOK_MAYORIGUAL exp
         {
-          fprintf(salida, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");
+          /*fprintf(salida, ";R96:\t<comparacion> ::= <exp> >= <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              mayor_igual(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+            }
+          }
         }
         |exp '<' exp
         {
-          fprintf(salida, ";R97:\t<comparacion> ::= <exp> < <exp>\n");
+          /*fprintf(salida, ";R97:\t<comparacion> ::= <exp> < <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              menor(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+            }
+          }
         }
         |exp '>' exp
         {
-          fprintf(salida, ";R98:\t<comparacion> ::= <exp> > <exp>\n");
+          /*fprintf(salida, ";R98:\t<comparacion> ::= <exp> > <exp>\n");*/
+          if (($1.tipo == INT) && ($3.tipo == INT)){
+            if($3.es_direccion==1 && $1.es_direccion==1){
+              mayor(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+              etiqueta++;
+              $$.tipo = BOOLEAN;
+              $$.es_direccion = 0;
+            }
+          }
         }
 
 constante: constante_logica

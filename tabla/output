@@ -33,7 +33,7 @@ main:
 	push dword eax
 	pop dword eax
 	mov [_res], eax 
-;D:	==
+;D:	>
 	push dword _x1
 	push dword _x2
 	pop dword edx
@@ -41,12 +41,12 @@ main:
 	mov dword edx, [edx]
 	mov dword eax, [eax]
 	cmp eax, edx
-	je igual1
+	jg mayor1
 	push dword 0
-	jmp fin_igual1
-igual1:
+	jmp fin_mayor1
+mayor1:
 	push dword 1
-fin_igual1:
+fin_mayor1:
 	pop dword eax
 	mov [_y1], eax 
 	push dword _y1
