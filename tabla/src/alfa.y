@@ -263,18 +263,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           }
 
           $1.valor_entero = $3.valor_entero;
-          
-          /* 
-          Generar el código para 
-          desapilar la parte derecha de la asignación:   pop dword eax
-          si la expresión es una dirección ($3.es_direccion == 1) (una variable) 
-          Acceder a memoria por el valor adecuado: mov dword eax , [eax]
-          realizar la asignación :    mov dword [$1.lexema], eax
-          */
 
-          sprintf(itoa, "%d", $1.valor_entero);
-
-          escribir_operando(salida, itoa, 0);
           asignar(salida, "x", 0);
           escribir_operando(salida, "x", 1);
 
