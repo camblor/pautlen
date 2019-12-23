@@ -250,24 +250,25 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             printf("ERROR itemActual == NULL\n");
           }
 
-          if (itemActual->data->categoria == 3){
-            printf("ERROR itemActual->data->categoria == 3\n");
+          else if (itemActual->data->categoria == FUNCION){
+            printf("ERROR itemActual->data->categoria == FUNCION\n");
           }
 
-          if(itemActual->data->clase == VECTOR){
+          else if(itemActual->data->clase == VECTOR){
             printf("ERROR itemActual->data->clase == VECTOR\n");
           }
 
-          if(itemActual->data->tipo != $3.tipo){
+          else if(itemActual->data->tipo != $3.tipo){
             printf("ERROR itemActual->data->tipo != $3.tipo\n");
           }
 
-          $1.valor_entero = $3.valor_entero;
-
+          else{
+            $1.valor_entero = $3.valor_entero;          
+            asignar(salida, "x", 0);
+            escribir_operando(salida, "x", 1);
+          }
 
           
-          asignar(salida, "x", 0);
-          escribir_operando(salida, "x", 1);
 
         }
         |elemento_vector '=' exp
@@ -402,7 +403,7 @@ exp: exp '+' exp
             printf("ERROR - Identificador no valido\n");
           }
           /*Si categoria es funicon error*/
-          else if(itemActual->data->categoria == 3){
+          else if(itemActual->data->categoria == FUNCION){
             printf("ERROR - Suma de funciones\n");
           }
           /*Si clase es vector error*/ 
@@ -413,6 +414,10 @@ exp: exp '+' exp
           else {
             $$.tipo = itemActual->data->tipo;
             $$.es_direccion = 1;
+            
+
+            /* Asignamos valor */
+            escribir_operando(salida, $1.lexema, $$.es_direccion);
           }
           /* TODO: Escritura en ensamblador de la introduccion en la pila de la dirección del identificador: push dword  _$1.lexema */
           /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
@@ -517,17 +522,17 @@ constante_entera: TOK_CONSTANTE_ENTERA
           $$.valor_entero = $1.valor_entero;
           $$.tipo = INT;
           $$.es_direccion = 0;
-          /*TODO: CONSTANTE A NASM*/
+
           /* Transformamos entero a string para adaptarnos al formato de generacion */
           sprintf(itoa, "%d", $1.valor_entero);
 
           /* Asignamos valor */
-          escribir_operando(salida, itoa, 0);
+          escribir_operando(salida, itoa, $$.es_direccion);
         }
 
 identificador: TOK_IDENTIFICADOR
         {
-
+          categoria_actual = VARIABLE;
           declarar_variable(salida, $1.lexema, tipo_actual, 1);
           infoActual = malloc(sizeof(datainfo));
           infoActual->categoria = categoria_actual;

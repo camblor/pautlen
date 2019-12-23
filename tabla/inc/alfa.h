@@ -16,6 +16,10 @@ typedef struct {
 }tipo_atributos;
 
 
+/* CATEGORIA */
+#define VARIABLE 1
+#define FUNCION 2
+
 /* CLASES */
 #define ESCALAR 1
 #define VECTOR 2
