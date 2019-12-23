@@ -13,11 +13,7 @@
 Struct: dataItem
 Descripcion: Elemento de la tabla de simbolos
 */
-struct _dataItem
-{
-   int data;
-   char *lexema;
-};
+
 
 
 struct _info{

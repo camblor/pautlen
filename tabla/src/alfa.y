@@ -23,6 +23,7 @@
   int ambito;
 
   /*Informacion de lo que estamos analizando*/
+  char* lexema_actual[MAX_LONG_ID+1];
   int categoria_actual;
   int clase_actual;
   int tipo_actual;
@@ -134,10 +135,10 @@ tipo: TOK_INT
           fprintf(salida, ";R11:\t<tipo> ::= boolean\n");
         }
 
-clase_vector: TOK_ARRAY tipo '['constante_entera']'
+clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
         {
           clase_actual = VECTOR;
-          fprintf(salida, ";R15:\t<clase_escalar> ::= array <tipo> [<constante_entera>]\n");
+          fprintf(salida, ";R15:\t<clase_vector> ::= array <tipo> [TOK_CONSTANTE_ENTERA]\n");
         }
 
 identificadores: identificador
@@ -242,6 +243,10 @@ bloque: condicional
 asignacion: identificador '=' exp
         {
           fprintf(salida, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
+          if(buscaElemento(tablaGlobal, $1.lexema) != NULL){
+            printf("Funciona y todo xD\n");
+            buscaElemento(tablaGlobal, $1.lexema)->data = $3.valor_entero;
+          }
         }
         |elemento_vector '=' exp
         {
@@ -293,18 +298,22 @@ retorno_funcion: TOK_RETURN exp
 exp: exp '+' exp
         {
           fprintf(salida, ";R72:\t<exp> ::= <exp> + <exp>\n");
+          $$.valor_entero = $1.valor_entero + $3.valor_entero;
         }
         |exp '-' exp
         {
           fprintf(salida, ";R73:\t<exp> ::= <exp> - <exp>\n");
+          $$.valor_entero = $1.valor_entero - $3.valor_entero;
         }
         |exp '/' exp
         {
           fprintf(salida, ";R74:\t<exp> ::= <exp> / <exp>\n");
+          $$.valor_entero = $1.valor_entero / $3.valor_entero;
         }
         |exp '*' exp
         {
           fprintf(salida, ";R75:\t<exp> ::= <exp> * <exp>\n");
+          $$.valor_entero = $1.valor_entero * $3.valor_entero;
         }
         |'-' exp
         {
@@ -333,6 +342,7 @@ exp: exp '+' exp
         |'('exp')'
         {
           fprintf(salida, ";R82:\t<exp> ::= (<exp>)\n");
+          $$.valor_entero = $2.valor_entero;
         }
         |comparacion
         {

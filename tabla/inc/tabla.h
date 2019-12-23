@@ -1,7 +1,11 @@
 #ifndef HASH_H
 #define HASH_H
 
-typedef struct _dataItem dataItem;
+typedef struct _dataItem
+{
+   int data;
+   char *lexema;
+} dataItem;
 
 dataItem** tablaInit();
 dataItem* buscaElemento(dataItem **tabla, char *lexema);

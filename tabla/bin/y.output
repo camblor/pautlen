@@ -23,7 +23,7 @@ Grammar
     8 tipo: TOK_INT
     9     | TOK_BOOLEAN
 
-   10 clase_vector: TOK_ARRAY tipo '[' constante_entera ']'
+   10 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA ']'
 
    11 identificadores: identificador
    12                | identificador ',' identificadores
@@ -135,7 +135,7 @@ $end (0) 0
 error (256)
 TOK_IDENTIFICADOR (258) 71
 TOK_CONSTANTE_REAL (259)
-TOK_CONSTANTE_ENTERA (260) 70
+TOK_CONSTANTE_ENTERA (260) 10 70
 TOK_MAIN (261) 1
 TOK_RETURN (262) 41
 TOK_ARRAY (263) 10
@@ -227,7 +227,7 @@ constante (72)
 constante_logica (73)
     on left: 68 69, on right: 66
 constante_entera (74)
-    on left: 70, on right: 10 67
+    on left: 70, on right: 67
 identificador (75)
     on left: 71, on right: 11 12 15 20 33 35 39 50 55
 
@@ -280,7 +280,7 @@ State 4
 
 State 5
 
-   10 clase_vector: TOK_ARRAY . tipo '[' constante_entera ']'
+   10 clase_vector: TOK_ARRAY . tipo '[' TOK_CONSTANTE_ENTERA ']'
 
     TOK_INT      shift, and go to state 6
     TOK_BOOLEAN  shift, and go to state 7
@@ -366,7 +366,7 @@ State 13
 
 State 14
 
-   10 clase_vector: TOK_ARRAY tipo . '[' constante_entera ']'
+   10 clase_vector: TOK_ARRAY tipo . '[' TOK_CONSTANTE_ENTERA ']'
 
     '['  shift, and go to state 22
 
@@ -451,11 +451,9 @@ State 21
 
 State 22
 
-   10 clase_vector: TOK_ARRAY tipo '[' . constante_entera ']'
+   10 clase_vector: TOK_ARRAY tipo '[' . TOK_CONSTANTE_ENTERA ']'
 
     TOK_CONSTANTE_ENTERA  shift, and go to state 44
-
-    constante_entera  go to state 45
 
 
 State 23
@@ -464,7 +462,7 @@ State 23
 
     TOK_IDENTIFICADOR  shift, and go to state 19
 
-    identificador  go to state 46
+    identificador  go to state 45
 
 
 State 24
@@ -472,7 +470,7 @@ State 24
    41 retorno_funcion: TOK_RETURN . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -502,7 +500,7 @@ State 26
    40 escritura: TOK_PRINTF . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -666,23 +664,23 @@ State 43
 
 State 44
 
-   70 constante_entera: TOK_CONSTANTE_ENTERA .
-
-    $default  reduce using rule 70 (constante_entera)
-
-
-State 45
-
-   10 clase_vector: TOK_ARRAY tipo '[' constante_entera . ']'
+   10 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA . ']'
 
     ']'  shift, and go to state 70
 
 
-State 46
+State 45
 
    15 funcion: TOK_FUNCTION tipo identificador . '(' parametros_funcion ')' '{' declaraciones_funcion sentencias '}'
 
     '('  shift, and go to state 71
+
+
+State 46
+
+   70 constante_entera: TOK_CONSTANTE_ENTERA .
+
+    $default  reduce using rule 70 (constante_entera)
 
 
 State 47
@@ -704,7 +702,7 @@ State 49
    46 exp: '-' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -725,7 +723,7 @@ State 50
    49 exp: '!' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -746,7 +744,7 @@ State 51
    52 exp: '(' . exp ')'
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -886,7 +884,7 @@ State 61
    37            | TOK_IF '(' . exp ')' '{' sentencias '}' TOK_ELSE '{' sentencias '}'
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -907,7 +905,7 @@ State 62
    38 bucle: TOK_WHILE '(' . exp ')' '{' sentencias '}'
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -949,7 +947,7 @@ State 66
    34 asignacion: elemento_vector '=' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -970,7 +968,7 @@ State 67
    35 elemento_vector: identificador '[' . exp ']'
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -991,7 +989,7 @@ State 68
    33 asignacion: identificador '=' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1016,7 +1014,7 @@ State 69
 
 State 70
 
-   10 clase_vector: TOK_ARRAY tipo '[' constante_entera ']' .
+   10 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA ']' .
 
     $default  reduce using rule 10 (clase_vector)
 
@@ -1118,7 +1116,7 @@ State 75
    48 exp: exp TOK_OR . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1139,7 +1137,7 @@ State 76
    47 exp: exp TOK_AND . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1160,7 +1158,7 @@ State 77
    61 comparacion: exp TOK_DISTINTO . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1181,7 +1179,7 @@ State 78
    60 comparacion: exp TOK_IGUAL . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1202,7 +1200,7 @@ State 79
    62 comparacion: exp TOK_MENORIGUAL . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1223,7 +1221,7 @@ State 80
    63 comparacion: exp TOK_MAYORIGUAL . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1244,7 +1242,7 @@ State 81
    42 exp: exp '+' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1265,7 +1263,7 @@ State 82
    43 exp: exp '-' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1286,7 +1284,7 @@ State 83
    45 exp: exp '*' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1307,7 +1305,7 @@ State 84
    44 exp: exp '/' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1328,7 +1326,7 @@ State 85
    64 comparacion: exp '<' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1349,7 +1347,7 @@ State 86
    65 comparacion: exp '>' . exp
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1370,7 +1368,7 @@ State 87
    55 exp: identificador '(' . lista_expresiones ')'
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
@@ -1970,7 +1968,7 @@ State 118
    58 resto_lista_expresiones: ',' . exp resto_lista_expresiones
 
     TOK_IDENTIFICADOR     shift, and go to state 19
-    TOK_CONSTANTE_ENTERA  shift, and go to state 44
+    TOK_CONSTANTE_ENTERA  shift, and go to state 46
     TOK_TRUE              shift, and go to state 47
     TOK_FALSE             shift, and go to state 48
     '-'                   shift, and go to state 49
