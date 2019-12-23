@@ -1,6 +1,7 @@
 main {
-    int x1, x2;
+    int x1, x2, res;
     scanf x1;
     scanf x2;
-    printf x1+x2;
+    res = x1 / 5;
+    printf res;
 }

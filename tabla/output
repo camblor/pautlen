@@ -19,14 +19,16 @@ main:
 	push dword _x2
 	call scan_int
 	add esp, 4
-;D:	+
+;D:	/
 	push dword _x1
-	push dword _x2
+	push dword 5
 	pop dword ebx
 	pop dword eax
 	mov dword eax, [eax]
-	mov dword ebx, [ebx]
-	add eax, ebx
+	mov dword edx, 0
+	cmp ebx, edx
+	je err_div0
+	idiv ebx
 	push dword eax
 	pop dword eax
 	mov [_res], eax 

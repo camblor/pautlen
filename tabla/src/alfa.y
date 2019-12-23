@@ -364,9 +364,10 @@ exp: exp '+' exp
           }
           else if($1.tipo == INT || $3.tipo == INT){
             restar(salida, $1.es_direccion, $3.es_direccion);
+            $$.valor_entero = $1.valor_entero - $3.valor_entero;
+            $$.tipo = INT;
+            $$.es_direccion=0;
           }
-          $$.tipo = INT;
-          $$.es_direccion = 0;
         }
         |exp '/' exp
         {
@@ -376,9 +377,10 @@ exp: exp '+' exp
           }
           else if($1.tipo == INT || $3.tipo == INT){
             dividir(salida, $1.es_direccion, $3.es_direccion);
+            $$.valor_entero = $1.valor_entero / $3.valor_entero;
+            $$.tipo = INT;
+            $$.es_direccion=0;
           }
-          $$.tipo = INT;
-          $$.es_direccion = 0;
         }
         |exp '*' exp
         {
@@ -388,9 +390,10 @@ exp: exp '+' exp
           }
           else if($1.tipo == INT || $3.tipo == INT){
             multiplicar(salida, $1.es_direccion, $3.es_direccion);
+            $$.valor_entero = $1.valor_entero * $3.valor_entero;
+            $$.tipo = INT;
+            $$.es_direccion=0;
           }
-          $$.tipo = INT;
-          $$.es_direccion = 0;
         }
         |'-' exp
         {
