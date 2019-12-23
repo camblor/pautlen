@@ -822,5 +822,13 @@ printf("%d\n", error);
     		else
     			fprintf(stderr,"****Error semantico en lin %d: Funcion <%s> sin sentencia de retorno.\n",linea,perror);
     }
+    else if (error == 0){
+      fprintf(stderr, "****Error sintactico en [lin %d, col %d]\n", linea, columna-1);
+    }
+    error = 0;
+    fclose(salida);
+
+    liberaTabla(tablaActual);
+    liberaTabla(tablaGlobal);
     error = 0;
 }
