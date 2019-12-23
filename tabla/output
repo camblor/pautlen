@@ -4,6 +4,20 @@ segment .data
 segment .bss 
 	__esp resd 1
 	_x1 resd 1
+;D:	function
+;R27:	<parametro_funcion> ::= <tipo> <TOK_IDENTIFICADOR>
+;R26:	<resto_parametros_funcion> ::= 
+;R23:	<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>
+	_x1 resd 1
+;R28:	<declaraciones_funcion> ::= <declaraciones>
+	_fibo:
+	push ebp
+	mov ebp, esp
+	sub esp, 0
+	push dword _x1
+	call scan_int
+	add esp, 4
+;R22:	<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -11,3 +25,28 @@ segment .text
 	extern alfa_malloc, alfa_free, ld_float
 main:
 	mov dword [__esp] , esp
+	push dword 666
+	pop dword eax
+	mov [_x1], eax 
+	push dword _x1
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	jmp fin
+fin_indice_fuera_rango:
+	push dword err_index
+	call print_string
+	add esp, 4
+	call print_endofline
+	jmp fin
+division_cero:
+	push dword err_div0
+	call print_string
+	add esp, 4
+	call print_endofline
+fin:
+	mov dword esp, [__esp]
+	ret

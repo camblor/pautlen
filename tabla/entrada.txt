@@ -2,6 +2,12 @@ main {
 
   int x1;
 
-  scanf x;
+  function int fibo(int arg){
+    int x1;
+    scanf x1;
+  }
+
+  x1 = 666;
+  printf x1;
 
 }

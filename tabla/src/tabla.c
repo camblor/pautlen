@@ -168,8 +168,18 @@ void vaciar(dataItem **tabla)
    {
       if (tabla[i] != NULL)
       {
-         free(tabla[i]->lexema);
+         if(tabla[i]->lexema != NULL){
+            free(tabla[i]->lexema);
+            tabla[i]->lexema = NULL;
+         }
+         
+         if(tabla[i]->data != NULL){
+            free(tabla[i]->data);
+            tabla[i]->data = NULL;
+         }
+
          free(tabla[i]);
+         tabla[i] = NULL;
       }
    }
 }
@@ -186,9 +196,18 @@ void liberaTabla(dataItem **tabla)
    {
       if (tabla[i] != NULL)
       {
-         free(tabla[i]->lexema);
-         free(tabla[i]->data);
+         if(tabla[i]->lexema != NULL){
+            free(tabla[i]->lexema);
+            tabla[i]->lexema = NULL;
+         }
+         
+         if(tabla[i]->data != NULL){
+            free(tabla[i]->data);
+            tabla[i]->data = NULL;
+         }
+
          free(tabla[i]);
+         tabla[i] = NULL;
       }
    }
 
