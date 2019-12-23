@@ -291,23 +291,24 @@ condicional: if_exp_sentencias
         }
         | if_exp_sentencias TOK_ELSE '{' sentencias '}'
         {
-          fprintf(salida, ";R51:\t<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}\n");
+          /*fprintf(salida, ";R51:\t<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}\n");*/
+
+
         }
 
 if_exp_sentencias: if_exp sentencias '}'
         {
           $$.etiqueta = $1.etiqueta;
-          ifthenelse_fin(salida, $$.etiqueta);
+          ifthenelse_fin(salida, $1.etiqueta);
         }
 if_exp: TOK_IF '(' exp ')' '{'
         {
 
           if($3.tipo != BOOLEAN){
             printf("ERROR - Condicional de no-booleanos\n");
-          } 
+          }
           else {
             $$.etiqueta = etiqueta++;
-            ifthenelse_inicio(salida, $$.es_direccion, $$.etiqueta);
             ifthenelse_fin_then(salida, $$.etiqueta);
           }
         }
@@ -479,11 +480,11 @@ exp: exp '+' exp
           $$.tipo = $2.tipo;
           $$.es_direccion = $2.es_direccion;
         }
-        |comparacion
+        |'('comparacion')'
         {
           /*fprintf(salida, ";R83:\t<exp> ::= <comparacion>\n");*/
-          $$.tipo = $1.tipo;
-          $$.es_direccion = $1.es_direccion;
+          $$.tipo = $2.tipo;
+          $$.es_direccion = $2.es_direccion;
         }
         |elemento_vector
         {

@@ -66,9 +66,6 @@ fin_igual0:
 igual1:
 	push dword 1
 fin_igual1:
-	pop eax
-	cmp eax, 0
-	je near fin_then2
 	jmp near fin_ifelse2
 fin_then2:
 	push dword _x1
@@ -87,7 +84,6 @@ fin_ifelse2:
 	call print_int
 	add esp, 4
 	call print_endofline
-;R51:	<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}
 ;R40:	<bloque> ::= <condicional>
 	jmp fin
 fin_indice_fuera_rango:
