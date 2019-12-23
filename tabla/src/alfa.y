@@ -5,7 +5,7 @@
   #include <stdbool.h>
   #include "../inc/alfa.h"
   #include "../inc/tabla.h"
-  
+
 
   tipo_atributos hola;
 
@@ -105,7 +105,7 @@ escritura1:
         {
           escribir_subseccion_data(salida);
           escribir_cabecera_bss(salida);
-          
+
         }
 
 escritura2:
@@ -155,7 +155,7 @@ clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
           clase_actual = VECTOR;
           /* Tipo se obtiene en accion semantica de tipo*/
           /* Obtenemos tamanyo del vector*/
-          tamanio_vector_actual = $4.valor_entero;          
+          tamanio_vector_actual = $4.valor_entero;
         }
 
 identificadores: identificador
@@ -263,11 +263,11 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           }
 
           else{
-            $1.valor_entero = $3.valor_entero;          
+            $1.valor_entero = $3.valor_entero;
             asignar(salida, $1.lexema, $3.es_direccion);
           }
 
-          
+
 
         }
         |elemento_vector '=' exp
@@ -297,8 +297,8 @@ bucle: TOK_WHILE '('exp')' '{'sentencias'}'
 lectura: TOK_SCANF TOK_IDENTIFICADOR
         {
           /* Si al buscar el identificdor en la tabla de símbolos, no está... salir con ERROR */
-          /* Si la categoría o la clase no es la adecuada 
-          (no se puede leer sobre el id de una función ni en algo queno sea escalar)... 
+          /* Si la categoría o la clase no es la adecuada
+          (no se puede leer sobre el id de una función ni en algo queno sea escalar)...
           salir con ERROR*/
           /* Se aplia la dirección sobre la que se va a leer*/
             /* Generar código para escribir push dword _$2.lexema */
@@ -332,7 +332,7 @@ escritura: TOK_PRINTF exp
           else if ($2.es_direccion == 1){
             escribir(salida, 1, itemActual->data->tipo);
           }
-          
+
         }
 
 retorno_funcion: TOK_RETURN exp
@@ -345,13 +345,16 @@ exp: exp '+' exp
         {
           /* Sumamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
-            printf("ERROR - Suma de booleanos\n");
-          }
-          else if($1.tipo == INT || $3.tipo == INT){
-            sumar(salida, $1.es_direccion, $3.es_direccion);
-          }
-          $$.tipo = INT;
-          $$.es_direccion = 0;
+              printf("ERROR\n");
+            }
+            else{
+              if ($1.es_direccion==1 && $3.es_direccion==1){
+              sumar(salida, $1.es_direccion, $3.es_direccion);
+              $$.valor_entero = $1.valor_entero + $3.valor_entero;
+              $$.tipo = INT;
+              $$.es_direccion=0;
+              }
+            }
         }
         |exp '-' exp
         {
@@ -422,7 +425,7 @@ exp: exp '+' exp
           else if(itemActual->data->categoria == FUNCION){
             printf("ERROR - Suma de funciones\n");
           }
-          /*Si clase es vector error*/ 
+          /*Si clase es vector error*/
           else if (itemActual->data->clase == VECTOR){
             printf("ERROR - Suma de vectores\n");
           }
@@ -516,7 +519,7 @@ constante: constante_logica
         {
           $$.tipo = $1.tipo;
           $$.es_direccion = $1.es_direccion;
-        } 
+        }
         | constante_entera
         {
           $$.tipo = $1.tipo;
@@ -561,7 +564,7 @@ identificador: TOK_IDENTIFICADOR
           infoActual->pos_variable_local = pos_variable_local_actual;
           infoActual->num_parametros = num_parametros_actual;
           infoActual->pos_parametro = pos_parametro_actual;
-          
+
           if(!insertaElemento(tablaActual, $1.lexema, infoActual)){
             printf("Ya existe ese elemento\n");
           }
