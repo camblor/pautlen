@@ -303,22 +303,19 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
           /* Se aplia la dirección sobre la que se va a leer*/
             /* Generar código para escribir push dword _$2.lexema */
           /* Invoca a la función de librería adecuada al tipo del ID*/
+
           itemActual = buscaElemento(tablaActual, $2.lexema);
           if(!itemActual){
             printf("ERROR\n");
-          } else{
-
-            if (itemActual->data->clase != 1){
-              printf("ERROR\n");
-            }
-            if (tablaActual == tablaGlobal){
-              leer(salida, itemActual->lexema, itemActual->data->tipo);
-            } else if (tablaActual == tablaLocal){
-              printf("ambito local\n");
-            } else{
-              printf("ERROR AMBITO\n");
-            }
-            printf("lul: %d\n", itemActual->data->clase);
+          }
+          else if(itemActual->data->categoria == FUNCION){
+            printf("ERROR\n");
+          }
+          else if(itemActual->data->clase != ESCALAR){
+            printf("ERROR\n");
+          }
+          else{
+            leer(salida, itemActual->lexema, itemActual->data->tipo);
           }
           /*fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");*/
         }
@@ -328,8 +325,9 @@ escritura: TOK_PRINTF exp
           /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
 
           itemActual = buscaElemento(tablaActual, $2.lexema);
+          printf("Da error en %s\n", $2.lexema);
           if(!itemActual){
-            printf("ERROR\n");
+            printf("ERROR - No existe el elemento\n");
           }
           else if ($2.es_direccion == 1){
             escribir(salida, 1, itemActual->data->tipo);
@@ -346,22 +344,50 @@ retorno_funcion: TOK_RETURN exp
 exp: exp '+' exp
         {
           /* Sumamos las dos expresiones */
-          $$.valor_entero = $1.valor_entero + $3.valor_entero;
+          if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+            printf("ERROR - Suma de booleanos\n");
+          }
+          else if($1.tipo == INT || $3.tipo == INT){
+            sumar(salida, $1.es_direccion, $3.es_direccion);
+          }
+          $$.tipo = INT;
+          $$.es_direccion = 0;
         }
         |exp '-' exp
         {
           /* Restamos las dos expresiones */
-          $$.valor_entero = $1.valor_entero - $3.valor_entero;
+          if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+            printf("ERROR - Resta de booleanos\n");
+          }
+          else if($1.tipo == INT || $3.tipo == INT){
+            restar(salida, $1.es_direccion, $3.es_direccion);
+          }
+          $$.tipo = INT;
+          $$.es_direccion = 0;
         }
         |exp '/' exp
         {
           /* Dividimos las dos expresiones */
-          $$.valor_entero = $1.valor_entero / $3.valor_entero;
+          if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+            printf("ERROR - Division de booleanos\n");
+          }
+          else if($1.tipo == INT || $3.tipo == INT){
+            dividir(salida, $1.es_direccion, $3.es_direccion);
+          }
+          $$.tipo = INT;
+          $$.es_direccion = 0;
         }
         |exp '*' exp
         {
           /* Multiplicamos las dos expresiones */
-          $$.valor_entero = $1.valor_entero * $3.valor_entero;
+          if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
+            printf("ERROR - Multiplicacion de booleanos\n");
+          }
+          else if($1.tipo == INT || $3.tipo == INT){
+            multiplicar(salida, $1.es_direccion, $3.es_direccion);
+          }
+          $$.tipo = INT;
+          $$.es_direccion = 0;
         }
         |'-' exp
         {
