@@ -515,6 +515,12 @@ constante_entera: TOK_CONSTANTE_ENTERA
           $$.valor_entero = $1.valor_entero;
           $$.tipo = INT;
           $$.es_direccion = 0;
+          
+          /* Transformamos entero a string para adaptarnos al formato de generacion */
+          sprintf(itoa, "%d", $1.valor_entero);
+
+          /* Asignamos valor */
+          escribir_operando(salida, itoa, 0);
           /*TODO: CONSTANTE A NASM*/
         }
 
