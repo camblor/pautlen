@@ -265,7 +265,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           else{
             $1.valor_entero = $3.valor_entero;          
             asignar(salida, "x", 0);
-            escribir_operando(salida, "x", 1);
           }
 
           
@@ -408,6 +407,7 @@ exp: exp '+' exp
             
 
             /* Asignamos valor */
+            printf("metido %s\n", $1.lexema);
             escribir_operando(salida, $1.lexema, $$.es_direccion);
           }
           /* TODO: Escritura en ensamblador de la introduccion en la pila de la dirección del identificador: push dword  _$1.lexema */
