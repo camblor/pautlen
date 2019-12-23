@@ -27,11 +27,18 @@
   int clase_actual;
   int tipo_actual;
   int tamanio_vector_actual;
+  int num_variables_locales_actual;
   int pos_variable_local_actual;
+  int num_parametros_actual;
+  int pos_parametro_actual;
 
   /*Tablas de simbolos*/
   extern dataItem** tablaGlobal;
   extern dataItem** tablaLocal;
+
+  extern dataItem** tablaActual;
+
+  extern datainfo * infoActual;
 
 %}
 
@@ -90,7 +97,6 @@ programa: TOK_MAIN '{'declaraciones funciones sentencias'}'
         {
           fprintf(salida, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");
           
-          ambito = 0;
         }
 
 
@@ -138,7 +144,9 @@ tipo: TOK_INT
 clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
         {
           clase_actual = VECTOR;
+          tamanio_vector_actual = $4.valor_entero;
           fprintf(salida, ";R15:\t<clase_vector> ::= array <tipo> [TOK_CONSTANTE_ENTERA]\n");
+          
         }
 
 identificadores: identificador
@@ -182,9 +190,9 @@ resto_parametros_funcion: ';' parametro_funcion resto_parametros_funcion
           fprintf(salida, ";R26:\t<resto_parametros_funcion> ::= \n");
         }
 
-parametro_funcion: tipo identificador
+parametro_funcion: tipo TOK_IDENTIFICADOR
         {
-          fprintf(salida, ";R27:\t<parametro_funcion> ::= <tipo> <identificador>\n");
+          fprintf(salida, ";R27:\t<parametro_funcion> ::= <tipo> <TOK_IDENTIFICADOR>\n");
         }
 
 declaraciones_funcion: declaraciones
@@ -240,12 +248,10 @@ bloque: condicional
           fprintf(salida, ";R41:\t<bloque> ::= <bucle>\n");
         }
 
-asignacion: identificador '=' exp
+asignacion: TOK_IDENTIFICADOR '=' exp
         {
-          fprintf(salida, ";R43:\t<asignacion> ::= <identificador> = <exp>\n");
+          fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");
           if(buscaElemento(tablaGlobal, $1.lexema) != NULL){
-            printf("Funciona y todo xD\n");
-            buscaElemento(tablaGlobal, $1.lexema)->data = $3.valor_entero;
             $1.valor_entero = $3.valor_entero;
           }
         }
@@ -254,9 +260,9 @@ asignacion: identificador '=' exp
           fprintf(salida, "R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
         }
 
-elemento_vector: identificador'['exp']'
+elemento_vector: TOK_IDENTIFICADOR'['exp']'
         {
-          fprintf(salida, ";R48:\t<elemento_vector> ::= identificador[<exp>]\n");
+          fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");
         }
 
 condicional: TOK_IF '('exp')' '{'sentencias'}'
@@ -273,7 +279,7 @@ bucle: TOK_WHILE '('exp')' '{'sentencias'}'
           fprintf(salida, ";R52:\t<bucle> ::= while (<exp>) {<sentencias>}\n");
         }
 
-lectura: TOK_SCANF identificador
+lectura: TOK_SCANF TOK_IDENTIFICADOR
         {
           /* Si al buscar el identificdor en la tabla de símbolos, no está... salir con ERROR */
           /* Si la categoría o la clase no es la adecuada 
@@ -283,7 +289,7 @@ lectura: TOK_SCANF identificador
             /* Generar código para escribir push dword _$2.lexema */
           /* Invoca a la función de librería adecuada al tipo del ID*/
 
-          fprintf(salida, ";R54:\t<lectura> ::= scanf <identificador>\n");
+          fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");
         }
 
 escritura: TOK_PRINTF exp
@@ -332,9 +338,9 @@ exp: exp '+' exp
         {
           fprintf(salida, ";R79:\t<exp> ::= !<exp>\n");
         }
-        |identificador
+        |TOK_IDENTIFICADOR
         {
-          fprintf(salida, ";R80:\t<exp> ::= <identificador>\n");
+          fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");
         }
         |constante
         {
@@ -353,9 +359,9 @@ exp: exp '+' exp
         {
           fprintf(salida, ";R85:\t<exp> ::= <elemento_vector>\n");
         }
-        |identificador '('lista_expresiones')'
+        |TOK_IDENTIFICADOR '('lista_expresiones')'
         {
-          fprintf(salida, ";R88:\t<exp> ::= <identificador> (<lista_expresiones>)\n");
+          fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");
         }
 
 lista_expresiones: exp resto_lista_expresiones
@@ -427,20 +433,20 @@ constante_entera: TOK_CONSTANTE_ENTERA
 identificador: TOK_IDENTIFICADOR
         {
           fprintf(salida, ";R108:\t<identificador> ::= TOK_IDENTIFICADOR\n");
+
+          infoActual = malloc(sizeof(datainfo));
+          infoActual->categoria = categoria_actual;
+          infoActual->clase = clase_actual;
+          infoActual->tipo = tipo_actual;
+          infoActual->tamanio_vector = tamanio_vector_actual;
+          infoActual->num_variables_locales = num_variables_locales_actual;
+          infoActual->pos_variable_local = pos_variable_local_actual;
+          infoActual->num_parametros = num_parametros_actual;
+          infoActual->pos_parametro = pos_parametro_actual;
+
           
-          if(ambito==0){
-            if (tipo_actual == INT){
-              printf("estamos con un entero\n");
-            }
-            if(clase_actual == ESCALAR){
-              printf("estamos con un escalar\n");
-            }
-            printf("%s %d\n", $1.lexema, $1.valor_entero);
-            if(!insertaElemento(tablaGlobal, $1.lexema, $1.valor_entero)){
-              printf("Ya existe ese elemento\n");
-            }
-          } else if(ambito==1){
-            printf("local\n");
+          if(!insertaElemento(tablaActual, $1.lexema, infoActual)){
+            printf("Ya existe ese elemento\n");
           }
         }
 

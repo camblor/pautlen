@@ -16,12 +16,7 @@ Descripcion: Elemento de la tabla de simbolos
 
 
 
-struct _info{
-   int categoria;
-   int clase;
-   int tipo;
-   int tamano;
-};
+
 
 int hash(char *lexema);
 
@@ -99,7 +94,7 @@ dataItem *buscaElemento(dataItem **tabla, char *lexema)
 Funcion: insertaElemento
 Descripcion: inserta un elemento en la tabla hash pasada como argumento
 */
-int insertaElemento(dataItem **tabla, char *lexema, int data)
+int insertaElemento(dataItem **tabla, char *lexema, datainfo *data)
 {
    int hashIndex;
 
@@ -147,7 +142,7 @@ void display(dataItem **tabla)
 
       if (tabla[i] != NULL)
       {
-         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data);
+         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data->tipo);
          j++;
       }
 
@@ -192,6 +187,7 @@ void liberaTabla(dataItem **tabla)
       if (tabla[i] != NULL)
       {
          free(tabla[i]->lexema);
+         free(tabla[i]->data);
          free(tabla[i]);
       }
    }
@@ -219,7 +215,7 @@ int strsearch(char *string, char character)
 Funcion: declararGlobal
 Desc: Declara variable global
 */
-int declararGlobal(dataItem** tablaGlobal, char *id, int desc_id)
+int declararGlobal(dataItem** tablaGlobal, char *id, datainfo *desc_id)
 {
    return insertaElemento(tablaGlobal, id, desc_id);
 }
@@ -237,7 +233,7 @@ dataItem *usoGlobal(dataItem** tablaGlobal, char *id)
 Funcion: declararLocal
 Desc: Declara variable local
 */
-int declararLocal(dataItem** tablaLocal, char *id, int desc_id)
+int declararLocal(dataItem** tablaLocal, char *id, datainfo *desc_id)
 {
    return insertaElemento(tablaLocal, id, desc_id);
 }
@@ -255,7 +251,7 @@ dataItem *usoLocal(dataItem** tablaLocal, char *id)
 Funcion: declararFuncion
 Desc: Declara funcion global y abre ambito local
 */
-int tablaDeclararFuncion(dataItem** tablaGlobal, dataItem** tablaLocal, char *id, int desc_id)
+int tablaDeclararFuncion(dataItem** tablaGlobal, dataItem** tablaLocal, char *id, datainfo *desc_id)
 {
    int i;
    if (buscaElemento(tablaGlobal, id) == NULL)

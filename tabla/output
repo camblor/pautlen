@@ -34,43 +34,37 @@
 ;R2:	<declaraciones> ::= <declaracion>
 ;R3:	<declaraciones> ::= <declaracion> <declaraciones>
 ;R21:	<funciones> ::= 
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	=
 ;D:	10
 ;R104:	<constante_entera> ::= TOK_CONSTANTE_ENTERA
 ;R100:	<constante> ::= <constante_entera>
 ;R81:	<exp> ::= <constante>
 ;D:	;
-;R43:	<asignacion> ::= <identificador> = <exp>
+;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	scanf
 ;D:	x
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
-;R54:	<lectura> ::= scanf <identificador>
+;R54:	<lectura> ::= scanf <TOK_IDENTIFICADOR>
 ;R35:	<sentencia_simple> ::= <lectura>
 ;D:	;
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	resultado
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	=
 ;D:	x
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	*
-;R80:	<exp> ::= <identificador>
+;R80:	<exp> ::= <TOK_IDENTIFICADOR>
 ;D:	x
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	;
-;R80:	<exp> ::= <identificador>
+;R80:	<exp> ::= <TOK_IDENTIFICADOR>
 ;R75:	<exp> ::= <exp> * <exp>
-;R43:	<asignacion> ::= <identificador> = <exp>
+;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
 ;R34:	<sentencia_simple> ::= <asignacion>
 ;R32:	<sentencia> ::= <sentencia_simple> ;
 ;D:	printf
 ;D:	resultado
-;R108:	<identificador> ::= TOK_IDENTIFICADOR
 ;D:	;
-;R80:	<exp> ::= <identificador>
+;R80:	<exp> ::= <TOK_IDENTIFICADOR>
 ;R56:	<escritura> ::= printf <exp>
 ;R36:	<sentencia_simple> ::= <escritura>
 ;R32:	<sentencia> ::= <sentencia_simple> ;

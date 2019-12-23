@@ -16,6 +16,8 @@ bool longitud = false;
 bool invalidchar = false;
 dataItem** tablaGlobal;
 dataItem** tablaLocal;
+dataItem** tablaActual;
+datainfo * infoActual;
 
 int main(int argc, char **argv)
 {
@@ -41,6 +43,7 @@ int main(int argc, char **argv)
 
   tablaGlobal = tablaInit();
   tablaLocal = tablaInit();
+  tablaActual = tablaGlobal;
   yyparse();
   display(tablaGlobal);
 
