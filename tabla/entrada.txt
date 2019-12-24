@@ -1,13 +1,9 @@
 main {
 
   int x1;
-
-  function int fibo(int arg){
-    int x2;
-    scanf x2;
-  }
-
+  int x2;
   x1 = 666;
-  printf x1;
+  x2=5;
+  printf x1+x2+3;
 
 }

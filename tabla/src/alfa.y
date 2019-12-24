@@ -124,7 +124,7 @@ escritura1:
 escritura2:
         {
           escribir_segmento_codigo(salida);
-          
+
         }
 
 escritura3:
@@ -213,7 +213,7 @@ funcion: fn_declaration sentencias '}'
         }
 
 
-fn_declaration : fn_name '('parametros_funcion ')' '{' declaraciones_funcion 
+fn_declaration : fn_name '('parametros_funcion ')' '{' declaraciones_funcion
         {
           itemActual = buscaElemento(tablaActual, $1.lexema);
 
@@ -281,7 +281,7 @@ parametro_funcion: tipo idpf
           fprintf(salida, ";R27:\t<parametro_funcion> ::= <tipo> <TOK_IDENTIFICADOR>\n");
         }
 
-idpf: TOK_IDENTIFICADOR 
+idpf: TOK_IDENTIFICADOR
         {
 
           infoActual = malloc(sizeof(datainfo));
@@ -513,22 +513,23 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
           /*fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");*/
         }
 
-escritura: TOK_PRINTF exp
-        {
-          /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
+        escritura: TOK_PRINTF exp
+                {
+                  /*fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");*/
+                  if ($2.es_direccion == 1){
+                  itemActual = buscaElemento(tablaActual, $2.lexema);
+                  if(!itemActual){
+                    error = -1;
+                    tipoErrorSemantico = 1;
+                    yyerror($2.lexema);
+                  return -1;
+                  }
+                    escribir(salida, $2.es_direccion, $2.tipo);
+                  }
+                  else
+                    escribir(salida, $2.es_direccion, $2.tipo);
 
-          itemActual = buscaElemento(tablaActual, $2.lexema);
-          if(!itemActual){
-            error = -1;
-            tipoErrorSemantico = 1;
-            yyerror($2.lexema);
-          return -1;
-          }
-          else if ($2.es_direccion == 1){
-            escribir(salida, 1, itemActual->data->tipo);
-          }
-
-        }
+                }
 
 retorno_funcion: TOK_RETURN exp
         {
