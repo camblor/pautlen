@@ -762,3 +762,61 @@ void escribir_elemento_vector(FILE * fpasm, char * nombre_vector, int tam_max, i
 
 
 }
+
+
+/*Funciones extra necesarias para trabajar con funciones*/
+void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int pos_param, int pos_var,int llamada_dentro_funcion)
+{
+  if(llamada_dentro_funcion==0)
+  {
+    if(categoria != 1 && categoria != 2)
+      {
+        fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*(num_param - pos_param));
+        fprintf(pasm, "\tpush dword eax\n");
+      }
+    else
+      {
+        fprintf(pasm, "\tlea eax, [ebp-%d]\n",4*pos_var);
+        fprintf(pasm, "\tpush dword eax\n");
+      }
+  }
+  else
+    {
+
+      if(categoria != 1 && categoria != 2)
+        {
+          fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*(num_param - pos_param));
+          fprintf(pasm, "\tpush dword [eax]\n");
+        }
+      else
+        {
+          fprintf(pasm, "\tlea eax, [ebp-%d]\n",4*pos_var);
+          fprintf(pasm, "\tpush dword [eax]\n");
+        }
+    }
+}
+
+void escribirScanfFuncion (FILE *pasm, int tipo)
+{
+  if(tipo==1)
+    fprintf(pasm,"\tcall scan_int\n");
+  else
+    fprintf(pasm,"\tcall scan_boolean\n");
+  fprintf(pasm,"\tadd esp, 4\n");
+}
+
+void asignarIdentLocal(FILE *pasm, int es_variable)
+{
+
+  fprintf(pasm,"; Cargar en eax la parte derecha de la asignación y en ebx la izquierda\n");
+  fprintf(pasm,"\tpop dword ebx\n");
+  fprintf(pasm,"\tpop dword eax\n");
+  if (es_variable)
+    fprintf(pasm,"\tmov dword eax , [eax]\n");
+  fprintf(pasm,"; Hacer la asignación efectiva\n");
+  fprintf(pasm,"\tmov dword [ebx] , eax\n");
+}
+
+void apilarAntesRetorno(FILE *pasm){
+    fprintf(pasm, "\tpush dword ebx\n");
+}

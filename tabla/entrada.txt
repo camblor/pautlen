@@ -1,9 +1,14 @@
 main {
 
   int x1;
-  int x2;
-  x1 = 666;
-  x2=5;
-  printf x1+x2+3;
+
+  function int fibonacci(int entrada){
+    int x;
+    x = 8;
+    return x;
+  }
+
+  x1 = 663;
+  printf 3+x1;
 
 }
