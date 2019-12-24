@@ -748,7 +748,6 @@ retorno_funcion: initretorno exp
           }
           retornarFuncion(salida, $2.es_direccion);
           retorno = 0;
-          fprintf(salida, "quecojones\n");
         }
 
 initretorno: TOK_RETURN
