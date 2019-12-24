@@ -597,14 +597,15 @@ void retornarFuncion(FILE *fd_asm, int es_variable)
     if (!fd_asm)
         return;
 
-    fprintf(fd_asm, "\tpop eax\n");
+    fprintf(fd_asm, "\tpop dword eax\n");
     if (es_variable == 1)
-        fprintf(fd_asm, "\tmov dword eax, [eax]\n");
+        fprintf(fd_asm, "\tmov eax, [eax]\n");
 
-    fprintf(fd_asm, "\tmov esp, ebp\n");
-    fprintf(fd_asm, "\tpop ebp \n");
+    fprintf(fd_asm, "\tmov dword esp, ebp\n");
+    fprintf(fd_asm, "\tpop dword ebp \n");
     fprintf(fd_asm, "\tret\n");
 }
+
 
 void escribirParametro(FILE *fpasm, int pos_parametro, int num_total_parametros)
 {

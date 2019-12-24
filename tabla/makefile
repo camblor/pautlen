@@ -58,7 +58,7 @@ exec:
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./sintactico entrada.txt output
 
-nasm: exec
+nasm:
 	nasm -felf32 output
 	gcc -m32 -o salida output.o alfalib.o
 

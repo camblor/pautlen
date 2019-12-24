@@ -4,6 +4,7 @@ segment .data
 segment .bss 
 	__esp resd 1
 	_x1 resd 1
+	_x2 resd 1
 ;D:	function
 segment .text
 	global main
@@ -14,7 +15,7 @@ segment .text
 ;R26:	<resto_parametros_funcion> ::= 
 ;R23:	<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>
 ;R28:	<declaraciones_funcion> ::= <declaraciones>
-	_fibonacci:
+	_fib:
 	push ebp
 	mov ebp, esp
 	sub esp, 4
@@ -29,24 +30,31 @@ segment .text
 ;D:	return
 	lea eax, [ebp-8]
 	push dword eax
-	pop eax
-	mov dword eax, [eax]
-	mov esp, ebp
-	pop ebp 
+	pop dword eax
+	mov eax, [eax]
+	mov dword esp, ebp
+	pop dword ebp 
 	ret
+quecojones
 ;R22:	<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}
 main:
 	mov dword [__esp] , esp
+	push dword 3
+	pop dword eax
+	mov [_x2], eax 
 	push dword 663
 	pop dword eax
 	mov [_x1], eax 
-	push dword 3
-;D:	+
-	push dword _x1
-	pop dword ebx
+	push dword _x2
+;R88:	<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)
+	call _fib
+	add esp, 4*1
+	push dword eax
 	pop dword eax
-	mov dword ebx, [ebx]
-	add eax, ebx
+	mov [_x1], eax 
+	push dword _x1
+	pop dword eax
+	mov eax, [eax]
 	push dword eax
 	call print_int
 	add esp, 4

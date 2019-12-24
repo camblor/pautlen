@@ -94,72 +94,76 @@ Grammar
 
    51 escritura: TOK_PRINTF exp
 
-   52 retorno_funcion: TOK_RETURN exp
+   52 retorno_funcion: initretorno exp
 
-   53 exp: exp '+' exp
-   54    | exp '-' exp
-   55    | exp '/' exp
-   56    | exp '*' exp
-   57    | '-' exp
-   58    | exp TOK_AND exp
-   59    | exp TOK_OR exp
-   60    | '!' exp
-   61    | TOK_IDENTIFICADOR
-   62    | constante
-   63    | '(' exp ')'
-   64    | '(' comparacion ')'
-   65    | elemento_vector
-   66    | TOK_IDENTIFICADOR '(' lista_expresiones ')'
+   53 initretorno: TOK_RETURN
 
-   67 lista_expresiones: exp resto_lista_expresiones
-   68                  | %empty
+   54 exp: exp '+' exp
+   55    | exp '-' exp
+   56    | exp '/' exp
+   57    | exp '*' exp
+   58    | '-' exp
+   59    | exp TOK_AND exp
+   60    | exp TOK_OR exp
+   61    | '!' exp
+   62    | TOK_IDENTIFICADOR
+   63    | constante
+   64    | '(' exp ')'
+   65    | '(' comparacion ')'
+   66    | elemento_vector
+   67    | llamadaAFuncion '(' lista_expresiones ')'
 
-   69 resto_lista_expresiones: ',' exp resto_lista_expresiones
-   70                        | %empty
+   68 llamadaAFuncion: TOK_IDENTIFICADOR
 
-   71 comparacion: exp TOK_IGUAL exp
-   72            | exp TOK_DISTINTO exp
-   73            | exp TOK_MENORIGUAL exp
-   74            | exp TOK_MAYORIGUAL exp
-   75            | exp '<' exp
-   76            | exp '>' exp
+   69 lista_expresiones: exp resto_lista_expresiones
+   70                  | %empty
 
-   77 constante: constante_logica
-   78          | constante_entera
+   71 resto_lista_expresiones: ',' exp resto_lista_expresiones
+   72                        | %empty
 
-   79 constante_logica: TOK_TRUE
-   80                 | TOK_FALSE
+   73 comparacion: exp TOK_IGUAL exp
+   74            | exp TOK_DISTINTO exp
+   75            | exp TOK_MENORIGUAL exp
+   76            | exp TOK_MAYORIGUAL exp
+   77            | exp '<' exp
+   78            | exp '>' exp
 
-   81 constante_entera: TOK_CONSTANTE_ENTERA
+   79 constante: constante_logica
+   80          | constante_entera
 
-   82 identificador: TOK_IDENTIFICADOR
+   81 constante_logica: TOK_TRUE
+   82                 | TOK_FALSE
+
+   83 constante_entera: TOK_CONSTANTE_ENTERA
+
+   84 identificador: TOK_IDENTIFICADOR
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 60
-'(' (40) 19 45 48 63 64 66
-')' (41) 19 45 48 63 64 66
-'*' (42) 56
-'+' (43) 53
-',' (44) 15 69
-'-' (45) 54 57
-'/' (47) 55
+'!' (33) 61
+'(' (40) 19 45 48 64 65 67
+')' (41) 19 45 48 64 65 67
+'*' (42) 57
+'+' (43) 54
+',' (44) 15 71
+'-' (45) 55 58
+'/' (47) 56
 ';' (59) 7 23 31
-'<' (60) 75
+'<' (60) 77
 '=' (61) 39 40
-'>' (62) 76
+'>' (62) 78
 '[' (91) 13 41
 ']' (93) 13 41
 '{' (123) 1 19 43 45 48
 '}' (125) 1 18 43 44 47
 error (256)
-TOK_IDENTIFICADOR (258) 20 26 39 41 50 61 66 82
+TOK_IDENTIFICADOR (258) 20 26 39 41 50 62 68 84
 TOK_CONSTANTE_REAL (259)
-TOK_CONSTANTE_ENTERA (260) 13 81
+TOK_CONSTANTE_ENTERA (260) 13 83
 TOK_MAIN (261) 1
-TOK_RETURN (262) 52
+TOK_RETURN (262) 53
 TOK_ARRAY (263) 13
 TOK_INT (264) 11
 TOK_BOOLEAN (265) 12
@@ -168,15 +172,15 @@ TOK_PRINTF (267) 51
 TOK_IF (268) 45
 TOK_ELSE (269) 43
 TOK_WHILE (270) 49
-TOK_OR (271) 59
-TOK_AND (272) 58
-TOK_DISTINTO (273) 72
-TOK_IGUAL (274) 71
-TOK_MENORIGUAL (275) 73
-TOK_MAYORIGUAL (276) 74
+TOK_OR (271) 60
+TOK_AND (272) 59
+TOK_DISTINTO (273) 74
+TOK_IGUAL (274) 73
+TOK_MENORIGUAL (275) 75
+TOK_MAYORIGUAL (276) 76
 TOK_FUNCTION (277) 20
-TOK_TRUE (278) 79
-TOK_FALSE (279) 80
+TOK_TRUE (278) 81
+TOK_FALSE (279) 82
 TOK_ERROR (280)
 
 
@@ -235,7 +239,7 @@ bloque (66)
 asignacion (67)
     on left: 39 40, on right: 33
 elemento_vector (68)
-    on left: 41, on right: 40 65
+    on left: 41, on right: 40 66
 condicional (69)
     on left: 42 43, on right: 37
 if_exp_sentencias (70)
@@ -256,24 +260,28 @@ escritura (77)
     on left: 51, on right: 35
 retorno_funcion (78)
     on left: 52, on right: 36
-exp (79)
-    on left: 53 54 55 56 57 58 59 60 61 62 63 64 65 66, on right: 39
-    40 41 45 48 51 52 53 54 55 56 57 58 59 60 63 67 69 71 72 73 74
-    75 76
-lista_expresiones (80)
-    on left: 67 68, on right: 66
-resto_lista_expresiones (81)
-    on left: 69 70, on right: 67 69
-comparacion (82)
-    on left: 71 72 73 74 75 76, on right: 64
-constante (83)
-    on left: 77 78, on right: 62
-constante_logica (84)
-    on left: 79 80, on right: 77
-constante_entera (85)
-    on left: 81, on right: 78
-identificador (86)
-    on left: 82, on right: 14 15
+initretorno (79)
+    on left: 53, on right: 52
+exp (80)
+    on left: 54 55 56 57 58 59 60 61 62 63 64 65 66 67, on right: 39
+    40 41 45 48 51 52 54 55 56 57 58 59 60 61 64 69 71 73 74 75 76
+    77 78
+llamadaAFuncion (81)
+    on left: 68, on right: 67
+lista_expresiones (82)
+    on left: 69 70, on right: 67
+resto_lista_expresiones (83)
+    on left: 71 72, on right: 69 71
+comparacion (84)
+    on left: 73 74 75 76 77 78, on right: 65
+constante (85)
+    on left: 79 80, on right: 63
+constante_logica (86)
+    on left: 81 82, on right: 79
+constante_entera (87)
+    on left: 83, on right: 80
+identificador (88)
+    on left: 84, on right: 14 15
 
 
 State 0
@@ -444,9 +452,9 @@ State 17
 
 State 18
 
-   82 identificador: TOK_IDENTIFICADOR .
+   84 identificador: TOK_IDENTIFICADOR .
 
-    $default  reduce using rule 82 (identificador)
+    $default  reduce using rule 84 (identificador)
 
 
 State 19
@@ -533,13 +541,14 @@ State 25
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
 State 26
 
    19 fn_declaration: fn_name . '(' parametros_funcion ')' '{' declaraciones_funcion
 
-    '('  shift, and go to state 55
+    '('  shift, and go to state 56
 
 
 State 27
@@ -555,7 +564,7 @@ State 28
 
     TOK_IDENTIFICADOR  shift, and go to state 18
 
-    identificadores  go to state 56
+    identificadores  go to state 57
     identificador    go to state 20
 
 
@@ -563,14 +572,14 @@ State 29
 
    13 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA . ']'
 
-    ']'  shift, and go to state 57
+    ']'  shift, and go to state 58
 
 
 State 30
 
    20 fn_name: TOK_FUNCTION tipo . TOK_IDENTIFICADOR
 
-    TOK_IDENTIFICADOR  shift, and go to state 58
+    TOK_IDENTIFICADOR  shift, and go to state 59
 
 
 State 31
@@ -584,7 +593,7 @@ State 31
     TOK_IF             shift, and go to state 37
     TOK_WHILE          shift, and go to state 38
 
-    sentencias            go to state 59
+    sentencias            go to state 60
     sentencia             go to state 40
     sentencia_simple      go to state 41
     bloque                go to state 42
@@ -600,6 +609,7 @@ State 31
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
 State 32
@@ -614,60 +624,49 @@ State 33
    39 asignacion: TOK_IDENTIFICADOR . '=' exp
    41 elemento_vector: TOK_IDENTIFICADOR . '[' exp ']'
 
-    '['  shift, and go to state 60
-    '='  shift, and go to state 61
+    '['  shift, and go to state 61
+    '='  shift, and go to state 62
 
 
 State 34
 
-   52 retorno_funcion: TOK_RETURN . exp
+   53 initretorno: TOK_RETURN .
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 70
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    $default  reduce using rule 53 (initretorno)
 
 
 State 35
 
    50 lectura: TOK_SCANF . TOK_IDENTIFICADOR
 
-    TOK_IDENTIFICADOR  shift, and go to state 74
+    TOK_IDENTIFICADOR  shift, and go to state 63
 
 
 State 36
 
    51 escritura: TOK_PRINTF . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 75
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 72
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 37
 
    45 if_exp: TOK_IF . '(' exp ')' '{'
 
-    '('  shift, and go to state 76
+    '('  shift, and go to state 77
 
 
 State 38
@@ -681,7 +680,7 @@ State 39
 
    18 funcion: fn_declaration sentencias . '}'
 
-    '}'  shift, and go to state 77
+    '}'  shift, and go to state 78
 
 
 State 40
@@ -698,7 +697,7 @@ State 40
 
     $default  reduce using rule 29 (sentencias)
 
-    sentencias            go to state 78
+    sentencias            go to state 79
     sentencia             go to state 40
     sentencia_simple      go to state 41
     bloque                go to state 42
@@ -714,13 +713,14 @@ State 40
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
 State 41
 
    31 sentencia: sentencia_simple . ';'
 
-    ';'  shift, and go to state 79
+    ';'  shift, and go to state 80
 
 
 State 42
@@ -741,7 +741,7 @@ State 44
 
    40 asignacion: elemento_vector . '=' exp
 
-    '='  shift, and go to state 80
+    '='  shift, and go to state 81
 
 
 State 45
@@ -756,7 +756,7 @@ State 46
    42 condicional: if_exp_sentencias .
    43            | if_exp_sentencias . TOK_ELSE '{' sentencias '}'
 
-    TOK_ELSE  shift, and go to state 81
+    TOK_ELSE  shift, and go to state 82
 
     $default  reduce using rule 42 (condicional)
 
@@ -772,7 +772,7 @@ State 47
     TOK_IF             shift, and go to state 37
     TOK_WHILE          shift, and go to state 38
 
-    sentencias            go to state 82
+    sentencias            go to state 83
     sentencia             go to state 40
     sentencia_simple      go to state 41
     bloque                go to state 42
@@ -788,6 +788,7 @@ State 47
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
 State 48
@@ -815,7 +816,7 @@ State 50
     TOK_IF             shift, and go to state 37
     TOK_WHILE          shift, and go to state 38
 
-    sentencias            go to state 83
+    sentencias            go to state 84
     sentencia             go to state 40
     sentencia_simple      go to state 41
     bloque                go to state 42
@@ -831,13 +832,14 @@ State 50
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
 State 51
 
    48 while_exp: while . '(' exp ')' '{'
 
-    '('  shift, and go to state 84
+    '('  shift, and go to state 85
 
 
 State 52
@@ -863,6 +865,26 @@ State 54
 
 State 55
 
+   52 retorno_funcion: initretorno . exp
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 86
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
+State 56
+
    19 fn_declaration: fn_name '(' . parametros_funcion ')' '{' declaraciones_funcion
 
     TOK_INT      shift, and go to state 7
@@ -870,659 +892,681 @@ State 55
 
     $default  reduce using rule 22 (parametros_funcion)
 
-    tipo                go to state 85
-    parametros_funcion  go to state 86
-    parametro_funcion   go to state 87
+    tipo                go to state 87
+    parametros_funcion  go to state 88
+    parametro_funcion   go to state 89
 
 
-State 56
+State 57
 
    15 identificadores: identificador ',' identificadores .
 
     $default  reduce using rule 15 (identificadores)
 
 
-State 57
+State 58
 
    13 clase_vector: TOK_ARRAY tipo '[' TOK_CONSTANTE_ENTERA ']' .
 
     $default  reduce using rule 13 (clase_vector)
 
 
-State 58
+State 59
 
    20 fn_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR .
 
     $default  reduce using rule 20 (fn_name)
 
 
-State 59
+State 60
 
     1 programa: TOK_MAIN '{' escritura1 declaraciones escritura2 funciones escritura3 sentencias . '}'
 
-    '}'  shift, and go to state 88
-
-
-State 60
-
-   41 elemento_vector: TOK_IDENTIFICADOR '[' . exp ']'
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 89
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    '}'  shift, and go to state 90
 
 
 State 61
 
-   39 asignacion: TOK_IDENTIFICADOR '=' . exp
+   41 elemento_vector: TOK_IDENTIFICADOR '[' . exp ']'
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 90
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 91
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 62
 
-   41 elemento_vector: TOK_IDENTIFICADOR . '[' exp ']'
-   61 exp: TOK_IDENTIFICADOR .
-   66    | TOK_IDENTIFICADOR . '(' lista_expresiones ')'
+   39 asignacion: TOK_IDENTIFICADOR '=' . exp
 
-    '['  shift, and go to state 60
-    '('  shift, and go to state 91
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    $default  reduce using rule 61 (exp)
+    elemento_vector   go to state 71
+    exp               go to state 92
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 63
-
-   81 constante_entera: TOK_CONSTANTE_ENTERA .
-
-    $default  reduce using rule 81 (constante_entera)
-
-
-State 64
-
-   79 constante_logica: TOK_TRUE .
-
-    $default  reduce using rule 79 (constante_logica)
-
-
-State 65
-
-   80 constante_logica: TOK_FALSE .
-
-    $default  reduce using rule 80 (constante_logica)
-
-
-State 66
-
-   57 exp: '-' . exp
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 92
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
-
-
-State 67
-
-   60 exp: '!' . exp
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 93
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
-
-
-State 68
-
-   63 exp: '(' . exp ')'
-   64    | '(' . comparacion ')'
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 94
-    comparacion       go to state 95
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
-
-
-State 69
-
-   65 exp: elemento_vector .
-
-    $default  reduce using rule 65 (exp)
-
-
-State 70
-
-   52 retorno_funcion: TOK_RETURN exp .
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-
-    $default  reduce using rule 52 (retorno_funcion)
-
-
-State 71
-
-   62 exp: constante .
-
-    $default  reduce using rule 62 (exp)
-
-
-State 72
-
-   77 constante: constante_logica .
-
-    $default  reduce using rule 77 (constante)
-
-
-State 73
-
-   78 constante: constante_entera .
-
-    $default  reduce using rule 78 (constante)
-
-
-State 74
 
    50 lectura: TOK_SCANF TOK_IDENTIFICADOR .
 
     $default  reduce using rule 50 (lectura)
 
 
-State 75
+State 64
+
+   41 elemento_vector: TOK_IDENTIFICADOR . '[' exp ']'
+   62 exp: TOK_IDENTIFICADOR .
+   68 llamadaAFuncion: TOK_IDENTIFICADOR .
+
+    '['  shift, and go to state 61
+
+    '('       reduce using rule 68 (llamadaAFuncion)
+    $default  reduce using rule 62 (exp)
+
+
+State 65
+
+   83 constante_entera: TOK_CONSTANTE_ENTERA .
+
+    $default  reduce using rule 83 (constante_entera)
+
+
+State 66
+
+   81 constante_logica: TOK_TRUE .
+
+    $default  reduce using rule 81 (constante_logica)
+
+
+State 67
+
+   82 constante_logica: TOK_FALSE .
+
+    $default  reduce using rule 82 (constante_logica)
+
+
+State 68
+
+   58 exp: '-' . exp
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 93
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
+State 69
+
+   61 exp: '!' . exp
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 94
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
+State 70
+
+   64 exp: '(' . exp ')'
+   65    | '(' . comparacion ')'
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 95
+    llamadaAFuncion   go to state 73
+    comparacion       go to state 96
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
+State 71
+
+   66 exp: elemento_vector .
+
+    $default  reduce using rule 66 (exp)
+
+
+State 72
 
    51 escritura: TOK_PRINTF exp .
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
     $default  reduce using rule 51 (escritura)
 
 
+State 73
+
+   67 exp: llamadaAFuncion . '(' lista_expresiones ')'
+
+    '('  shift, and go to state 103
+
+
+State 74
+
+   63 exp: constante .
+
+    $default  reduce using rule 63 (exp)
+
+
+State 75
+
+   79 constante: constante_logica .
+
+    $default  reduce using rule 79 (constante)
+
+
 State 76
 
-   45 if_exp: TOK_IF '(' . exp ')' '{'
+   80 constante: constante_entera .
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 102
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    $default  reduce using rule 80 (constante)
 
 
 State 77
+
+   45 if_exp: TOK_IF '(' . exp ')' '{'
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 104
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
+State 78
 
    18 funcion: fn_declaration sentencias '}' .
 
     $default  reduce using rule 18 (funcion)
 
 
-State 78
+State 79
 
    30 sentencias: sentencia sentencias .
 
     $default  reduce using rule 30 (sentencias)
 
 
-State 79
+State 80
 
    31 sentencia: sentencia_simple ';' .
 
     $default  reduce using rule 31 (sentencia)
 
 
-State 80
+State 81
 
    40 asignacion: elemento_vector '=' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 103
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
-
-
-State 81
-
-   43 condicional: if_exp_sentencias TOK_ELSE . '{' sentencias '}'
-
-    '{'  shift, and go to state 104
+    elemento_vector   go to state 71
+    exp               go to state 105
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 82
 
-   44 if_exp_sentencias: if_exp sentencias . '}'
+   43 condicional: if_exp_sentencias TOK_ELSE . '{' sentencias '}'
 
-    '}'  shift, and go to state 105
+    '{'  shift, and go to state 106
 
 
 State 83
 
-   47 while_exp_sentencias: while_exp sentencias . '}'
+   44 if_exp_sentencias: if_exp sentencias . '}'
 
-    '}'  shift, and go to state 106
+    '}'  shift, and go to state 107
 
 
 State 84
 
-   48 while_exp: while '(' . exp ')' '{'
+   47 while_exp_sentencias: while_exp sentencias . '}'
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 107
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    '}'  shift, and go to state 108
 
 
 State 85
 
-   25 parametro_funcion: tipo . idpf
+   48 while_exp: while '(' . exp ')' '{'
 
-    TOK_IDENTIFICADOR  shift, and go to state 108
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    idpf  go to state 109
+    elemento_vector   go to state 71
+    exp               go to state 109
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 86
 
-   19 fn_declaration: fn_name '(' parametros_funcion . ')' '{' declaraciones_funcion
+   52 retorno_funcion: initretorno exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    ')'  shift, and go to state 110
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+
+    $default  reduce using rule 52 (retorno_funcion)
 
 
 State 87
 
-   21 parametros_funcion: parametro_funcion . resto_parametros_funcion
+   25 parametro_funcion: tipo . idpf
 
-    ';'  shift, and go to state 111
+    TOK_IDENTIFICADOR  shift, and go to state 110
 
-    $default  reduce using rule 24 (resto_parametros_funcion)
-
-    resto_parametros_funcion  go to state 112
+    idpf  go to state 111
 
 
 State 88
+
+   19 fn_declaration: fn_name '(' parametros_funcion . ')' '{' declaraciones_funcion
+
+    ')'  shift, and go to state 112
+
+
+State 89
+
+   21 parametros_funcion: parametro_funcion . resto_parametros_funcion
+
+    ';'  shift, and go to state 113
+
+    $default  reduce using rule 24 (resto_parametros_funcion)
+
+    resto_parametros_funcion  go to state 114
+
+
+State 90
 
     1 programa: TOK_MAIN '{' escritura1 declaraciones escritura2 funciones escritura3 sentencias '}' .
 
     $default  reduce using rule 1 (programa)
 
 
-State 89
-
-   41 elemento_vector: TOK_IDENTIFICADOR '[' exp . ']'
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-    ']'      shift, and go to state 113
-
-
-State 90
-
-   39 asignacion: TOK_IDENTIFICADOR '=' exp .
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-
-    $default  reduce using rule 39 (asignacion)
-
-
 State 91
 
-   66 exp: TOK_IDENTIFICADOR '(' . lista_expresiones ')'
+   41 elemento_vector: TOK_IDENTIFICADOR '[' exp . ']'
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    $default  reduce using rule 68 (lista_expresiones)
-
-    elemento_vector    go to state 69
-    exp                go to state 114
-    lista_expresiones  go to state 115
-    constante          go to state 71
-    constante_logica   go to state 72
-    constante_entera   go to state 73
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+    ']'      shift, and go to state 115
 
 
 State 92
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   57    | '-' exp .
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   39 asignacion: TOK_IDENTIFICADOR '=' exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
-    $default  reduce using rule 57 (exp)
+    $default  reduce using rule 39 (asignacion)
 
 
 State 93
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   60    | '!' exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   58    | '-' exp .
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    $default  reduce using rule 60 (exp)
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+
+    $default  reduce using rule 58 (exp)
 
 
 State 94
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   63    | '(' exp . ')'
-   71 comparacion: exp . TOK_IGUAL exp
-   72            | exp . TOK_DISTINTO exp
-   73            | exp . TOK_MENORIGUAL exp
-   74            | exp . TOK_MAYORIGUAL exp
-   75            | exp . '<' exp
-   76            | exp . '>' exp
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   61    | '!' exp .
 
-    TOK_OR          shift, and go to state 96
-    TOK_AND         shift, and go to state 97
+    $default  reduce using rule 61 (exp)
+
+
+State 95
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   64    | '(' exp . ')'
+   73 comparacion: exp . TOK_IGUAL exp
+   74            | exp . TOK_DISTINTO exp
+   75            | exp . TOK_MENORIGUAL exp
+   76            | exp . TOK_MAYORIGUAL exp
+   77            | exp . '<' exp
+   78            | exp . '>' exp
+
+    TOK_OR          shift, and go to state 97
+    TOK_AND         shift, and go to state 98
     TOK_DISTINTO    shift, and go to state 116
     TOK_IGUAL       shift, and go to state 117
     TOK_MENORIGUAL  shift, and go to state 118
     TOK_MAYORIGUAL  shift, and go to state 119
-    '+'             shift, and go to state 98
-    '-'             shift, and go to state 99
-    '*'             shift, and go to state 100
-    '/'             shift, and go to state 101
+    '+'             shift, and go to state 99
+    '-'             shift, and go to state 100
+    '*'             shift, and go to state 101
+    '/'             shift, and go to state 102
     '<'             shift, and go to state 120
     '>'             shift, and go to state 121
     ')'             shift, and go to state 122
 
 
-State 95
+State 96
 
-   64 exp: '(' comparacion . ')'
+   65 exp: '(' comparacion . ')'
 
     ')'  shift, and go to state 123
 
 
-State 96
-
-   59 exp: exp TOK_OR . exp
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 124
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
-
-
 State 97
 
-   58 exp: exp TOK_AND . exp
+   60 exp: exp TOK_OR . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 125
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 124
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 98
 
-   53 exp: exp '+' . exp
+   59 exp: exp TOK_AND . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 126
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 125
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 99
 
-   54 exp: exp '-' . exp
+   54 exp: exp '+' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 127
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 126
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 100
 
-   56 exp: exp '*' . exp
+   55 exp: exp '-' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 128
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 127
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 101
 
-   55 exp: exp '/' . exp
+   57 exp: exp '*' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 129
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 128
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 102
 
-   45 if_exp: TOK_IF '(' exp . ')' '{'
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   56 exp: exp '/' . exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-    ')'      shift, and go to state 130
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 129
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 103
 
-   40 asignacion: elemento_vector '=' exp .
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   67 exp: llamadaAFuncion '(' . lista_expresiones ')'
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    $default  reduce using rule 70 (lista_expresiones)
+
+    elemento_vector    go to state 71
+    exp                go to state 130
+    llamadaAFuncion    go to state 73
+    lista_expresiones  go to state 131
+    constante          go to state 74
+    constante_logica   go to state 75
+    constante_entera   go to state 76
+
+
+State 104
+
+   45 if_exp: TOK_IF '(' exp . ')' '{'
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+    ')'      shift, and go to state 132
+
+
+State 105
+
+   40 asignacion: elemento_vector '=' exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
     $default  reduce using rule 40 (asignacion)
 
 
-State 104
+State 106
 
    43 condicional: if_exp_sentencias TOK_ELSE '{' . sentencias '}'
 
@@ -1533,7 +1577,7 @@ State 104
     TOK_IF             shift, and go to state 37
     TOK_WHILE          shift, and go to state 38
 
-    sentencias            go to state 131
+    sentencias            go to state 133
     sentencia             go to state 40
     sentencia_simple      go to state 41
     bloque                go to state 42
@@ -1549,357 +1593,364 @@ State 104
     lectura               go to state 52
     escritura             go to state 53
     retorno_funcion       go to state 54
+    initretorno           go to state 55
 
 
-State 105
+State 107
 
    44 if_exp_sentencias: if_exp sentencias '}' .
 
     $default  reduce using rule 44 (if_exp_sentencias)
 
 
-State 106
+State 108
 
    47 while_exp_sentencias: while_exp sentencias '}' .
 
     $default  reduce using rule 47 (while_exp_sentencias)
 
 
-State 107
+State 109
 
    48 while_exp: while '(' exp . ')' '{'
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-    ')'      shift, and go to state 132
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+    ')'      shift, and go to state 134
 
 
-State 108
+State 110
 
    26 idpf: TOK_IDENTIFICADOR .
 
     $default  reduce using rule 26 (idpf)
 
 
-State 109
+State 111
 
    25 parametro_funcion: tipo idpf .
 
     $default  reduce using rule 25 (parametro_funcion)
 
 
-State 110
+State 112
 
    19 fn_declaration: fn_name '(' parametros_funcion ')' . '{' declaraciones_funcion
 
-    '{'  shift, and go to state 133
+    '{'  shift, and go to state 135
 
 
-State 111
+State 113
 
    23 resto_parametros_funcion: ';' . parametro_funcion resto_parametros_funcion
 
     TOK_INT      shift, and go to state 7
     TOK_BOOLEAN  shift, and go to state 8
 
-    tipo               go to state 85
-    parametro_funcion  go to state 134
+    tipo               go to state 87
+    parametro_funcion  go to state 136
 
 
-State 112
+State 114
 
    21 parametros_funcion: parametro_funcion resto_parametros_funcion .
 
     $default  reduce using rule 21 (parametros_funcion)
 
 
-State 113
+State 115
 
    41 elemento_vector: TOK_IDENTIFICADOR '[' exp ']' .
 
     $default  reduce using rule 41 (elemento_vector)
 
 
-State 114
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   67 lista_expresiones: exp . resto_lista_expresiones
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-    ','      shift, and go to state 135
-
-    $default  reduce using rule 70 (resto_lista_expresiones)
-
-    resto_lista_expresiones  go to state 136
-
-
-State 115
-
-   66 exp: TOK_IDENTIFICADOR '(' lista_expresiones . ')'
-
-    ')'  shift, and go to state 137
-
-
 State 116
 
-   72 comparacion: exp TOK_DISTINTO . exp
+   74 comparacion: exp TOK_DISTINTO . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 138
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 137
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 117
 
-   71 comparacion: exp TOK_IGUAL . exp
+   73 comparacion: exp TOK_IGUAL . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 139
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 138
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 118
 
-   73 comparacion: exp TOK_MENORIGUAL . exp
+   75 comparacion: exp TOK_MENORIGUAL . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 140
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 139
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 119
 
-   74 comparacion: exp TOK_MAYORIGUAL . exp
+   76 comparacion: exp TOK_MAYORIGUAL . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 141
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 140
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 120
 
-   75 comparacion: exp '<' . exp
+   77 comparacion: exp '<' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 142
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 141
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 121
 
-   76 comparacion: exp '>' . exp
+   78 comparacion: exp '>' . exp
 
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
 
-    elemento_vector   go to state 69
-    exp               go to state 143
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    elemento_vector   go to state 71
+    exp               go to state 142
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
 
 
 State 122
 
-   63 exp: '(' exp ')' .
-
-    $default  reduce using rule 63 (exp)
-
-
-State 123
-
-   64 exp: '(' comparacion ')' .
+   64 exp: '(' exp ')' .
 
     $default  reduce using rule 64 (exp)
 
 
+State 123
+
+   65 exp: '(' comparacion ')' .
+
+    $default  reduce using rule 65 (exp)
+
+
 State 124
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   59    | exp TOK_OR exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   60    | exp TOK_OR exp .
 
-    $default  reduce using rule 59 (exp)
+    $default  reduce using rule 60 (exp)
 
 
 State 125
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   58    | exp TOK_AND exp .
-   59    | exp . TOK_OR exp
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   59    | exp TOK_AND exp .
+   60    | exp . TOK_OR exp
 
-    $default  reduce using rule 58 (exp)
+    $default  reduce using rule 59 (exp)
 
 
 State 126
 
-   53 exp: exp . '+' exp
-   53    | exp '+' exp .
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   54 exp: exp . '+' exp
+   54    | exp '+' exp .
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-
-    $default  reduce using rule 53 (exp)
-
-
-State 127
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   54    | exp '-' exp .
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
 
     $default  reduce using rule 54 (exp)
 
 
-State 128
+State 127
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   56    | exp '*' exp .
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   55    | exp '-' exp .
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-
-    $default  reduce using rule 56 (exp)
-
-
-State 129
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   55    | exp '/' exp .
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
 
     $default  reduce using rule 55 (exp)
 
 
+State 128
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   57    | exp '*' exp .
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+
+    $default  reduce using rule 57 (exp)
+
+
+State 129
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   56    | exp '/' exp .
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+
+    $default  reduce using rule 56 (exp)
+
+
 State 130
 
-   45 if_exp: TOK_IF '(' exp ')' . '{'
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   69 lista_expresiones: exp . resto_lista_expresiones
 
-    '{'  shift, and go to state 144
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+    ','      shift, and go to state 143
+
+    $default  reduce using rule 72 (resto_lista_expresiones)
+
+    resto_lista_expresiones  go to state 144
 
 
 State 131
 
-   43 condicional: if_exp_sentencias TOK_ELSE '{' sentencias . '}'
+   67 exp: llamadaAFuncion '(' lista_expresiones . ')'
 
-    '}'  shift, and go to state 145
+    ')'  shift, and go to state 145
 
 
 State 132
 
-   48 while_exp: while '(' exp ')' . '{'
+   45 if_exp: TOK_IF '(' exp ')' . '{'
 
     '{'  shift, and go to state 146
 
 
 State 133
+
+   43 condicional: if_exp_sentencias TOK_ELSE '{' sentencias . '}'
+
+    '}'  shift, and go to state 147
+
+
+State 134
+
+   48 while_exp: while '(' exp ')' . '{'
+
+    '{'  shift, and go to state 148
+
+
+State 135
 
    19 fn_declaration: fn_name '(' parametros_funcion ')' '{' . declaraciones_funcion
 
@@ -1909,246 +1960,247 @@ State 133
 
     $default  reduce using rule 28 (declaraciones_funcion)
 
-    declaraciones          go to state 147
+    declaraciones          go to state 149
     declaracion            go to state 10
     clase                  go to state 11
     clase_escalar          go to state 12
     tipo                   go to state 13
     clase_vector           go to state 14
-    declaraciones_funcion  go to state 148
-
-
-State 134
-
-   23 resto_parametros_funcion: ';' parametro_funcion . resto_parametros_funcion
-
-    ';'  shift, and go to state 111
-
-    $default  reduce using rule 24 (resto_parametros_funcion)
-
-    resto_parametros_funcion  go to state 149
-
-
-State 135
-
-   69 resto_lista_expresiones: ',' . exp resto_lista_expresiones
-
-    TOK_IDENTIFICADOR     shift, and go to state 62
-    TOK_CONSTANTE_ENTERA  shift, and go to state 63
-    TOK_TRUE              shift, and go to state 64
-    TOK_FALSE             shift, and go to state 65
-    '-'                   shift, and go to state 66
-    '!'                   shift, and go to state 67
-    '('                   shift, and go to state 68
-
-    elemento_vector   go to state 69
-    exp               go to state 150
-    constante         go to state 71
-    constante_logica  go to state 72
-    constante_entera  go to state 73
+    declaraciones_funcion  go to state 150
 
 
 State 136
 
-   67 lista_expresiones: exp resto_lista_expresiones .
+   23 resto_parametros_funcion: ';' parametro_funcion . resto_parametros_funcion
 
-    $default  reduce using rule 67 (lista_expresiones)
+    ';'  shift, and go to state 113
+
+    $default  reduce using rule 24 (resto_parametros_funcion)
+
+    resto_parametros_funcion  go to state 151
 
 
 State 137
 
-   66 exp: TOK_IDENTIFICADOR '(' lista_expresiones ')' .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   74 comparacion: exp TOK_DISTINTO exp .
 
-    $default  reduce using rule 66 (exp)
-
-
-State 138
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   72 comparacion: exp TOK_DISTINTO exp .
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-
-    $default  reduce using rule 72 (comparacion)
-
-
-State 139
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   71 comparacion: exp TOK_IGUAL exp .
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-
-    $default  reduce using rule 71 (comparacion)
-
-
-State 140
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   73 comparacion: exp TOK_MENORIGUAL exp .
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-
-    $default  reduce using rule 73 (comparacion)
-
-
-State 141
-
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   74 comparacion: exp TOK_MAYORIGUAL exp .
-
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
     $default  reduce using rule 74 (comparacion)
 
 
-State 142
+State 138
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   75 comparacion: exp '<' exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   73 comparacion: exp TOK_IGUAL exp .
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+
+    $default  reduce using rule 73 (comparacion)
+
+
+State 139
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   75 comparacion: exp TOK_MENORIGUAL exp .
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
     $default  reduce using rule 75 (comparacion)
 
 
-State 143
+State 140
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   76 comparacion: exp '>' exp .
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   76 comparacion: exp TOK_MAYORIGUAL exp .
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
 
     $default  reduce using rule 76 (comparacion)
 
 
+State 141
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   77 comparacion: exp '<' exp .
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+
+    $default  reduce using rule 77 (comparacion)
+
+
+State 142
+
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   78 comparacion: exp '>' exp .
+
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+
+    $default  reduce using rule 78 (comparacion)
+
+
+State 143
+
+   71 resto_lista_expresiones: ',' . exp resto_lista_expresiones
+
+    TOK_IDENTIFICADOR     shift, and go to state 64
+    TOK_CONSTANTE_ENTERA  shift, and go to state 65
+    TOK_TRUE              shift, and go to state 66
+    TOK_FALSE             shift, and go to state 67
+    '-'                   shift, and go to state 68
+    '!'                   shift, and go to state 69
+    '('                   shift, and go to state 70
+
+    elemento_vector   go to state 71
+    exp               go to state 152
+    llamadaAFuncion   go to state 73
+    constante         go to state 74
+    constante_logica  go to state 75
+    constante_entera  go to state 76
+
+
 State 144
+
+   69 lista_expresiones: exp resto_lista_expresiones .
+
+    $default  reduce using rule 69 (lista_expresiones)
+
+
+State 145
+
+   67 exp: llamadaAFuncion '(' lista_expresiones ')' .
+
+    $default  reduce using rule 67 (exp)
+
+
+State 146
 
    45 if_exp: TOK_IF '(' exp ')' '{' .
 
     $default  reduce using rule 45 (if_exp)
 
 
-State 145
+State 147
 
    43 condicional: if_exp_sentencias TOK_ELSE '{' sentencias '}' .
 
     $default  reduce using rule 43 (condicional)
 
 
-State 146
+State 148
 
    48 while_exp: while '(' exp ')' '{' .
 
     $default  reduce using rule 48 (while_exp)
 
 
-State 147
+State 149
 
    27 declaraciones_funcion: declaraciones .
 
     $default  reduce using rule 27 (declaraciones_funcion)
 
 
-State 148
+State 150
 
    19 fn_declaration: fn_name '(' parametros_funcion ')' '{' declaraciones_funcion .
 
     $default  reduce using rule 19 (fn_declaration)
 
 
-State 149
+State 151
 
    23 resto_parametros_funcion: ';' parametro_funcion resto_parametros_funcion .
 
     $default  reduce using rule 23 (resto_parametros_funcion)
 
 
-State 150
+State 152
 
-   53 exp: exp . '+' exp
-   54    | exp . '-' exp
-   55    | exp . '/' exp
-   56    | exp . '*' exp
-   58    | exp . TOK_AND exp
-   59    | exp . TOK_OR exp
-   69 resto_lista_expresiones: ',' exp . resto_lista_expresiones
+   54 exp: exp . '+' exp
+   55    | exp . '-' exp
+   56    | exp . '/' exp
+   57    | exp . '*' exp
+   59    | exp . TOK_AND exp
+   60    | exp . TOK_OR exp
+   71 resto_lista_expresiones: ',' exp . resto_lista_expresiones
 
-    TOK_OR   shift, and go to state 96
-    TOK_AND  shift, and go to state 97
-    '+'      shift, and go to state 98
-    '-'      shift, and go to state 99
-    '*'      shift, and go to state 100
-    '/'      shift, and go to state 101
-    ','      shift, and go to state 135
+    TOK_OR   shift, and go to state 97
+    TOK_AND  shift, and go to state 98
+    '+'      shift, and go to state 99
+    '-'      shift, and go to state 100
+    '*'      shift, and go to state 101
+    '/'      shift, and go to state 102
+    ','      shift, and go to state 143
 
-    $default  reduce using rule 70 (resto_lista_expresiones)
+    $default  reduce using rule 72 (resto_lista_expresiones)
 
-    resto_lista_expresiones  go to state 151
+    resto_lista_expresiones  go to state 153
 
 
-State 151
+State 153
 
-   69 resto_lista_expresiones: ',' exp resto_lista_expresiones .
+   71 resto_lista_expresiones: ',' exp resto_lista_expresiones .
 
-    $default  reduce using rule 69 (resto_lista_expresiones)
+    $default  reduce using rule 71 (resto_lista_expresiones)

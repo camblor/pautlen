@@ -26,14 +26,15 @@
   int ambito;
 
   /*Informacion de lo que estamos analizando*/
-  int categoria_actual;
-  int clase_actual;
-  int tipo_actual;
-  int tamanio_vector_actual;
-  int num_variables_locales_actual;
-  int pos_variable_local_actual;
-  int num_parametros_actual;
-  int pos_parametro_actual;
+  int categoria_actual = 0;
+  int clase_actual = 0;
+  int tipo_actual = 0;
+  int tamanio_vector_actual = 0;
+  int num_variables_locales_actual = 0;
+  int pos_variable_local_actual = 0;
+  int num_parametros_actual = 0;
+  int pos_parametro_actual = 0;
+  int num_parametros_llamada_actual = 0;
 
   extern int etiqueta;
 
@@ -48,6 +49,8 @@
   extern datainfo * infoActual;
 
   char nombreFuncion[100];
+
+  int retorno=0;
 
 %}
 
@@ -76,6 +79,7 @@
 %type <atributos> fn_declaration
 %type <atributos> fn_name
 %type <atributos> idpf
+%type <atributos> llamadaAFuncion
 
 
 %token TOK_MAIN
@@ -245,7 +249,7 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
             pos_parametro_actual = 0;
 
             infoActual = malloc(sizeof(datainfo));
-            infoActual->categoria = categoria_actual;
+            infoActual->categoria = FUNCION;
             infoActual->clase = clase_actual;
             infoActual->tipo = tipo_actual;
             infoActual->tamanio_vector = tamanio_vector_actual;
@@ -256,6 +260,15 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
 
             insertaElemento(tablaActual, $3.lexema, infoActual);
             tablaActual = tablaLocal;
+            infoActual = malloc(sizeof(datainfo));
+            infoActual->categoria = FUNCION;
+            infoActual->clase = clase_actual;
+            infoActual->tipo = tipo_actual;
+            infoActual->tamanio_vector = tamanio_vector_actual;
+            infoActual->num_variables_locales = num_variables_locales_actual;
+            infoActual->pos_variable_local = pos_variable_local_actual;
+            infoActual->num_parametros = num_parametros_actual;
+            infoActual->pos_parametro = pos_parametro_actual;
             insertaElemento(tablaActual, $3.lexema, infoActual);
           }
         }
@@ -347,15 +360,19 @@ asignacion: TOK_IDENTIFICADOR '=' exp
         {
           /*fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");*/
           if(tablaActual == tablaGlobal){
+            
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
             if(itemActual == NULL){
+              printf("Tipo 1:\n");
               error = -1;
               tipoErrorSemantico = 1;
               yyerror($1.lexema);
               return -1;
             }
+            
 
             else if (itemActual->data->categoria == FUNCION){
+              printf("Tipo 2:\n");
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -363,6 +380,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             }
 
             else if(itemActual->data->clase == VECTOR){
+              printf("Tipo 3:\n");
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -370,6 +388,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             }
 
             else if(itemActual->data->tipo != $3.tipo){
+              printf("Tipo 4: %d = %d \n", itemActual->data->tipo, $3.tipo);
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -505,7 +524,7 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
                 yyerror($1.lexema);
                 return -1;
               }
-              printf("Tipo variable: %d\n", itemActual->data->categoria);
+              
               if (itemActual->data->categoria!=VECTOR){
                 error = -1;
                 tipoErrorSemantico=9;
@@ -710,7 +729,7 @@ escritura: TOK_PRINTF exp
         }
 
 
-retorno_funcion: TOK_RETURN exp
+retorno_funcion: initretorno exp
         {
           if(tablaLocal==tablaGlobal)
           {
@@ -728,6 +747,13 @@ retorno_funcion: TOK_RETURN exp
             return -1;
           }
           retornarFuncion(salida, $2.es_direccion);
+          retorno = 0;
+          fprintf(salida, "quecojones\n");
+        }
+
+initretorno: TOK_RETURN
+        {
+          retorno = 1;
         }
 
 
@@ -964,10 +990,38 @@ exp: exp '+' exp
           $$.es_direccion = $1.es_direccion;
           /*fprintf(salida, ";R85:\t<exp> ::= <elemento_vector>\n");*/
         }
-        |TOK_IDENTIFICADOR '('lista_expresiones')'
+        |llamadaAFuncion '('lista_expresiones')'
         {
-          /*fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");*/
+          fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");
+          llamarFuncion(salida, $1.lexema, 1);
         }
+
+
+llamadaAFuncion: TOK_IDENTIFICADOR
+        {
+          itemActual = buscaElemento(tablaGlobal, $1.lexema);
+          if(itemActual == NULL)
+          {
+            error=-1;
+            tipoErrorSemantico=1;
+            yyerror($1.lexema);
+            return -1;
+          }
+          display(tablaGlobal);
+          display(tablaLocal);
+          printf("Ya no se %d\n", itemActual->data->categoria);
+          if(itemActual->data->categoria != FUNCION)
+          {
+            error=-1;
+            tipoErrorSemantico=0;
+            yyerror("El identificador de llamada de funcion, no es de categoria funcion.");
+            return -1;
+          }
+          num_parametros_llamada_actual=0;
+          strcpy($$.lexema,$1.lexema);
+          $$.tipo = itemActual->data->tipo;
+        }
+
 
 lista_expresiones: exp resto_lista_expresiones
         {
@@ -1139,27 +1193,27 @@ printf("%d\n", error);
     		else if (tipoErrorSemantico==2)
     			fprintf(stderr,"****Error semantico en lin %d: El tamanyo del vector <%s> excede los limites permitidos (1,64).\n",linea,perror);
         else if(tipoErrorSemantico==3)
-          fprintf(stderr, "****Error semantico en lin %d: Operacion aritmetica con operandos boolean.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Operacion aritmetica con operandos boolean.\n", linea);
         else if (tipoErrorSemantico==4)
-          fprintf(stderr, "****Error semantico en lin %d: Operacion logica con operandos int.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Operacion logica con operandos int.\n", linea);
         else if (tipoErrorSemantico==5)
-          fprintf(stderr, "****Error semantico en lin %d: Condicional con condicion de tipo int.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Condicional con condicion de tipo int.\n", linea);
         else if (tipoErrorSemantico==6)
-          fprintf(stderr, "****Error semantico en lin %d: Bucle con condicion de tipo int.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Bucle con condicion de tipo int.\n", linea);
         else if (tipoErrorSemantico==7)
-          fprintf(stderr, "****Error semantico en lin %d: Numero incorrecto de parametros en llamada a funcion.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Numero incorrecto de parametros en llamada a funcion.\n", linea);
         else if (tipoErrorSemantico==8)
-          fprintf(stderr, "****Error semantico en lin %d: Asignacion incompatible.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Asignacion incompatible.\n", linea);
         else if (tipoErrorSemantico==9)
-          fprintf(stderr, "****Error semantico en lin %d: Intento de indexacion de una variable que no es de tipo vector.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Intento de indexacion de una variable que no es de tipo vector.\n", linea);
         else if (tipoErrorSemantico==10)
-          fprintf(stderr, "****Error semantico en lin %d: El indice en una operacion de indexacion tiene que ser de tipo entero", linea);
+          fprintf(stderr, "****Error semantico en lin %d: El indice en una operacion de indexacion tiene que ser de tipo entero\n", linea);
         else if (tipoErrorSemantico==11)
-          fprintf(stderr, "****Error semantico en lin %d: Sentencia de retorno fuera del cuerpo de una función.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Sentencia de retorno fuera del cuerpo de una función.\n", linea);
         else if (tipoErrorSemantico==12)
-          fprintf(stderr, "****Error semantico en lin %d: No esta permitido el uso de llamadas a funciones como parametros de otras funciones.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: No esta permitido el uso de llamadas a funciones como parametros de otras funciones.\n", linea);
         else if (tipoErrorSemantico==13){
-          fprintf(stderr, "****Error semantico en lin %d: Declaracion duplicada.", linea);
+          fprintf(stderr, "****Error semantico en lin %d: Declaracion duplicada.\n", linea);
         }
     		else
     			fprintf(stderr,"****Error semantico en lin %d: Funcion <%s> sin sentencia de retorno.\n",linea,perror);
