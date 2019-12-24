@@ -456,38 +456,95 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
         {
+          if(tablaActual == tablaGlobal){
+            itemActual = buscaElemento(tablaGlobal, $1.lexema);
+            if (itemActual==NULL){
+              tipoErrorSemantico=1;
+              yyerror($1.lexema);
+            }
 
-          itemActual = buscaElemento(tablaActual, $1.lexema);
-          if (itemActual==NULL){
-            tipoErrorSemantico=1;
-            yyerror($1.lexema);
+            if (itemActual->data->categoria==FUNCION){
+              error = -1;
+              tipoErrorSemantico=9;
+              yyerror($1.lexema);
+              return -1;
+            }
+            printf("Tipo variable: %d\n", itemActual->data->categoria);
+            if (itemActual->data->categoria!=VECTOR){
+              error = -1;
+              tipoErrorSemantico=9;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            if($3.tipo!=INT){
+              error = -1;
+              tipoErrorSemantico=10;
+              yyerror($1.lexema);
+              return -1;
+            }
+            $$.tipo = VECTOR;
+            $$.es_direccion=1;
+            escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
           }
+          else{
+            itemActual = buscaElemento(tablaLocal, $1.lexema);
+            if (itemActual==NULL){
+              itemActual = buscaElemento(tablaGlobal, $1.lexema);
+              if (itemActual==NULL){
+                tipoErrorSemantico=1;
+                yyerror($1.lexema);
+              }
 
-          if (itemActual->data->categoria==FUNCION){
-            error = -1;
-            tipoErrorSemantico=9;
-            yyerror($1.lexema);
-            return -1;
+              if (itemActual->data->categoria==FUNCION){
+                error = -1;
+                tipoErrorSemantico=9;
+                yyerror($1.lexema);
+                return -1;
+              }
+              printf("Tipo variable: %d\n", itemActual->data->categoria);
+              if (itemActual->data->categoria!=VECTOR){
+                error = -1;
+                tipoErrorSemantico=9;
+                yyerror($1.lexema);
+                return -1;
+              }
+
+              if($3.tipo!=INT){
+                error = -1;
+                tipoErrorSemantico=10;
+                yyerror($1.lexema);
+                return -1;
+              }
+              $$.tipo = VECTOR;
+              $$.es_direccion=1;
+              escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
+              }
+
+              if (itemActual->data->categoria==FUNCION){
+              error = -1;
+              tipoErrorSemantico=9;
+              yyerror($1.lexema);
+              return -1;
+            }
+            printf("Tipo variable: %d\n", itemActual->data->categoria);
+            if (itemActual->data->categoria!=VECTOR){
+              error = -1;
+              tipoErrorSemantico=9;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            if($3.tipo!=INT){
+              error = -1;
+              tipoErrorSemantico=10;
+              yyerror($1.lexema);
+              return -1;
+            }
+            $$.tipo = VECTOR;
+            $$.es_direccion=1;
+            escribirVariableLocal(salida, itemActual->data->pos_variable_local);
           }
-          printf("Tipo variable: %d\n", itemActual->data->categoria);
-          if (itemActual->data->categoria!=VECTOR){
-            error = -1;
-            tipoErrorSemantico=9;
-            yyerror($1.lexema);
-            return -1;
-          }
-
-          if($3.tipo!=INT){
-            error = -1;
-            tipoErrorSemantico=10;
-            yyerror($1.lexema);
-            return -1;
-          }
-          $$.tipo = VECTOR;
-          $$.es_direccion=1;
-          escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
-
-
           /*fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");*/
         }
 
@@ -556,28 +613,78 @@ while: TOK_WHILE
 lectura: TOK_SCANF TOK_IDENTIFICADOR
         {
 
-          itemActual = buscaElemento(tablaActual, $2.lexema);
-          if(!itemActual){
-            error = -1;
-            tipoErrorSemantico = 1;
-            yyerror($2.lexema);
-            return -1;
+          if(tablaActual=tablaGlobal){
+            itemActual = buscaElemento(tablaGlobal, $2.lexema);
+            if(!itemActual){
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror($2.lexema);
+              return -1;
+            }
+            else if(itemActual->data->categoria == FUNCION){
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror($2.lexema);
+              return -1;
+            }
+            else if(itemActual->data->clase != ESCALAR){
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror($2.lexema);
+              return -1;
+            }
+            else{
+              leer(salida, itemActual->lexema, itemActual->data->tipo);
+            }
           }
-          else if(itemActual->data->categoria == FUNCION){
-            error = -1;
-            tipoErrorSemantico = 0;
-            yyerror($2.lexema);
-            return -1;
-          }
-          else if(itemActual->data->clase != ESCALAR){
-            error = -1;
-            tipoErrorSemantico = 0;
-            yyerror($2.lexema);
-            return -1;
-          }
+
           else{
-            leer(salida, itemActual->lexema, itemActual->data->tipo);
+
+            itemActual = buscaElemento(tablaLocal, $2.lexema);
+            if(!itemActual){
+              itemActual = buscaElemento(tablaGlobal, $2.lexema);
+              if(!itemActual){
+                error = -1;
+                tipoErrorSemantico = 1;
+                yyerror($2.lexema);
+                return -1;
+              }
+              else if(itemActual->data->categoria == FUNCION){
+                error = -1;
+                tipoErrorSemantico = 0;
+                yyerror($2.lexema);
+                return -1;
+              }
+              else if(itemActual->data->clase != ESCALAR){
+                error = -1;
+                tipoErrorSemantico = 0;
+                yyerror($2.lexema);
+                return -1;
+              }
+              else{
+                leer(salida, itemActual->lexema, itemActual->data->tipo);
+              }
+            }
+            else if(itemActual->data->categoria == FUNCION){
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror($2.lexema);
+              return -1;
+            }
+            else if(itemActual->data->clase != ESCALAR){
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror($2.lexema);
+              return -1;
+            }
+            else{
+              escribirVariableLocal(salida, int posicion_variable_local);
+              leer(salida, "eax", itemActual->data->tipo);
+            }
+
           }
+
+          
           /*fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");*/
         }
 
