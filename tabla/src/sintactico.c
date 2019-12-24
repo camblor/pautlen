@@ -48,7 +48,6 @@ int main(int argc, char **argv)
   
   
   yyparse();
-  display(tablaGlobal);
 
   liberaTabla(tablaGlobal);
   if(tablaLocal != NULL){

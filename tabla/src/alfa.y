@@ -344,39 +344,107 @@ bloque: condicional
 asignacion: TOK_IDENTIFICADOR '=' exp
         {
           /*fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");*/
-          itemActual = buscaElemento(tablaGlobal, $1.lexema);
-          if(itemActual == NULL){
-            error = -1;
-            tipoErrorSemantico = 1;
-            yyerror($1.lexema);
-            return -1;
-          }
+          if(tablaActual == tablaGlobal){
+            itemActual = buscaElemento(tablaGlobal, $1.lexema);
+            if(itemActual == NULL){
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror($1.lexema);
+              return -1;
+            }
 
-          else if (itemActual->data->categoria == FUNCION){
-            error = -1;
-            tipoErrorSemantico = 8;
-            yyerror($1.lexema);
-            return -1;
-          }
+            else if (itemActual->data->categoria == FUNCION){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
 
-          else if(itemActual->data->clase == VECTOR){
-            error = -1;
-            tipoErrorSemantico = 8;
-            yyerror($1.lexema);
-            return -1;
-          }
+            else if(itemActual->data->clase == VECTOR){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
 
-          else if(itemActual->data->tipo != $3.tipo){
-            error = -1;
-            tipoErrorSemantico = 8;
-            yyerror($1.lexema);
-            return -1;
+            else if(itemActual->data->tipo != $3.tipo){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            else{
+              $1.valor_entero = $3.valor_entero;
+              asignar(salida, $1.lexema, $3.es_direccion);
+            }
           }
 
           else{
-            $1.valor_entero = $3.valor_entero;
-            asignar(salida, $1.lexema, $3.es_direccion);
+            itemActual = buscaElemento(tablaLocal, $1.lexema);
+            if(itemActual == NULL){
+              itemActual = buscaElemento(tablaGlobal, $1.lexema);
+              if(itemActual == NULL){
+                error = -1;
+                tipoErrorSemantico = 1;
+                yyerror($1.lexema);
+                return -1;
+              }
+
+              else if (itemActual->data->categoria == FUNCION){
+                error = -1;
+                tipoErrorSemantico = 8;
+                yyerror($1.lexema);
+                return -1;
+              }
+
+              else if(itemActual->data->clase == VECTOR){
+                error = -1;
+                tipoErrorSemantico = 8;
+                yyerror($1.lexema);
+                return -1;
+              }
+
+              else if(itemActual->data->tipo != $3.tipo){
+                error = -1;
+                tipoErrorSemantico = 8;
+                yyerror($1.lexema);
+                return -1;
+              }
+
+              else{
+                $1.valor_entero = $3.valor_entero;
+                asignar(salida, $1.lexema, $3.es_direccion);
+              }
+            }
+
+            else if (itemActual->data->categoria == FUNCION){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            else if(itemActual->data->clase == VECTOR){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            else if(itemActual->data->tipo != $3.tipo){
+              error = -1;
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
+              return -1;
+            }
+
+            else{
+              $1.valor_entero = $3.valor_entero;
+              escribirVariableLocal(salida, itemActual->data->pos_variable_local);
+            }
           }
+          
 
 
 
@@ -683,7 +751,6 @@ exp: exp '+' exp
 
 
             /* Asignamos valor */
-            printf("metido %s\n", $1.lexema);
             escribir_operando(salida, $1.lexema, $$.es_direccion);
           }
           /* TODO: Escritura en ensamblador de la introduccion en la pila de la dirección del identificador: push dword  _$1.lexema */
