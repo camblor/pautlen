@@ -142,7 +142,7 @@ void display(dataItem **tabla)
 
       if (tabla[i] != NULL)
       {
-         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data->categoria);
+         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data->tipo);
          j++;
       }
 
@@ -212,6 +212,7 @@ void liberaTabla(dataItem **tabla)
    }
 
    free(tabla);
+   tabla = NULL;
 }
 
 

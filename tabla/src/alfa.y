@@ -24,7 +24,6 @@
   int tipoErrorSemantico = -1;
   /*Diferenciar globales y locales*/
   int ambito;
-  int asignando;
 
   /*Informacion de lo que estamos analizando*/
   int categoria_actual = 0;
@@ -179,12 +178,15 @@ clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
           /* Obtenemos clase */
           clase_actual = VECTOR;
           tamanio_vector_actual = $4.valor_entero;
-          if (tamanio_vector_actual>64 || tamanio_vector_actual<1){
+          categoria_actual = VARIABLE;
+          if (tamanio_vector_actual>MAX_TAMANIO_VECTOR || tamanio_vector_actual<1){
             error = -1;
             tipoErrorSemantico = 2;
             yyerror ($4.lexema);
             return -1;
           }
+
+          
         }
 
 identificadores: identificador
@@ -249,6 +251,7 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
             num_parametros_actual = 0;
             pos_parametro_actual = 0;
 
+
             infoActual = malloc(sizeof(datainfo));
             infoActual->categoria = FUNCION;
             infoActual->clase = clase_actual;
@@ -271,6 +274,10 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
             infoActual->num_parametros = num_parametros_actual;
             infoActual->pos_parametro = pos_parametro_actual;
             insertaElemento(tablaActual, $3.lexema, infoActual);
+
+            categoria_actual = 0;
+            clase_actual = 0;
+            tipo_actual = 0;
           }
         }
 
@@ -474,19 +481,30 @@ asignacion: TOK_IDENTIFICADOR '=' exp
         }
         |elemento_vector '=' exp
         {
+          
+          if($3.tipo!=$1.tipo)
+          {
+            error=-1;
+            tipoErrorSemantico=8;
+            yyerror("vector");
+            return -1;
+          }
           asignarElemVec(salida);
           fprintf(salida, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
-          fprintf(salida, ";ASIGNANDO A 1\n");
         }
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
         {
           if(tablaActual == tablaGlobal){
+            itemActual = NULL;
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
+
             if (itemActual==NULL){
+              error = -1;
               tipoErrorSemantico=1;
               yyerror($1.lexema);
-            }
+              return -1;
+            }            
 
             if (itemActual->data->categoria==FUNCION){
               error = -1;
@@ -507,8 +525,9 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
               yyerror($1.lexema);
               return -1;
             }
-            $$.tipo = VECTOR;
             $$.es_direccion=1;
+            strcpy($$.lexema, $1.lexema);
+            $$.tipo = itemActual->data->tipo;
             escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
           }
           else{
@@ -516,8 +535,10 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
             if (itemActual==NULL){
               itemActual = buscaElemento(tablaGlobal, $1.lexema);
               if (itemActual==NULL){
+                error = -1;
                 tipoErrorSemantico=1;
                 yyerror($1.lexema);
+                return -1;
               }
 
               if (itemActual->data->categoria==FUNCION){
@@ -540,8 +561,9 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
                 yyerror($1.lexema);
                 return -1;
               }
-              $$.tipo = VECTOR;
               $$.es_direccion=1;
+              strcpy($$.lexema, $1.lexema);
+              $$.tipo = itemActual->data->tipo;
               escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
               }
 
@@ -551,7 +573,6 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
               yyerror($1.lexema);
               return -1;
             }
-            printf("Tipo variable: %d\n", itemActual->data->categoria);
             if (itemActual->data->clase!=VECTOR){
               error = -1;
               tipoErrorSemantico=9;
@@ -565,8 +586,9 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
               yyerror($1.lexema);
               return -1;
             }
-            $$.tipo = VECTOR;
             $$.es_direccion=1;
+            strcpy($$.lexema, $1.lexema);
+            $$.tipo = itemActual->data->tipo;
             escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
           }
           /*fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");*/
@@ -734,20 +756,41 @@ escritura: TOK_PRINTF exp
 
 retorno_funcion: initretorno exp
         {
-          if(tablaLocal==tablaGlobal)
-          {
-            error=-1;
-            tipoErrorSemantico=0;
-            yyerror("Sentencia de retorno fuera del cuerpo de una función.");
-            return -1;
-          }
-          itemActual = buscaElemento(tablaLocal, $2.lexema);
-          if(itemActual == NULL || $2.tipo!=itemActual->data->tipo)
-          {
-            error=-1;
-            tipoErrorSemantico=0;
-            yyerror("Asignacion incompatible, la expresion de retorno tiene que tener el mismo tipo que la funcion.");
-            return -1;
+
+          if($2.es_direccion){
+            if(tablaLocal==tablaGlobal)
+            {
+              error=-1;
+              tipoErrorSemantico=0;
+              yyerror("Sentencia de retorno fuera del cuerpo de una función.\n");
+              return -1;
+            }
+
+            printf("lexema = %s\n", $2.lexema);
+            printf("esvar = %d\n", $2.es_direccion);
+            itemActual = buscaElemento(tablaLocal, $2.lexema);
+            
+            if(itemActual == NULL)
+            {
+              error=-1;
+              tipoErrorSemantico=0;
+              yyerror("No se encuentra en la tabla.\n");
+              return -1;
+            }
+
+            display(tablaLocal);
+            printf("Tipo funcion: %d\n", itemActual->data->tipo);
+            printf("Tipo variable: %d\n", $2.tipo);
+
+            if($2.tipo!=itemActual->data->tipo)
+            {
+              error=-1;
+              tipoErrorSemantico=0;
+              yyerror("Asignacion incompatible, la expresion de retorno tiene que tener el mismo tipo que la funcion.\n");
+              return -1;
+            }
+            
+            
           }
           retornarFuncion(salida, $2.es_direccion);
           retorno = 0;
@@ -883,6 +926,7 @@ exp: exp '+' exp
         }
         |TOK_IDENTIFICADOR
         {
+          
 
           if(tablaActual==tablaGlobal){
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
@@ -901,7 +945,9 @@ exp: exp '+' exp
             }
             /*CORRECTO*/
             else {
+              
               $$.tipo = itemActual->data->tipo;
+              
               $$.es_direccion = 1;
               $$.valor_entero = $1.valor_entero;
 
@@ -916,6 +962,7 @@ exp: exp '+' exp
           else{
 
             itemActual = buscaElemento(tablaLocal, $1.lexema);
+            printf("AQUI");
 
             /*Si no lo encuentra error*/
             if (itemActual == NULL){
@@ -936,6 +983,7 @@ exp: exp '+' exp
               /*CORRECTO*/
               else {
                 $$.tipo = itemActual->data->tipo;
+                
                 $$.es_direccion = 1;
                 $$.valor_entero = $1.valor_entero;
 
@@ -956,12 +1004,12 @@ exp: exp '+' exp
             /*CORRECTO*/
             else {
               $$.tipo = itemActual->data->tipo;
+              printf("Aqui tenemos: %d\n", $$.tipo);
               $$.es_direccion = 1;
               $$.valor_entero = $1.valor_entero;
 
 
               /* Asignamos valor */
-              printf("posLocal: %d\n", itemActual->data->pos_variable_local);
               escribirIdentificadorLocal (salida, itemActual->data->categoria,itemActual->data->num_parametros, itemActual->data->pos_parametro,itemActual->data->pos_variable_local,0);
             }
             /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
@@ -1013,7 +1061,6 @@ llamadaAFuncion: TOK_IDENTIFICADOR
           }
           display(tablaGlobal);
           display(tablaLocal);
-          printf("Ya no se %d\n", itemActual->data->categoria);
           if(itemActual->data->categoria != FUNCION)
           {
             error=-1;
@@ -1240,7 +1287,7 @@ printf("%d\n", error);
     error = 0;
     fclose(salida);
 
-    liberaTabla(tablaActual);
+    liberaTabla(tablaLocal);
     liberaTabla(tablaGlobal);
     error = 0;
 }

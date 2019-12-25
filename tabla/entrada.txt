@@ -1,11 +1,22 @@
 main {
 
-  array int [2] A;
+  int x1, x2;
+  
 
-  A[0] = 40;
-  A[1] = 30;
+  function int fib(int arg){
+    int x, y, z;
 
-  printf A[0];
-  printf A[1];
+    x = 20;
+    y = 30;
+    z = 40;
+
+    return 80;
+  }
+
+  x2 = 3;
+  x1 = fib(x2);
+
+  printf x1;
 
 }
+

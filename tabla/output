@@ -56,56 +56,30 @@ segment .text
 ; Hacer la asignación efectiva
 	mov dword [ebx] , eax
 ;D:	return
-	push dword 80
-;herewegoagain
-;R81:	<exp> ::= <constante>
-	pop dword eax
-	mov dword esp, ebp
-	pop dword ebp 
-	ret
-;R22:	<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}
-main:
-	mov dword [__esp] , esp
-;D:	=
 	push dword 3
 ;herewegoagain
 ;R81:	<exp> ::= <constante>
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;HOLA
-	pop dword eax
-	mov [_x2], eax 
-;D:	=
-;XD
-	push dword _x2
-;R88:	<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)
-	call _fib
+;D:	+
+;D:	+
+	lea eax, [ebp-12]
 	push dword eax
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;HOLA
+	pop dword ebx
 	pop dword eax
-	mov [_x1], eax 
-;XD
-	push dword _x1
-;R56:	<escritura> ::= printf <exp>
-;AESCRIBIR
-	pop dword eax
-	mov eax, [eax]
+	mov dword ebx, [ebx]
+	add eax, ebx
 	push dword eax
-	call print_int
-	add esp, 4
-	call print_endofline
-	jmp fin
-fin_indice_fuera_rango:
-	push dword err_index
-	call print_string
-	add esp, 4
-	call print_endofline
-	jmp fin
-division_cero:
-	push dword err_div0
-	call print_string
-	add esp, 4
-	call print_endofline
-fin:
-	mov dword esp, [__esp]
-	ret
+;D:	+
+	lea eax, [ebp-4]
+	push dword eax
+	pop dword ebx
+	pop dword eax
+	mov dword ebx, [ebx]
+	add eax, ebx
+	push dword eax
+	push dword 3
+;herewegoagain
+;R81:	<exp> ::= <constante>
+	pop dword ebx
+	pop dword eax
+	add eax, ebx
+	push dword eax

@@ -1,0 +1,11 @@
+main {
+
+  array int [2] A;
+
+  A[0] = 40;
+  A[1] = 30;
+
+  printf A[0];
+  printf A[1];
+
+}
