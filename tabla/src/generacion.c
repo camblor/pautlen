@@ -755,8 +755,8 @@ void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int po
   {
     if(categoria != 1 && categoria != 2)
       {
-        
-        fprintf(pasm, "\tlea eax, [ebp+%d]\n",4*(num_param - pos_param));
+        printf("vamos\n");
+        fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*((num_param) - pos_param));
         fprintf(pasm, "\tpush dword eax\n");
       }
     else
@@ -770,11 +770,13 @@ void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int po
 
       if(categoria != 1 && categoria != 2)
         {
-          fprintf(pasm, "\tlea eax, [ebp+%d]\n",4*(num_param - pos_param));
+            
+          fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*((num_param) - pos_param));
           fprintf(pasm, "\tpush dword [eax]\n");
         }
       else
         {
+            
           fprintf(pasm, "\tlea eax, [ebp-%d]\n",4*pos_var);
           fprintf(pasm, "\tpush dword [eax]\n");
         }

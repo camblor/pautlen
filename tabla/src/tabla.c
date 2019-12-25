@@ -142,7 +142,7 @@ void display(dataItem **tabla)
 
       if (tabla[i] != NULL)
       {
-         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data->tipo);
+         printf(" (%s,%d)", tabla[i]->lexema, tabla[i]->data->pos_parametro);
          j++;
       }
 

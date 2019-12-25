@@ -3,20 +3,28 @@ main {
   int x1, x2;
   
 
-  function int fib(int arg){
-    int x, y, z;
+  function int fib(int arg; int arg2; boolean arg3){
+    int x,y;
+    boolean z;
 
-    x = 20;
-    y = 30;
-    z = 40;
+    x = 120;
+    y = 400;
+    z = true;
 
-    return 80;
+    printf x;
+    printf y;
+    printf z;
+    
+    printf arg;
+    printf arg2;
+    printf arg3;
+
+    return arg2;
   }
 
   x2 = 3;
-  x1 = fib(x2);
+  x1 = fib(4, 80, true);
 
   printf x1;
-
 }
 
