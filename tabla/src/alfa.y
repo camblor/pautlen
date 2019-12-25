@@ -80,6 +80,7 @@
 %type <atributos> fn_name
 %type <atributos> idpf
 %type <atributos> llamadaAFuncion
+%type <atributos> argumento
 
 
 %token TOK_MAIN
@@ -215,7 +216,10 @@ funcion: fn_declaration sentencias '}'
           itemActual = buscaElemento(tablaGlobal, $1.lexema);
 
           if(itemActual == NULL){
-            printf("ERROR - No creo que sea posible pero compruebo\n");
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror("No existe");
+              return -1;
           }
 
           itemActual->data->num_parametros = num_parametros_actual;
@@ -227,7 +231,10 @@ fn_declaration : fn_name '('parametros_funcion ')' '{' declaraciones_funcion
           itemActual = buscaElemento(tablaLocal, $1.lexema);
 
           if(itemActual == NULL){
-            printf("Problema del codigo\n");
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror($1.lexema);
+              return -1;
           }
           itemActual->data->num_parametros = num_parametros_actual;
 
@@ -241,7 +248,10 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
           itemActual = buscaElemento(tablaActual, $3.lexema);
 
           if(itemActual != NULL){
-            printf("ERROR - YA EXISTE IDENTIFICADOR\n");
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror("No existe");
+              return -1;
           }
           else{
             strcpy($$.lexema, $3.lexema);
@@ -319,10 +329,12 @@ idpf: TOK_IDENTIFICADOR
           infoActual->pos_parametro = pos_parametro_actual++;
 
           if(!insertaElemento(tablaLocal, $1.lexema, infoActual)){
-            printf("ERROR\n");
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror($1.lexema);
+              return -1;
           }
 
-          printf("parametrosss: %d\n", num_parametros_actual);
 
           strcpy($$.lexema,$1.lexema);
         }
@@ -373,7 +385,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
             if(itemActual == NULL){
-              printf("Tipo 1:\n");
               error = -1;
               tipoErrorSemantico = 1;
               yyerror($1.lexema);
@@ -382,7 +393,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             
 
             else if (itemActual->data->categoria == FUNCION){
-              printf("Tipo 2:\n");
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -390,7 +400,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             }
 
             else if(itemActual->data->clase == VECTOR){
-              printf("Tipo 3:\n");
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -398,7 +407,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             }
 
             else if(itemActual->data->tipo != $3.tipo){
-              printf("Tipo 4: %d = %d \n", itemActual->data->tipo, $3.tipo);
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -407,7 +415,6 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
             else{
               $1.valor_entero = $3.valor_entero;
-              fprintf(salida, ";HOLA\n");
               asignar(salida, $1.lexema, $3.es_direccion);
             }
           }
@@ -670,7 +677,6 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
           if(tablaActual==tablaGlobal){
             itemActual = buscaElemento(tablaGlobal, $2.lexema);
             if(!itemActual){
-              printf("estoyaqui\n");
               error = -1;
               tipoErrorSemantico = 1;
               yyerror($2.lexema);
@@ -733,8 +739,8 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
               return -1;
             }
             else{
-              escribirVariableLocal(salida, itemActual->data->pos_variable_local);
-              leer(salida, "eax", itemActual->data->tipo);
+              escribirIdentificadorLocal (salida, itemActual->data->categoria,num_parametros_actual, itemActual->data->pos_parametro,itemActual->data->pos_variable_local,0);
+              escribirScanfFuncion(salida, itemActual->data->tipo);
             }
 
           }
@@ -746,8 +752,6 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
 escritura: TOK_PRINTF exp
         {
           fprintf(salida, ";R56:\t<escritura> ::= printf <exp>\n");
-          printf("\nes_direccion: %d\n", $2.es_direccion);
-          printf("tipo_actual: %d\n\n", tipo_actual);
         
           if($2.es_direccion){
             if(tablaActual == tablaGlobal){
@@ -800,9 +804,6 @@ retorno_funcion: initretorno exp
               yyerror("Sentencia de retorno fuera del cuerpo de una función.\n");
               return -1;
             }
-
-            printf("lexema = %s\n", $2.lexema);
-            printf("esvar = %d\n", $2.es_direccion);
             itemActual = buscaElemento(tablaLocal, $2.lexema);
             
             if(itemActual == NULL)
@@ -958,7 +959,6 @@ exp: exp '+' exp
         |TOK_IDENTIFICADOR
         {
           
-          
 
           if(tablaActual==tablaGlobal){
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
@@ -991,12 +991,14 @@ exp: exp '+' exp
               
               $$.es_direccion = 1;
               $$.valor_entero = $1.valor_entero;
+              strcpy($$.lexema, $1.lexema);
               
               categoria_actual = itemActual->data->categoria;
 
 
+
+
               /* Asignamos valor */
-              fprintf(salida, ";XD\n");
               escribir_operando(salida, $1.lexema, $$.es_direccion);
             }
             /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
@@ -1134,8 +1136,9 @@ llamadaAFuncion: TOK_IDENTIFICADOR
         }
 
 
-lista_expresiones: exp resto_lista_expresiones
+lista_expresiones: argumento resto_lista_expresiones
         {
+          
           /*fprintf(salida, "R89:\t<lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");*/
         }
         |
@@ -1143,7 +1146,15 @@ lista_expresiones: exp resto_lista_expresiones
           /*fprintf(salida, "R90:\t<lista_expresiones> ::= \n");*/
         }
 
-resto_lista_expresiones: ',' exp resto_lista_expresiones
+argumento: exp
+{
+  if($1.es_direccion){
+    argumentoFuncionVariable(salida);
+  }
+  
+}
+
+resto_lista_expresiones: ',' argumento resto_lista_expresiones
         {
           /*fprintf(salida, ";R91:\t<resto_lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");*/
         }

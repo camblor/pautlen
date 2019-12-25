@@ -1,16 +1,30 @@
 main {
-  int x;
-  array int [2] A;
+
+  int x1, x2;
   
 
-  function int fib(int arg){
-    return arg;
+  function int fib(int arg; int arg2; boolean arg3){
+    int x,y;
+    boolean z;
+
+    x = 120;
+    y = 400;
+    z = true;
+
+    printf x;
+    printf y;
+    printf z;
+    
+    printf arg;
+    printf arg2;
+    printf arg3;
+
+    return arg2;
   }
-  
-  A[0] = fib(80);
-  A[1] = 20;
-  x = 100;
-  
-  printf A[0] + A[1] + x+ 6;
+
+  x2 = 3;
+  x1 = fib(4, 80, true);
+
+  printf x1;
 }
 

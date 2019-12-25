@@ -755,7 +755,6 @@ void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int po
   {
     if(categoria != 1 && categoria != 2)
       {
-        printf("vamos\n");
         fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*((num_param) - pos_param));
         fprintf(pasm, "\tpush dword eax\n");
       }
@@ -813,10 +812,8 @@ void asignarElemVec(FILE* pasm, int retornofun){
     fprintf(pasm,"\tmov [eax], ebx\n");
 }
 
-
-	
-	
-
-void apilarAntesRetorno(FILE *pasm){
-    fprintf(pasm, "\tpush dword ebx\n");
+void argumentoFuncionVariable(FILE *pasm){
+    fprintf(pasm, "\tpop dword eax\n");
+    fprintf(pasm, "\tmov eax, [eax]\n");
+    fprintf(pasm, "\tpush dword eax\n");
 }

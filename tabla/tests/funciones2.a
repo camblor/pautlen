@@ -1,0 +1,35 @@
+main
+{
+    int x, y, resultado;
+    array int [2] AR;
+    boolean b1;
+
+	function int suma (int num1; int num2)
+	{
+		return num1+num2;
+	}
+
+  function boolean algo (boolean arg1)
+  {
+    return arg1;
+  }
+
+    x = 1;
+	y = 3;
+  AR[1] = 40;
+	
+	resultado = suma (x,AR[1]);
+
+  b1 = false;
+
+  b1 = algo(b1);
+
+	printf resultado;
+  printf b1;
+	
+}
+
+
+
+
+
