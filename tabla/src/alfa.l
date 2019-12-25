@@ -194,6 +194,7 @@ while {
 "=" {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
+    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 true {

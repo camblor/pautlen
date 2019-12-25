@@ -1226,12 +1226,13 @@ YY_RULE_SETUP
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
+    fprintf(salida, ";D:\t%s\n", yytext);
     return yytext[0];
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 199 "src/alfa.l"
+#line 200 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
@@ -1241,7 +1242,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 205 "src/alfa.l"
+#line 206 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
@@ -1251,7 +1252,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 211 "src/alfa.l"
+#line 212 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
@@ -1261,7 +1262,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 217 "src/alfa.l"
+#line 218 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
@@ -1271,7 +1272,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 223 "src/alfa.l"
+#line 224 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema,yytext);
@@ -1280,7 +1281,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 228 "src/alfa.l"
+#line 229 "src/alfa.l"
 {
     columna+=yyleng;
     strcpy(yylval.atributos.lexema, yytext);
@@ -1290,14 +1291,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 234 "src/alfa.l"
+#line 235 "src/alfa.l"
 {
     columna += 4;
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 237 "src/alfa.l"
+#line 238 "src/alfa.l"
 {
     columna++;
 }
@@ -1305,7 +1306,7 @@ YY_RULE_SETUP
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 240 "src/alfa.l"
+#line 241 "src/alfa.l"
 {
     linea++;
     columna=1;
@@ -1314,7 +1315,7 @@ YY_RULE_SETUP
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 244 "src/alfa.l"
+#line 245 "src/alfa.l"
 {
     linea ++;
     columna=1;
@@ -1322,7 +1323,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 248 "src/alfa.l"
+#line 249 "src/alfa.l"
 {
     longitud=true;
     fprintf(stderr, "****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",linea,columna,yytext);
@@ -1332,7 +1333,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 254 "src/alfa.l"
+#line 255 "src/alfa.l"
 {
     invalidchar=true;
     fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n",linea,columna,yytext);
@@ -1342,10 +1343,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 261 "src/alfa.l"
+#line 262 "src/alfa.l"
 ECHO;
 	YY_BREAK
-#line 1349 "lex.yy.c"
+#line 1350 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2350,6 +2351,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 261 "src/alfa.l"
+#line 262 "src/alfa.l"
 
 

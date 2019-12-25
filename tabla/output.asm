@@ -1,0 +1,42 @@
+segment .data 
+	err_div0 db "Error al dividir entre 0"
+	err_index db "Indice de vector fuera de rango"
+segment .bss 
+	__esp resd 1
+	_x resd 1
+segment .text
+	global main
+	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
+	extern print_endofline, print_blank, print_string
+	extern alfa_malloc, alfa_free, ld_float
+main:
+	mov dword [__esp] , esp
+;D:	=
+	push dword 8
+;R81:	<exp> ::= <constante>
+;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
+	pop dword eax
+	mov [_x], eax 
+	push dword _x
+;R56:	<escritura> ::= printf <exp>
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_int
+	add esp, 4
+	call print_endofline
+	jmp fin
+fin_indice_fuera_rango:
+	push dword err_index
+	call print_string
+	add esp, 4
+	call print_endofline
+	jmp fin
+division_cero:
+	push dword err_div0
+	call print_string
+	add esp, 4
+	call print_endofline
+fin:
+	mov dword esp, [__esp]
+	ret

@@ -612,7 +612,7 @@ void escribirParametro(FILE *fpasm, int pos_parametro, int num_total_parametros)
 
     if (!fpasm)
         return;
-    int aux = 4 * (1 + (num_total_parametros - pos_parametro));
+    int aux = 4 * (1 + (num_total_parametros - (pos_parametro)));
     fprintf(fpasm, "\tlea eax, [ebp +%d]\n", aux);
     fprintf(fpasm, "\tpush dword eax\n");
 }
@@ -622,8 +622,9 @@ void escribirVariableLocal(FILE *fpasm, int posicion_variable_local)
 
     if (!fpasm)
         return;
-
+    printf("HOLA\n");
     int aux = 4 * posicion_variable_local;
+    fprintf(fpasm, "\t;--------------------\n");
     fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux);
     fprintf(fpasm, "\tpush dword eax\n");
 }
@@ -660,7 +661,6 @@ void llamarFuncion(FILE *fd_asm, char *nombre_funcion, int num_argumentos)
         return;
 
     fprintf(fd_asm, "\tcall _%s\n", nombre_funcion);
-    fprintf(fd_asm, "\tadd esp, 4*%d\n", num_argumentos);
     fprintf(fd_asm, "\tpush dword eax\n");
 }
 
@@ -768,11 +768,13 @@ void escribir_elemento_vector(FILE * fpasm, char * nombre_vector, int tam_max, i
 /*Funciones extra necesarias para trabajar con funciones*/
 void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int pos_param, int pos_var,int llamada_dentro_funcion)
 {
+    
   if(llamada_dentro_funcion==0)
   {
     if(categoria != 1 && categoria != 2)
       {
-        fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*(num_param - pos_param));
+        
+        fprintf(pasm, "\tlea eax, [ebp+%d]\n",4*(num_param - pos_param));
         fprintf(pasm, "\tpush dword eax\n");
       }
     else
@@ -786,7 +788,7 @@ void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int po
 
       if(categoria != 1 && categoria != 2)
         {
-          fprintf(pasm, "\tlea eax, [ebp+%d]\n",4+4*(num_param - pos_param));
+          fprintf(pasm, "\tlea eax, [ebp+%d]\n",4*(num_param - pos_param));
           fprintf(pasm, "\tpush dword [eax]\n");
         }
       else

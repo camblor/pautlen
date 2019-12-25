@@ -53,13 +53,13 @@ y.tab.c: $(SRCDIR)/alfa.y
 	mv y.output $(BINDIR)
 
 exec:
-	./sintactico entrada.txt output
+	./sintactico entrada.txt output.asm
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./sintactico entrada.txt output
 
 nasm:
-	nasm -felf32 output
+	nasm -felf32 output.asm
 	gcc -m32 -o salida output.o alfalib.o
 
 .PHONY: clean
