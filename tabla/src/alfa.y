@@ -492,8 +492,13 @@ asignacion: TOK_IDENTIFICADOR '=' exp
             yyerror("vector");
             return -1;
           }
-          asignarElemVec(salida);
+          if(categoria_actual==FUNCION){
+            asignarElemVec(salida, 1);
+          } else{
+            asignarElemVec(salida, 0);
+          }          
           fprintf(salida, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+          categoria_actual = 0;
         }
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
@@ -953,22 +958,31 @@ exp: exp '+' exp
         |TOK_IDENTIFICADOR
         {
           
+          
 
           if(tablaActual==tablaGlobal){
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
 
             /*Si no lo encuentra error*/
             if (itemActual == NULL){
-              printf("El no valido es: %s\n", $1.lexema);
-              printf("ERROR - Identificador no valido\n");
+              error=-1;
+              tipoErrorSemantico=0;
+              yyerror("No se encuentra en la tabla.\n");
+              return -1;
             }
             /*Si categoria es funicon error*/
             else if(itemActual->data->categoria == FUNCION){
-              printf("ERROR - Suma de funciones\n");
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror("Funcion expresion");
+              return -1;
             }
             /*Si clase es vector error*/
             else if (itemActual->data->clase == VECTOR){
-              printf("ERROR - Suma de vectores\n");
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror("clase vector");
+              return -1;
             }
             /*CORRECTO*/
             else {
@@ -977,6 +991,8 @@ exp: exp '+' exp
               
               $$.es_direccion = 1;
               $$.valor_entero = $1.valor_entero;
+              
+              categoria_actual = itemActual->data->categoria;
 
 
               /* Asignamos valor */
@@ -1023,33 +1039,36 @@ exp: exp '+' exp
                 
                 $$.es_direccion = 1;
                 $$.valor_entero = $1.valor_entero;
-
+                categoria_actual = itemActual->data->categoria;
+                
 
                 /* Asignamos valor */
                 escribir_operando(salida, $1.lexema, $$.es_direccion);
               }
-              /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
             }
             /*Si categoria es funicon error*/
             else if(itemActual->data->categoria == FUNCION){
-              printf("ERROR - Suma de funciones\n");
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror("Funcion expresion");
+              return -1;
             }
             /*Si clase es vector error*/
             else if (itemActual->data->clase == VECTOR){
-              printf("ERROR - Suma de vectores\n");
+              error = -1;
+              tipoErrorSemantico = 0;
+              yyerror("clase vector");
+              return -1;
             }
             /*CORRECTO*/
             else {
               $$.tipo = itemActual->data->tipo;
-              printf("exp->identificador es de tipo: %d\n", $$.tipo);
               $$.es_direccion = 1;
               $$.valor_entero = $1.valor_entero;
+              categoria_actual = itemActual->data->categoria;
 
 
               /* Asignamos valor */
-              fprintf(salida, ";TOCAVENIR\n");
-              display(tablaLocal);
-              printf("problema con %s\n", itemActual->lexema);
               escribirIdentificadorLocal (salida, itemActual->data->categoria,num_parametros_actual, itemActual->data->pos_parametro,itemActual->data->pos_variable_local,0);
             }
             /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
@@ -1086,6 +1105,7 @@ exp: exp '+' exp
         {
           fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");
           llamarFuncion(salida, $1.lexema, 1);
+          categoria_actual = FUNCION;
         }
 
 
@@ -1109,6 +1129,8 @@ llamadaAFuncion: TOK_IDENTIFICADOR
           num_parametros_llamada_actual=0;
           strcpy($$.lexema,$1.lexema);
           $$.tipo = itemActual->data->tipo;
+          
+          
         }
 
 
@@ -1207,13 +1229,15 @@ comparacion: exp TOK_IGUAL exp
 constante: constante_logica
         {
           clase_actual = ESCALAR;
+          categoria_actual = VARIABLE;
           $$.tipo = $1.tipo;
           $$.es_direccion = $1.es_direccion;
+          
         }
         | constante_entera
         {
           clase_actual = ESCALAR;
-          fprintf(salida, ";herewegoagain\n");
+          categoria_actual = VARIABLE;
           $$.tipo = $1.tipo;
           $$.es_direccion = $1.es_direccion;
         }
@@ -1244,6 +1268,7 @@ constante_entera: TOK_CONSTANTE_ENTERA
           $$.valor_entero = $1.valor_entero;
           $$.tipo = INT;
           $$.es_direccion = 0;
+          
 
           /* Transformamos entero a string para adaptarnos al formato de generacion */
           sprintf(itoa, "%d", $1.valor_entero);
@@ -1278,6 +1303,8 @@ identificador: TOK_IDENTIFICADOR
             yyerror($1.lexema);
             return -1;
           }
+
+          categoria_actual = 0;
         }
 
 

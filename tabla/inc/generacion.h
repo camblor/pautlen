@@ -167,5 +167,5 @@ void escribir_elemento_vector(FILE * fpasm,char * nombre_vector, int tam_max, in
 void escribirIdentificadorLocal (FILE *pasm, int categoria,int num_param, int pos_param, int pos_var,int llamada_dentro_funcion);
 void escribirScanfFuncion (FILE *pasm, int tipo);
 void asignarIdentLocal(FILE *pasm, int es_variable);
-void asignarElemVec(FILE* pasm);
+void asignarElemVec(FILE* pasm, int retornofun);
 #endif
