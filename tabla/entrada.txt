@@ -1,11 +1,11 @@
 main {
 
-  boolean x, y;
+  array int [2] A;
 
-  x = false;
-  y = true;
+  A[0] = 40;
+  A[1] = 30;
 
-  printf x;
-  printf y;
+  printf A[0];
+  printf A[1];
 
 }

@@ -802,6 +802,16 @@ void asignarIdentLocal(FILE *pasm, int es_variable)
   fprintf(pasm,"\tmov dword [ebx] , eax\n");
 }
 
+void asignarElemVec(FILE* pasm){
+    fprintf(pasm,"\tpop dword ebx\n");
+    fprintf(pasm,"\tpop dword eax\n");
+    fprintf(pasm,"\tmov [eax], ebx\n");
+}
+
+
+	
+	
+
 void apilarAntesRetorno(FILE *pasm){
     fprintf(pasm, "\tpush dword ebx\n");
 }

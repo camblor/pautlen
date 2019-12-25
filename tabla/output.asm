@@ -3,8 +3,7 @@ segment .data
 	err_index db "Indice de vector fuera de rango"
 segment .bss 
 	__esp resd 1
-	_x resd 1
-	_y resd 1
+	_A resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -12,38 +11,84 @@ segment .text
 	extern alfa_malloc, alfa_free, ld_float
 main:
 	mov dword [__esp] , esp
-;D:	=
-;D:	false
 	push dword 0
+;herewegoagain
 ;R81:	<exp> ::= <constante>
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;HOLA
 	pop dword eax
-	mov [_x], eax 
+	cmp eax, 0
+	jl  fin_indice_fuera_rango
+	cmp eax, 1
+	jg  fin_indice_fuera_rango
+	mov dword edx, _A
+	lea eax, [edx+eax*4]
+	push dword eax
 ;D:	=
-;D:	true
-	push dword 1
+	push dword 40
+;herewegoagain
 ;R81:	<exp> ::= <constante>
-;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
-;HOLA
+	pop dword ebx
 	pop dword eax
-	mov [_y], eax 
-;XD
-	push dword _x
+	mov [eax], ebx
+;R44:	<asignacion> ::= <elemento_vector> = <exp>
+;ASIGNANDO A 1
+	push dword 1
+;herewegoagain
+;R81:	<exp> ::= <constante>
+	pop dword eax
+	cmp eax, 0
+	jl  fin_indice_fuera_rango
+	cmp eax, 1
+	jg  fin_indice_fuera_rango
+	mov dword edx, _A
+	lea eax, [edx+eax*4]
+	push dword eax
+;D:	=
+	push dword 30
+;herewegoagain
+;R81:	<exp> ::= <constante>
+	pop dword ebx
+	pop dword eax
+	mov [eax], ebx
+;R44:	<asignacion> ::= <elemento_vector> = <exp>
+;ASIGNANDO A 1
+	push dword 0
+;herewegoagain
+;R81:	<exp> ::= <constante>
+	pop dword eax
+	cmp eax, 0
+	jl  fin_indice_fuera_rango
+	cmp eax, 1
+	jg  fin_indice_fuera_rango
+	mov dword edx, _A
+	lea eax, [edx+eax*4]
+	push dword eax
+;R85:	<exp> ::= <elemento_vector>
 ;R56:	<escritura> ::= printf <exp>
+;AESCRIBIR
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
-	call print_boolean
+	call print_int
 	add esp, 4
 	call print_endofline
-;XD
-	push dword _y
+	push dword 1
+;herewegoagain
+;R81:	<exp> ::= <constante>
+	pop dword eax
+	cmp eax, 0
+	jl  fin_indice_fuera_rango
+	cmp eax, 1
+	jg  fin_indice_fuera_rango
+	mov dword edx, _A
+	lea eax, [edx+eax*4]
+	push dword eax
+;R85:	<exp> ::= <elemento_vector>
 ;R56:	<escritura> ::= printf <exp>
+;AESCRIBIR
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
-	call print_boolean
+	call print_int
 	add esp, 4
 	call print_endofline
 	jmp fin

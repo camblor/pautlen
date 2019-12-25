@@ -21,9 +21,10 @@
 
   char itoa[100];
   int cuantos_no;
-  int tipoErrorSemantico = 0;
+  int tipoErrorSemantico = -1;
   /*Diferenciar globales y locales*/
   int ambito;
+  int asignando;
 
   /*Informacion de lo que estamos analizando*/
   int categoria_actual = 0;
@@ -473,7 +474,9 @@ asignacion: TOK_IDENTIFICADOR '=' exp
         }
         |elemento_vector '=' exp
         {
-          /*fprintf(salida, "R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");*/
+          asignarElemVec(salida);
+          fprintf(salida, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+          fprintf(salida, ";ASIGNANDO A 1\n");
         }
 
 elemento_vector: TOK_IDENTIFICADOR'['exp']'
@@ -722,6 +725,7 @@ escritura: TOK_PRINTF exp
           return -1;
           }
           else if ($2.es_direccion == 1){
+            fprintf(salida, ";AESCRIBIR\n");
             escribir(salida, 1, itemActual->data->tipo);
           }
 
@@ -1117,11 +1121,14 @@ comparacion: exp TOK_IGUAL exp
 
 constante: constante_logica
         {
+          clase_actual = ESCALAR;
           $$.tipo = $1.tipo;
           $$.es_direccion = $1.es_direccion;
         }
         | constante_entera
         {
+          clase_actual = ESCALAR;
+          fprintf(salida, ";herewegoagain\n");
           $$.tipo = $1.tipo;
           $$.es_direccion = $1.es_direccion;
         }
@@ -1132,6 +1139,7 @@ constante_logica: TOK_TRUE
           $$.tipo = BOOLEAN;
           $$.valor_entero = 1;
           $$.es_direccion = 0;
+          
           escribir_operando(salida, "1", $$.es_direccion);
         }
         |TOK_FALSE
@@ -1140,6 +1148,10 @@ constante_logica: TOK_TRUE
           $$.es_direccion = 0;
           escribir_operando(salida, "0", $$.es_direccion);
         }
+
+
+  
+
 
 constante_entera: TOK_CONSTANTE_ENTERA
         {
