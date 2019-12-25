@@ -217,7 +217,7 @@ funcion: fn_declaration sentencias '}'
           if(itemActual == NULL){
               error = -1;
               tipoErrorSemantico = 1;
-              yyerror("No existe");
+              yyerror($1.lexema);
               return -1;
           }
 
@@ -249,7 +249,7 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
           if(itemActual != NULL){
               error = -1;
               tipoErrorSemantico = 1;
-              yyerror("No existe");
+              yyerror($3.lexema);
               return -1;
           }
           else{
@@ -270,9 +270,15 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
             infoActual->num_variables_locales = num_variables_locales_actual;
             infoActual->pos_variable_local = pos_variable_local_actual;
             infoActual->num_parametros = num_parametros_actual;
-            infoActual->pos_parametro = pos_parametro_actual;
+            infoActual->pos_parametro = pos_parametro_actual;            
 
-            insertaElemento(tablaActual, $3.lexema, infoActual);
+            if(!insertaElemento(tablaActual, $3.lexema, infoActual)){
+              error = -1;
+              tipoErrorSemantico = 13;
+              yyerror($3.lexema);
+              return -1;
+            }
+
             tablaActual = tablaLocal;
             infoActual = malloc(sizeof(datainfo));
             infoActual->categoria = FUNCION;
@@ -283,7 +289,13 @@ fn_name : TOK_FUNCTION tipo TOK_IDENTIFICADOR
             infoActual->pos_variable_local = pos_variable_local_actual;
             infoActual->num_parametros = num_parametros_actual;
             infoActual->pos_parametro = pos_parametro_actual;
-            insertaElemento(tablaActual, $3.lexema, infoActual);
+
+            if(!insertaElemento(tablaActual, $3.lexema, infoActual)){
+              error = -1;
+              tipoErrorSemantico = 13;
+              yyerror($3.lexema);
+              return -1;
+            }
 
             categoria_actual = 0;
             clase_actual = 0;
@@ -329,7 +341,7 @@ idpf: TOK_IDENTIFICADOR
 
           if(!insertaElemento(tablaLocal, $1.lexema, infoActual)){
               error = -1;
-              tipoErrorSemantico = 1;
+              tipoErrorSemantico = 13;
               yyerror($1.lexema);
               return -1;
           }
@@ -799,8 +811,8 @@ retorno_funcion: initretorno exp
             if(tablaLocal==tablaGlobal)
             {
               error=-1;
-              tipoErrorSemantico=0;
-              yyerror("Sentencia de retorno fuera del cuerpo de una función.\n");
+              tipoErrorSemantico=11;
+              yyerror("\n");
               return -1;
             }
             itemActual = buscaElemento(tablaLocal, $2.lexema);
@@ -808,16 +820,16 @@ retorno_funcion: initretorno exp
             if(itemActual == NULL)
             {
               error=-1;
-              tipoErrorSemantico=0;
-              yyerror("No se encuentra en la tabla.\n");
+              tipoErrorSemantico=1;
+              yyerror($2.lexema);
               return -1;
             }
 
             if($2.tipo!=itemActual->data->tipo)
             {
               error=-1;
-              tipoErrorSemantico=0;
-              yyerror("Asignacion incompatible, la expresion de retorno tiene que tener el mismo tipo que la funcion.\n");
+              tipoErrorSemantico=8;
+              yyerror($2.lexema);
               return -1;
             }
             
@@ -965,22 +977,22 @@ exp: exp '+' exp
             /*Si no lo encuentra error*/
             if (itemActual == NULL){
               error=-1;
-              tipoErrorSemantico=0;
-              yyerror("No se encuentra en la tabla.\n");
+              tipoErrorSemantico=1;
+              yyerror($1.lexema);
               return -1;
             }
             /*Si categoria es funicon error*/
             else if(itemActual->data->categoria == FUNCION){
               error = -1;
-              tipoErrorSemantico = 0;
-              yyerror("Funcion expresion");
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
               return -1;
             }
             /*Si clase es vector error*/
             else if (itemActual->data->clase == VECTOR){
               error = -1;
-              tipoErrorSemantico = 0;
-              yyerror("clase vector");
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
               return -1;
             }
             /*CORRECTO*/
@@ -1016,22 +1028,22 @@ exp: exp '+' exp
               /*Si no lo encuentra error*/
               if (itemActual == NULL){
                 error=-1;
-                tipoErrorSemantico=0;
-                yyerror("No se encuentra en la tabla.\n");
+                tipoErrorSemantico=1;
+                yyerror($1.lexema);
                 return -1;
               }
               /*Si categoria es funicon error*/
               else if(itemActual->data->categoria == FUNCION){
                 error = -1;
-                tipoErrorSemantico = 0;
-                yyerror("Funcion expresion");
+                tipoErrorSemantico = 8;
+                yyerror($1.lexema);
                 return -1;
               }
               /*Si clase es vector error*/
               else if (itemActual->data->clase == VECTOR){
                 error = -1;
-                tipoErrorSemantico = 0;
-                yyerror("clase vector");
+                tipoErrorSemantico = 8;
+                yyerror($1.lexema);
                 return -1;
               }
               /*CORRECTO*/
@@ -1044,21 +1056,21 @@ exp: exp '+' exp
                 
 
                 /* Asignamos valor */
-                escribir_operando(salida, $1.lexema, $$.es_direccion);
+                escribir_operando(salida, itemActual->lexema, $$.es_direccion);
               }
             }
             /*Si categoria es funicon error*/
             else if(itemActual->data->categoria == FUNCION){
               error = -1;
-              tipoErrorSemantico = 0;
-              yyerror("Funcion expresion");
+              tipoErrorSemantico = 8;
+              yyerror($1.lexema);
               return -1;
             }
             /*Si clase es vector error*/
             else if (itemActual->data->clase == VECTOR){
               error = -1;
-              tipoErrorSemantico = 0;
-              yyerror("clase vector");
+              tipoErrorSemantico = 8;
+              yyerror(itemActual->lexema);
               return -1;
             }
             /*CORRECTO*/
@@ -1123,8 +1135,8 @@ llamadaAFuncion: TOK_IDENTIFICADOR
           if(itemActual->data->categoria != FUNCION)
           {
             error=-1;
-            tipoErrorSemantico=0;
-            yyerror("El identificador de llamada de funcion, no es de categoria funcion.");
+            tipoErrorSemantico=8;
+            yyerror($1.lexema);
             return -1;
           }
           num_parametros_llamada_actual=0;
@@ -1173,6 +1185,12 @@ comparacion: exp TOK_IGUAL exp
               $$.es_direccion = 0;
 
             }
+          }else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
         |exp TOK_DISTINTO exp
@@ -1185,6 +1203,12 @@ comparacion: exp TOK_IGUAL exp
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
             }
+          }else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
         |exp TOK_MENORIGUAL exp
@@ -1197,6 +1221,12 @@ comparacion: exp TOK_IGUAL exp
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
             }
+          }else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
         |exp TOK_MAYORIGUAL exp
@@ -1209,6 +1239,12 @@ comparacion: exp TOK_IGUAL exp
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
             }
+          } else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
         |exp '<' exp
@@ -1221,6 +1257,12 @@ comparacion: exp TOK_IGUAL exp
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
             }
+          } else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
         |exp '>' exp
@@ -1233,6 +1275,12 @@ comparacion: exp TOK_IGUAL exp
               $$.tipo = BOOLEAN;
               $$.es_direccion = 0;
             }
+          } else
+          {
+            error=-1;
+            tipoErrorSemantico=3;
+            yyerror("\n");
+            return -1;
           }
         }
 
