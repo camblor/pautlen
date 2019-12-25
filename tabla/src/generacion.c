@@ -536,22 +536,6 @@ void leer(FILE *fpasm, char *nombre, int tipo)
     fprintf(fpasm, "\tadd esp, 4\n");
 }
 
-/*
-GENERA EL CÓDIGO PARA ESCRIBIR POR PANTALLA LO QUE HAYA EN LA CIMA DE LA PILA
-TENIENDO EN CUENTA QUE PUEDE SER UN VALOR INMEDIATO (es_referncia == 0) O UNA
-DIRECCION (es_variable == 1) Y QUE HAY QUE LLAMAR A LA CORRESPONDIENTE
-FUNCIÓN DE ALFALIB (print_int O print_boolean) DEPENDIENTO DEL TIPO (tipo == BOOLEANO
-O ENTERO )
-*/
-
-/*
-  mov eax, 0xDEADBEEF
-  push eax
-  push message
-  call printf
-  add esp, 8
-*/
-
 
 
 void escribir(FILE *fpasm, int es_variable, int tipo)
@@ -622,9 +606,7 @@ void escribirVariableLocal(FILE *fpasm, int posicion_variable_local)
 
     if (!fpasm)
         return;
-    printf("HOLA\n");
     int aux = 4 * posicion_variable_local;
-    fprintf(fpasm, "\t;--------------------\n");
     fprintf(fpasm, "\tlea eax, [ebp - %d]\n", aux);
     fprintf(fpasm, "\tpush dword eax\n");
 }
@@ -750,12 +732,11 @@ void escribir_elemento_vector(FILE * fpasm, char * nombre_vector, int tam_max, i
   if(exp_es_direccion == 1){
     fprintf(fpasm, "\tmov dword eax, [eax]\n");
   }
-
   fprintf(fpasm, "\tcmp eax, 0\n");
-
   fprintf(fpasm, "\tjl  fin_indice_fuera_rango\n");
   fprintf(fpasm, "\tcmp eax, %d\n", tam_max-1);
   fprintf(fpasm, "\tjg  fin_indice_fuera_rango\n");
+
 
   fprintf(fpasm, "\tmov dword edx, _%s\n",nombre_vector );
   fprintf(fpasm, "\tlea eax, [edx+eax*4]\n");
@@ -763,6 +744,7 @@ void escribir_elemento_vector(FILE * fpasm, char * nombre_vector, int tam_max, i
 
 
 }
+
 
 
 /*Funciones extra necesarias para trabajar con funciones*/

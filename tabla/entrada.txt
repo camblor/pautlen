@@ -1,7 +1,11 @@
 main {
 
-  int x;
-  x = 8;
+  boolean x, y;
+
+  x = false;
+  y = true;
+
   printf x;
+  printf y;
 
 }

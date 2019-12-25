@@ -4,6 +4,7 @@ segment .data
 segment .bss 
 	__esp resd 1
 	_x resd 1
+	_y resd 1
 segment .text
 	global main
 	extern scan_int, print_int, scan_float, scan_boolean, print_boolean
@@ -12,17 +13,37 @@ segment .text
 main:
 	mov dword [__esp] , esp
 ;D:	=
-	push dword 8
+;D:	false
+	push dword 0
 ;R81:	<exp> ::= <constante>
 ;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
+;HOLA
 	pop dword eax
 	mov [_x], eax 
+;D:	=
+;D:	true
+	push dword 1
+;R81:	<exp> ::= <constante>
+;R43:	<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>
+;HOLA
+	pop dword eax
+	mov [_y], eax 
+;XD
 	push dword _x
 ;R56:	<escritura> ::= printf <exp>
 	pop dword eax
 	mov eax, [eax]
 	push dword eax
-	call print_int
+	call print_boolean
+	add esp, 4
+	call print_endofline
+;XD
+	push dword _y
+;R56:	<escritura> ::= printf <exp>
+	pop dword eax
+	mov eax, [eax]
+	push dword eax
+	call print_boolean
 	add esp, 4
 	call print_endofline
 	jmp fin

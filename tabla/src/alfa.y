@@ -357,7 +357,7 @@ bloque: condicional
 asignacion: TOK_IDENTIFICADOR '=' exp
         {
           fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");
-          printf("HOLA\n");
+          
           if(tablaActual == tablaGlobal){
             
             itemActual = buscaElemento(tablaGlobal, $1.lexema);
@@ -396,6 +396,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
             else{
               $1.valor_entero = $3.valor_entero;
+              fprintf(salida, ";HOLA\n");
               asignar(salida, $1.lexema, $3.es_direccion);
             }
           }
@@ -902,6 +903,7 @@ exp: exp '+' exp
 
 
               /* Asignamos valor */
+              fprintf(salida, ";XD\n");
               escribir_operando(salida, $1.lexema, $$.es_direccion);
             }
             /*fprintf(salida, ";R80:\t<exp> ::= <TOK_IDENTIFICADOR>\n");*/
@@ -1130,11 +1132,13 @@ constante_logica: TOK_TRUE
           $$.tipo = BOOLEAN;
           $$.valor_entero = 1;
           $$.es_direccion = 0;
+          escribir_operando(salida, "1", $$.es_direccion);
         }
         |TOK_FALSE
         {
           $$.tipo = BOOLEAN;
           $$.es_direccion = 0;
+          escribir_operando(salida, "0", $$.es_direccion);
         }
 
 constante_entera: TOK_CONSTANTE_ENTERA
