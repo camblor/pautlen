@@ -7,7 +7,6 @@
   #include "../inc/tabla.h"
 
 
-  tipo_atributos hola;
 
   void yyerror(const char *error);
   extern int linea ,columna;
@@ -1255,7 +1254,6 @@ constante: constante_logica
 
 constante_logica: TOK_TRUE
         {
-          printf("hola\n");
           $$.tipo = BOOLEAN;
           $$.valor_entero = 1;
           $$.es_direccion = 0;

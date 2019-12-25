@@ -17,9 +17,9 @@ INCDIR   = inc
 
 rm       = rm -f
 
-all: compilador
+all: alfa
 
-compilador: compilador.o y.tab.o lex.yy.o tabla.o generacion.o
+alfa: compilador.o y.tab.o lex.yy.o tabla.o generacion.o
 	 $(CC) $(CFLAGS) -o $@ $(OBJDIR)/compilador.o $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/tabla.o $(OBJDIR)/generacion.o
 
 compilador.o: $(SRCDIR)/compilador.c y.tab.c
@@ -53,10 +53,10 @@ y.tab.c: $(SRCDIR)/alfa.y
 	mv y.output $(BINDIR)
 
 exec:
-	./compilador entrada.txt output.asm
+	./alfa entrada.txt output.asm
 
 valgrind:
-	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./compilador entrada.txt output
+	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./alfa entrada.txt output
 
 nasm:
 	nasm -felf32 output.asm
@@ -65,7 +65,7 @@ nasm:
 .PHONY: clean
 clean:
 	@$(rm) $(OBJDIR)/*
-	@$(rm) hola.txt compilador output.asm output.o salida
+	@$(rm) hola.txt alfa output.asm output.o salida
 
 	@echo "Cleanup complete!"
 
