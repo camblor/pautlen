@@ -60,14 +60,30 @@ extern int yydebug;
     TOK_WHILE = 270,
     TOK_OR = 271,
     TOK_AND = 272,
-    TOK_DISTINTO = 273,
-    TOK_IGUAL = 274,
-    TOK_MENORIGUAL = 275,
-    TOK_MAYORIGUAL = 276,
-    TOK_FUNCTION = 277,
-    TOK_TRUE = 278,
-    TOK_FALSE = 279,
-    TOK_ERROR = 280
+    TOK_NOT = 273,
+    TOK_DISTINTO = 274,
+    TOK_IGUAL = 275,
+    TOK_MENOR = 276,
+    TOK_MAYOR = 277,
+    TOK_MENORIGUAL = 278,
+    TOK_MAYORIGUAL = 279,
+    TOK_COMA = 280,
+    TOK_PUNTOYCOMA = 281,
+    TOK_LLAVEIZQUIERDA = 282,
+    TOK_LLAVEDERECHA = 283,
+    TOK_CORCHETEIZQUIERDO = 284,
+    TOK_CORCHETEDERECHO = 285,
+    TOK_PARENTESISIZQUIERDO = 286,
+    TOK_PARENTESISDERECHO = 287,
+    TOK_MENOS = 288,
+    TOK_MAS = 289,
+    TOK_ASTERISCO = 290,
+    TOK_DIVISION = 291,
+    TOK_FUNCTION = 292,
+    TOK_TRUE = 293,
+    TOK_FALSE = 294,
+    TOK_ERROR = 295,
+    TOK_ASIGNACION = 296
   };
 #endif
 /* Tokens.  */
@@ -86,14 +102,30 @@ extern int yydebug;
 #define TOK_WHILE 270
 #define TOK_OR 271
 #define TOK_AND 272
-#define TOK_DISTINTO 273
-#define TOK_IGUAL 274
-#define TOK_MENORIGUAL 275
-#define TOK_MAYORIGUAL 276
-#define TOK_FUNCTION 277
-#define TOK_TRUE 278
-#define TOK_FALSE 279
-#define TOK_ERROR 280
+#define TOK_NOT 273
+#define TOK_DISTINTO 274
+#define TOK_IGUAL 275
+#define TOK_MENOR 276
+#define TOK_MAYOR 277
+#define TOK_MENORIGUAL 278
+#define TOK_MAYORIGUAL 279
+#define TOK_COMA 280
+#define TOK_PUNTOYCOMA 281
+#define TOK_LLAVEIZQUIERDA 282
+#define TOK_LLAVEDERECHA 283
+#define TOK_CORCHETEIZQUIERDO 284
+#define TOK_CORCHETEDERECHO 285
+#define TOK_PARENTESISIZQUIERDO 286
+#define TOK_PARENTESISDERECHO 287
+#define TOK_MENOS 288
+#define TOK_MAS 289
+#define TOK_ASTERISCO 290
+#define TOK_DIVISION 291
+#define TOK_FUNCTION 292
+#define TOK_TRUE 293
+#define TOK_FALSE 294
+#define TOK_ERROR 295
+#define TOK_ASIGNACION 296
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -105,7 +137,7 @@ union YYSTYPE
   tipo_atributos atributos;
  
 
-#line 109 "y.tab.h" /* yacc.c:1909  */
+#line 141 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

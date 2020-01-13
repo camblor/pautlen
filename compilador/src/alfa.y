@@ -94,27 +94,45 @@
 %token TOK_WHILE
 %token TOK_OR
 %token TOK_AND
+%token TOK_NOT
 %token TOK_DISTINTO
 %token TOK_IGUAL
+%token TOK_MENOR
+%token TOK_MAYOR
 %token TOK_MENORIGUAL
 %token TOK_MAYORIGUAL
+%token TOK_COMA
+%token TOK_PUNTOYCOMA
+%token TOK_LLAVEIZQUIERDA
+%token TOK_LLAVEDERECHA
+%token TOK_CORCHETEIZQUIERDO
+%token TOK_CORCHETEDERECHO
+%token TOK_PARENTESISIZQUIERDO
+%token TOK_PARENTESISDERECHO
+%token TOK_MENOS
+%token TOK_MAS
+%token TOK_ASTERISCO
+%token TOK_DIVISION
 %token TOK_FUNCTION
 %token TOK_TRUE
 %token TOK_FALSE
 %token TOK_ERROR
+%token TOK_ASIGNACION
 
-%left '+' '-' '*' '/'
+%left TOK_MAS TOK_MENOS TOK_ASTERISCO TOK_DIVISION
 %left TOK_OR TOK_AND
 %left TOK_DISTINTO TOK_IGUAL
-%left '<' '>' TOK_MAYORIGUAL TOK_MENORIGUAL
-%left '!'
+
+
+%left TOK_MENOR TOK_MAYOR TOK_MAYORIGUAL TOK_MENORIGUAL
+%right TOK_NOT
 
 
 %start programa
 
 %%
 
-programa: TOK_MAIN '{'escritura1 declaraciones escritura2 funciones escritura3 sentencias'}'
+programa: TOK_MAIN TOK_LLAVEIZQUIERDA escritura1 declaraciones escritura2 funciones escritura3 sentencias TOK_LLAVEDERECHA
         {
           /* Final del fichero */
           escribir_fin(salida);
@@ -148,7 +166,7 @@ declaraciones: declaracion
           /*fprintf(salida, ";R3:\t<declaraciones> ::= <declaracion> <declaraciones>\n");*/
         }
 
-declaracion: clase identificadores ';'
+declaracion: clase identificadores TOK_PUNTOYCOMA
         {
           /*fprintf(salida, ";R4:\t<declaracion> ::= <clase> <identificadores> ;\n");*/
         }
@@ -173,7 +191,7 @@ tipo: TOK_INT
           tipo_actual = BOOLEAN;
         }
 
-clase_vector: TOK_ARRAY tipo '['TOK_CONSTANTE_ENTERA']'
+clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO TOK_CONSTANTE_ENTERA TOK_CORCHETEDERECHO
         {
           /* Obtenemos clase */
           clase_actual = VECTOR;
@@ -193,7 +211,7 @@ identificadores: identificador
         {
           /*fprintf(salida, ";R18:\t<identificadores> ::= <identificador>\n");*/
         }
-        |identificador ',' identificadores
+        |identificador TOK_COMA identificadores
         {
           /*fprintf(salida, ";R19:\t<identificadores> ::= <identificador> , <identificadores>\n");*/
         }
@@ -207,7 +225,7 @@ funciones: funcion funciones
           /*fprintf(salida, ";R21:\t<funciones> ::= \n");*/
         }
 
-funcion: fn_declaration sentencias '}'
+funcion: fn_declaration sentencias TOK_LLAVEDERECHA
         {
           fprintf(salida, ";R22:\t<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}\n");
           vaciar(tablaActual);
@@ -225,7 +243,7 @@ funcion: fn_declaration sentencias '}'
         }
 
 
-fn_declaration : fn_name '('parametros_funcion ')' '{' declaraciones_funcion
+fn_declaration : fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion
         {
           itemActual = buscaElemento(tablaLocal, $1.lexema);
 
@@ -312,7 +330,7 @@ parametros_funcion: parametro_funcion resto_parametros_funcion
           fprintf(salida, ";R24:\t<parametros_funcion> ::= \n");
         }
 
-resto_parametros_funcion: ';' parametro_funcion resto_parametros_funcion
+resto_parametros_funcion: TOK_PUNTOYCOMA parametro_funcion resto_parametros_funcion
         {
           fprintf(salida, ";R25:\t<resto_parametros_funcion> ::= ;<parametro_funcion> <resto_parametros_funcion>\n");
         }
@@ -368,7 +386,7 @@ sentencias: sentencia
           /*fprintf(salida, ";R31:\t<sentencias> ::= <sentencia> <sentencias>\n");*/
         }
 
-sentencia: sentencia_simple ';'
+sentencia: sentencia_simple TOK_PUNTOYCOMA
         {
          /* fprintf(salida, ";R32:\t<sentencia> ::= <sentencia_simple> ;\n");*/
         }
@@ -388,7 +406,7 @@ bloque: condicional
           fprintf(salida, ";R41:\t<bloque> ::= <bucle>\n");
         }
 
-asignacion: TOK_IDENTIFICADOR '=' exp
+asignacion: TOK_IDENTIFICADOR TOK_ASIGNACION exp
         {
           fprintf(salida, ";R43:\t<asignacion> ::= <TOK_IDENTIFICADOR> = <exp>\n");
           
@@ -500,7 +518,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
 
 
         }
-        |elemento_vector '=' exp
+        |elemento_vector TOK_ASIGNACION exp
         {
           
           if($3.tipo!=$1.tipo)
@@ -519,7 +537,7 @@ asignacion: TOK_IDENTIFICADOR '=' exp
           categoria_actual = 0;
         }
 
-elemento_vector: TOK_IDENTIFICADOR'['exp']'
+elemento_vector: TOK_IDENTIFICADOR TOK_CORCHETEIZQUIERDO exp TOK_CORCHETEDERECHO
         {
           if(tablaActual == tablaGlobal){
             itemActual = NULL;
@@ -617,26 +635,24 @@ elemento_vector: TOK_IDENTIFICADOR'['exp']'
             $$.tipo = itemActual->data->tipo;
             escribir_elemento_vector(salida, $1.lexema, itemActual->data->tamanio_vector, $1.es_direccion);
           }
-          /*fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");*/
+          fprintf(salida, ";R48:\t<elemento_vector> ::= TOK_IDENTIFICADOR[<exp>]\n");
         }
 
 condicional: if_exp_sentencias
         {
           fprintf(salida, ";R50:\t<condicional> ::= if (<exp>) {<sentencias>}\n");
         }
-        | if_exp_sentencias TOK_ELSE '{' sentencias '}'
+        | if_exp_sentencias TOK_ELSE TOK_LLAVEIZQUIERDA sentencias TOK_LLAVEDERECHA
         {
-          /*fprintf(salida, ";R51:\t<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}\n");*/
-
-
+          fprintf(salida, ";R51:\t<condicional> ::= if (<exp>) {<sentencias>} then {<sentencias>}\n");
         }
 
-if_exp_sentencias: if_exp sentencias '}'
+if_exp_sentencias: if_exp sentencias TOK_LLAVEDERECHA
         {
           $$.etiqueta = $1.etiqueta;
           ifthenelse_fin(salida, $1.etiqueta);
         }
-if_exp: TOK_IF '(' exp ')' '{'
+if_exp: TOK_IF TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA
         {
 
           if($3.tipo != BOOLEAN){
@@ -656,13 +672,13 @@ bucle: while_exp_sentencias
           fprintf(salida, ";R52:\t<bucle> ::= while (<exp>) {<sentencias>}\n");
         }
 
-while_exp_sentencias: while_exp sentencias '}'
+while_exp_sentencias: while_exp sentencias TOK_LLAVEDERECHA
         {
           $$.etiqueta = $1.etiqueta;
           while_fin(salida, $1.etiqueta);
         }
 
-while_exp: while '(' exp ')' '{'
+while_exp: while TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO TOK_CORCHETEIZQUIERDO
         {
           if($3.tipo != BOOLEAN){
             error = -1;
@@ -681,6 +697,8 @@ while: TOK_WHILE
           $$.etiqueta = etiqueta++;
           while_inicio(salida, $$.etiqueta);
         }
+
+
 
 lectura: TOK_SCANF TOK_IDENTIFICADOR
         {
@@ -759,6 +777,16 @@ lectura: TOK_SCANF TOK_IDENTIFICADOR
           
           /*fprintf(salida, ";R54:\t<lectura> ::= scanf <TOK_IDENTIFICADOR>\n");*/
         }
+        | TOK_SCANF elemento_vector
+        {
+          if(categoria_actual==FUNCION){
+            asignarElemVec(salida, 1);
+          } else{
+            asignarElemVec(salida, 0);
+          }          
+          fprintf(salida, ";R44:\t<asignacion> ::= <elemento_vector> = <exp>\n");
+          categoria_actual = 0;
+        }
 
 escritura: TOK_PRINTF exp
         {
@@ -797,7 +825,7 @@ escritura: TOK_PRINTF exp
             
             
           } else{
-            escribir(salida, 0, tipo_actual);
+            escribir(salida, 0, $2.tipo);
           }
           
 
@@ -846,7 +874,7 @@ initretorno: TOK_RETURN
 
 
 
-exp: exp '+' exp
+exp: exp TOK_MAS exp
         {
           /* Sumamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
@@ -862,7 +890,7 @@ exp: exp '+' exp
             $$.es_direccion=0;
           }
         }
-        |exp '-' exp
+        |exp TOK_MENOS exp
         {
           /* Restamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
@@ -878,7 +906,7 @@ exp: exp '+' exp
             $$.es_direccion=0;
           }
         }
-        |exp '/' exp
+        |exp TOK_DIVISION exp
         {
           /* Dividimos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
@@ -894,7 +922,7 @@ exp: exp '+' exp
             $$.es_direccion=0;
           }
         }
-        |exp '*' exp
+        |exp TOK_ASTERISCO exp
         {
           /* Multiplicamos las dos expresiones */
           if ($1.tipo == BOOLEAN || $3.tipo == BOOLEAN){
@@ -910,7 +938,7 @@ exp: exp '+' exp
             $$.es_direccion=0;
           }
         }
-        |'-' exp
+        |TOK_MENOS exp
         {
           /* Multiplicamos por -1 la expresion */
           if ($2.tipo == BOOLEAN){
@@ -952,7 +980,7 @@ exp: exp '+' exp
           $$.es_direccion=0;
           /*fprintf(salida, ";R77:\t<exp> ::= <exp> && <exp>\n");*/
         }
-        |'!'exp
+        |TOK_NOT exp
         {
           /* NEGAMOS la expresion (logica) */
           if ($2.tipo == INT){
@@ -983,13 +1011,6 @@ exp: exp '+' exp
             }
             /*Si categoria es funicon error*/
             else if(itemActual->data->categoria == FUNCION){
-              error = -1;
-              tipoErrorSemantico = 8;
-              yyerror($1.lexema);
-              return -1;
-            }
-            /*Si clase es vector error*/
-            else if (itemActual->data->clase == VECTOR){
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
@@ -1039,13 +1060,6 @@ exp: exp '+' exp
                 yyerror($1.lexema);
                 return -1;
               }
-              /*Si clase es vector error*/
-              else if (itemActual->data->clase == VECTOR){
-                error = -1;
-                tipoErrorSemantico = 8;
-                yyerror($1.lexema);
-                return -1;
-              }
               /*CORRECTO*/
               else {
                 $$.tipo = itemActual->data->tipo;
@@ -1064,13 +1078,6 @@ exp: exp '+' exp
               error = -1;
               tipoErrorSemantico = 8;
               yyerror($1.lexema);
-              return -1;
-            }
-            /*Si clase es vector error*/
-            else if (itemActual->data->clase == VECTOR){
-              error = -1;
-              tipoErrorSemantico = 8;
-              yyerror(itemActual->lexema);
               return -1;
             }
             /*CORRECTO*/
@@ -1096,17 +1103,17 @@ exp: exp '+' exp
           $$.es_direccion = $1.es_direccion;
           fprintf(salida, ";R81:\t<exp> ::= <constante>\n");
         }
-        |'('exp')'
+        |TOK_PARENTESISIZQUIERDO exp TOK_PARENTESISDERECHO
         {
           /*fprintf(salida, ";R82:\t<exp> ::= (<exp>)\n");*/
           $$.tipo = $2.tipo;
           $$.es_direccion = $2.es_direccion;
         }
-        |'('comparacion')'
+        |comparacion
         {
           /*fprintf(salida, ";R83:\t<exp> ::= <comparacion>\n");*/
-          $$.tipo = $2.tipo;
-          $$.es_direccion = $2.es_direccion;
+          $$.tipo = $1.tipo;
+          $$.es_direccion = $1.es_direccion;
         }
         |elemento_vector
         {
@@ -1114,7 +1121,7 @@ exp: exp '+' exp
           $$.es_direccion = $1.es_direccion;
           fprintf(salida, ";R85:\t<exp> ::= <elemento_vector>\n");
         }
-        |llamadaAFuncion '('lista_expresiones')'
+        |llamadaAFuncion TOK_PARENTESISIZQUIERDO lista_expresiones TOK_PARENTESISDERECHO
         {
           fprintf(salida, ";R88:\t<exp> ::= <TOK_IDENTIFICADOR> (<lista_expresiones>)\n");
           llamarFuncion(salida, $1.lexema, 1);
@@ -1165,7 +1172,7 @@ argumento: exp
   
 }
 
-resto_lista_expresiones: ',' argumento resto_lista_expresiones
+resto_lista_expresiones: TOK_COMA argumento resto_lista_expresiones
         {
           /*fprintf(salida, ";R91:\t<resto_lista_expresiones> ::= <exp> <resto_lista_expresiones>\n");*/
         }
@@ -1177,39 +1184,20 @@ resto_lista_expresiones: ',' argumento resto_lista_expresiones
 comparacion: exp TOK_IGUAL exp
         {
           /*fprintf(salida, ";R93:\t<comparacion> ::= <exp> == <exp>\n");*/
-          if (($1.tipo == INT) && ($3.tipo == INT)){
-            if($3.es_direccion==1 && $1.es_direccion==1){
-              igual(salida, $1.es_direccion, $3.es_direccion, etiqueta);
-              etiqueta++;
-              $$.tipo = BOOLEAN;
-              $$.es_direccion = 0;
-
-            }
-          }else
-          {
-            error=-1;
-            tipoErrorSemantico=3;
-            yyerror("\n");
-            return -1;
-          }
+          
+          igual(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+          etiqueta++;
+          $$.tipo = BOOLEAN;
+          $$.es_direccion = 0;
         }
         |exp TOK_DISTINTO exp
         {
           /*fprintf(salida, ";R94:\t<comparacion> ::= <exp> != <exp>\n");*/
-          if (($1.tipo == INT) && ($3.tipo == INT)){
-            if($3.es_direccion==1 && $1.es_direccion==1){
-              distinto(salida, $1.es_direccion, $3.es_direccion, etiqueta);
-              etiqueta++;
-              $$.tipo = BOOLEAN;
-              $$.es_direccion = 0;
-            }
-          }else
-          {
-            error=-1;
-            tipoErrorSemantico=3;
-            yyerror("\n");
-            return -1;
-          }
+          
+          distinto(salida, $1.es_direccion, $3.es_direccion, etiqueta);
+          etiqueta++;
+          $$.tipo = BOOLEAN;
+          $$.es_direccion = 0;
         }
         |exp TOK_MENORIGUAL exp
         {
@@ -1247,7 +1235,7 @@ comparacion: exp TOK_IGUAL exp
             return -1;
           }
         }
-        |exp '<' exp
+        |exp TOK_MENOR exp
         {
           /*fprintf(salida, ";R97:\t<comparacion> ::= <exp> < <exp>\n");*/
           if (($1.tipo == INT) && ($3.tipo == INT)){
@@ -1265,7 +1253,7 @@ comparacion: exp TOK_IGUAL exp
             return -1;
           }
         }
-        |exp '>' exp
+        |exp TOK_MAYOR exp
         {
           /*fprintf(salida, ";R98:\t<comparacion> ::= <exp> > <exp>\n");*/
           if (($1.tipo == INT) && ($3.tipo == INT)){

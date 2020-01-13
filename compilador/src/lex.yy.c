@@ -937,416 +937,226 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 28 "src/alfa.l"
-{
-    columna+=yyleng; 
-    strcpy(yylval.atributos.lexema, yytext); 
-    return TOK_MAIN;
-}
+{columna+=yyleng;return TOK_MAIN;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 33 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return TOK_ARRAY;
-}
+#line 29 "src/alfa.l"
+{columna+=yyleng;return TOK_ARRAY;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 38 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return TOK_INT;
-}
+#line 30 "src/alfa.l"
+{columna+=yyleng;return TOK_INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 43 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return TOK_BOOLEAN;
-}
+#line 31 "src/alfa.l"
+{columna+=yyleng;return TOK_BOOLEAN;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 48 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return TOK_SCANF;
-}
+#line 32 "src/alfa.l"
+{columna+=yyleng;return TOK_SCANF;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 53 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return TOK_PRINTF;
-}
+#line 33 "src/alfa.l"
+{columna+=yyleng;return TOK_PRINTF;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 58 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_IF;
-}
+#line 34 "src/alfa.l"
+{columna+=yyleng;return TOK_IF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 64 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_ELSE;
-}
+#line 35 "src/alfa.l"
+{columna+=yyleng;return TOK_ELSE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 70 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_WHILE;
-}
+#line 36 "src/alfa.l"
+{columna+=yyleng;return TOK_WHILE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 76 "src/alfa.l"
-{
-    columna+=yyleng;
-    /*strcpy(yylval.atributos.lexema, yytext);*/
-    return yytext[0];
-}
+#line 37 "src/alfa.l"
+{columna+=yyleng;return TOK_PUNTOYCOMA;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 81 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    /*fprintf(salida, ";D:\t%s\n", yytext);*/
-    return yytext[0];
-}
+#line 38 "src/alfa.l"
+{columna+=yyleng;return TOK_COMA;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 87 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 39 "src/alfa.l"
+{columna+=yyleng;return TOK_LLAVEIZQUIERDA;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 92 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 40 "src/alfa.l"
+{columna+=yyleng;return TOK_LLAVEDERECHA;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 97 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 41 "src/alfa.l"
+{columna+=yyleng;return TOK_CORCHETEIZQUIERDO;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 102 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 42 "src/alfa.l"
+{columna+=yyleng;return TOK_CORCHETEDERECHO;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 107 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 43 "src/alfa.l"
+{columna+=yyleng;return TOK_PARENTESISIZQUIERDO;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 112 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 44 "src/alfa.l"
+{columna+=yyleng;return TOK_PARENTESISDERECHO;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 117 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 45 "src/alfa.l"
+{columna+=yyleng;return TOK_MAS;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 123 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 46 "src/alfa.l"
+{columna+=yyleng;return TOK_MENOS;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 129 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    return yytext[0];
-}
+#line 47 "src/alfa.l"
+{columna+=yyleng;return TOK_ASTERISCO;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 134 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 48 "src/alfa.l"
+{columna+=yyleng;return TOK_DIVISION;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 140 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_OR;
-}
+#line 49 "src/alfa.l"
+{columna+=yyleng;return TOK_OR;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 146 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_AND;
-}
+#line 50 "src/alfa.l"
+{columna+=yyleng;return TOK_AND;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 152 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 51 "src/alfa.l"
+{columna+=yyleng;return TOK_NOT;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 158 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_DISTINTO;
-}
+#line 52 "src/alfa.l"
+{columna+=yyleng;return TOK_DISTINTO;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 164 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_IGUAL;
-}
+#line 53 "src/alfa.l"
+{columna+=yyleng;return TOK_IGUAL;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 170 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_MENORIGUAL;
-}
+#line 54 "src/alfa.l"
+{columna+=yyleng;return TOK_MENORIGUAL;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 176 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_MAYORIGUAL;
-}
+#line 55 "src/alfa.l"
+{columna+=yyleng;return TOK_MAYORIGUAL;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 182 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 56 "src/alfa.l"
+{columna+=yyleng;return TOK_MENOR;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 188 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 57 "src/alfa.l"
+{columna+=yyleng;return TOK_MAYOR;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 194 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return yytext[0];
-}
+#line 58 "src/alfa.l"
+{columna+=yyleng;return TOK_ASIGNACION;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 200 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_TRUE;
-}
+#line 59 "src/alfa.l"
+{columna+=yyleng;return TOK_TRUE;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 206 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_FALSE;
-}
+#line 60 "src/alfa.l"
+{columna+=yyleng;return TOK_FALSE;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 212 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_FUNCTION;
-}
+#line 61 "src/alfa.l"
+{columna+=yyleng;return TOK_FUNCTION;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 218 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    fprintf(salida, ";D:\t%s\n", yytext);
-    return TOK_RETURN;
-}
+#line 62 "src/alfa.l"
+{columna+=yyleng;return TOK_RETURN;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 224 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema,yytext);
-    return TOK_IDENTIFICADOR;
-}
+#line 63 "src/alfa.l"
+{columna+=yyleng;strcpy(yylval.atributos.lexema,yytext);return TOK_IDENTIFICADOR;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 229 "src/alfa.l"
-{
-    columna+=yyleng;
-    strcpy(yylval.atributos.lexema, yytext);
-    yylval.atributos.valor_entero=atoi(yytext);
-    return TOK_CONSTANTE_ENTERA;
-}
+#line 64 "src/alfa.l"
+{columna+=yyleng;strcpy(yylval.atributos.lexema, yytext);yylval.atributos.valor_entero=atoi(yytext);return TOK_CONSTANTE_ENTERA;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 235 "src/alfa.l"
-{
-    columna += 4;
-}
+#line 65 "src/alfa.l"
+{columna += 4;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 238 "src/alfa.l"
-{
-    columna++;
-}
+#line 66 "src/alfa.l"
+{columna++;}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 241 "src/alfa.l"
-{
-    linea++;
-    columna=1;
-}
+#line 67 "src/alfa.l"
+{linea++;columna=1;}
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 245 "src/alfa.l"
-{
-    linea ++;
-    columna=1;
-}
+#line 68 "src/alfa.l"
+{linea ++;columna=1;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 249 "src/alfa.l"
-{
-    longitud=true;
-    fprintf(stderr, "****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",linea,columna,yytext);
-    error = 1;
-    return TOK_ERROR;
-}
+#line 69 "src/alfa.l"
+{longitud=true;fprintf(stderr, "****Error en [lin %d, col %d]: identificador demasiado largo (%s)\n",linea,columna,yytext);error = 1;return TOK_ERROR;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 255 "src/alfa.l"
-{
-    invalidchar=true;
-    fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n",linea,columna,yytext);
-    error = 1;
-    return TOK_ERROR;
-}
+#line 70 "src/alfa.l"
+{invalidchar=true;fprintf(stderr, "****Error en [lin %d, col %d]: simbolo no permitido (%s)\n",linea,columna,yytext);error = 1;return TOK_ERROR;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 262 "src/alfa.l"
+#line 72 "src/alfa.l"
 ECHO;
 	YY_BREAK
-#line 1350 "lex.yy.c"
+#line 1160 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2351,6 +2161,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 262 "src/alfa.l"
+#line 72 "src/alfa.l"
 
 

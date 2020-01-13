@@ -1,0 +1,28 @@
+main {
+  int x;
+  array int [2] A;
+  array boolean [2] B;
+  
+
+  function int fib(int arg){
+    return arg;
+  }
+
+  function boolean tre(boolean argumento){
+    int variable;
+    boolean bol, man;
+
+    bol = true;
+    man = true;
+    return true;
+  }
+  
+  A[0] = fib(80);
+  A[1] = 20;
+  B[0] = true;
+  B[1] = tre(B[0]);
+  x = 100;
+  
+  printf B[1];
+}
+

@@ -19,7 +19,7 @@ rm       = rm -f
 
 all: alfa
 
-alfa: compilador.o y.tab.o lex.yy.o tabla.o generacion.o
+alfa:  y.tab.o lex.yy.o tabla.o generacion.o compilador.o
 	 $(CC) $(CFLAGS) -o $@ $(OBJDIR)/compilador.o $(OBJDIR)/y.tab.o $(OBJDIR)/lex.yy.o $(OBJDIR)/tabla.o $(OBJDIR)/generacion.o
 
 compilador.o: $(SRCDIR)/compilador.c y.tab.c
@@ -53,7 +53,7 @@ y.tab.c: $(SRCDIR)/alfa.y
 	mv y.output $(BINDIR)
 
 exec:
-	./alfa entrada.txt output.asm
+	./alfa entrada.alfa output.asm
 
 valgrind:
 	valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all ./alfa entrada.txt output
@@ -66,6 +66,10 @@ nasm:
 clean:
 	@$(rm) $(OBJDIR)/*
 	@$(rm) hola.txt alfa output.asm output.o salida
+	@$(rm) $(SRCDIR)/y.tab.c 
+	@$(rm) $(SRCDIR)/lex.yy.c
+	@$(rm) $(BINDIR)/y.output
+	@$(rm) $(INCDIR)/y.tab.h
 
 	@echo "Cleanup complete!"
 
