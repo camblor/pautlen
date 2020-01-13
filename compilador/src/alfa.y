@@ -211,22 +211,20 @@ funcion: fn_declaration sentencias TOK_LLAVEDERECHA
           fprintf(salida, ";R22:\t<funcion> ::= function <tipo> <identificador> (<parametros_funcion>) {<declaraciones_funcion> <sentencias>}\n");
           vaciar(tablaActual);
           tablaActual = tablaGlobal;
-          itemActual = buscaElemento(tablaGlobal, $1.lexema);
-
-          if(itemActual == NULL){
-              error = -1;
-              tipoErrorSemantico = 1;
-              yyerror($1.lexema);
-              return -1;
-          }
-
-          itemActual->data->num_parametros = num_parametros_actual;
         }
 
 
 fn_declaration : fn_name TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion
         {
           itemActual = buscaElemento(tablaLocal, $1.lexema);
+          if(itemActual == NULL){
+              error = -1;
+              tipoErrorSemantico = 1;
+              yyerror($1.lexema);
+              return -1;
+          }
+          itemActual->data->num_parametros = num_parametros_actual;
+          itemActual = buscaElemento(tablaGlobal, $1.lexema);
 
           if(itemActual == NULL){
               error = -1;
