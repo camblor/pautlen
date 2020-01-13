@@ -22,8 +22,8 @@ void escribir_subseccion_data(FILE *fpasm)
     /*Declaracion del segmento de datos*/
     fprintf(fpasm, "segment .data \n");
     /*Declaracion del error de dividir entre 0*/
-    fprintf(fpasm, "\terr_div0 db \"Error al dividir entre 0\"\n");
-    fprintf(fpasm, "\terr_index db \"Indice de vector fuera de rango\"\n");
+    fprintf(fpasm, "\terr_div0 db \"Error al dividir entre 0\", 0\n");
+    fprintf(fpasm, "\terr_index db \"Indice de vector fuera de rango\", 0\n");
 }
 
 /*
@@ -240,7 +240,7 @@ void dividir(FILE *fpasm, int es_variable_1, int es_variable_2)
 
     fprintf(fpasm, "\tmov dword edx, 0\n");
     fprintf(fpasm, "\tcmp ebx, edx\n");
-    fprintf(fpasm, "\tje err_div0\n");
+    fprintf(fpasm, "\tje division_cero\n");
 
     fprintf(fpasm, "\tidiv ebx\n");
     fprintf(fpasm, "\tpush dword eax\n");
