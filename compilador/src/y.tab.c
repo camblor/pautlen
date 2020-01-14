@@ -2266,7 +2266,7 @@ yyreduce:
             yyerror((yyvsp[-2].atributos).lexema);
             return -1;
           }
-          else if((yyvsp[0].atributos).valor_entero == 0){
+          else if((yyvsp[0].atributos).valor_entero == 0 && !(yyvsp[0].atributos).es_direccion){
             error = -1;
             yyerror("Division entre 0");
             return -1;
